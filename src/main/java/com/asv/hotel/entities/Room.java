@@ -1,12 +1,15 @@
 package com.asv.hotel.entities;
 
 import jakarta.persistence.*;
+
+
+
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 
 @Entity
@@ -18,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "number", nullable = false, length = 10, unique = true)
@@ -33,7 +36,7 @@ public class Room {
     @Column(nullable = false)
     private Integer capacity;
 
-    @Column(name = "price_per_night", nullable = false, precision = 10, scale = 2)
+    @Column(name = "price_per_night", nullable = false, precision = 7, scale = 2)
     private BigDecimal pricePerNight;
 
     @Column(name = "is_available", columnDefinition = "boolean default true")
