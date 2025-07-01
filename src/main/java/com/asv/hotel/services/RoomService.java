@@ -3,18 +3,14 @@ package com.asv.hotel.services;
 import com.asv.hotel.dto.mapper.RoomMapper;
 import com.asv.hotel.dto.RoomDTO;
 import com.asv.hotel.entities.Room;
-import com.asv.hotel.exceptions.rooms.RoomAlreadyExistsException;
-import com.asv.hotel.exceptions.rooms.RoomNotFoundException;
+import com.asv.hotel.exceptions.rooms.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.rooms.DataNotFoundException;
 import com.asv.hotel.repositories.RoomRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +18,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-//@Validated
 public class RoomService {
     private final RoomRepository roomRepository;
 
@@ -36,7 +31,7 @@ public class RoomService {
     @Transactional(readOnly = true)
     public RoomDTO findByNumber(String number) {
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.findRoomByNumberLikeIgnoreCase(number)
-                .orElseThrow(() -> new RoomNotFoundException(number)));
+                .orElseThrow(() -> new DataNotFoundException("Не существует комнаты с номером "+ number)));
     }
 
     @Transactional(readOnly = true)
@@ -52,27 +47,27 @@ public class RoomService {
                 .collect(Collectors.toList());
     }
 
-    @Modifying
+
     @Transactional
     public RoomDTO save(RoomDTO roomDTO) {
         try {
             if (roomRepository.findRoomByNumberLikeIgnoreCase(roomDTO.getNumber()).isPresent()) {
-                throw new RoomAlreadyExistsException(roomDTO.getNumber());
+                throw new DataAlreadyExistsException(roomDTO.getNumber());
             }
             Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
             room.setCreatedAt(LocalDateTime.now());
             room.setUpdatedAt(LocalDateTime.now());
             return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(room));
         } catch (DataAccessException e) {
-            throw new RoomAlreadyExistsException(roomDTO.getNumber());
+            throw new DataAlreadyExistsException(roomDTO.getNumber());
         }
     }
 
-    @Modifying
+
     @Transactional
     public RoomDTO update(String number, RoomDTO newRoomDTO) {
         Room existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(number)
-                .orElseThrow(() -> new RoomNotFoundException(number));
+                .orElseThrow(() -> new DataNotFoundException(number));
 
         existingRoom.setNumber(newRoomDTO.getNumber());
         existingRoom.setCapacity(newRoomDTO.getCapacity());
@@ -88,7 +83,7 @@ public class RoomService {
     @Transactional
     public void delete(String number) {
         if (roomRepository.deleteRoomByNumberLikeIgnoreCase(number) == 0) {
-            throw new RoomNotFoundException(number);
+            throw new DataNotFoundException(number);
         }
     }
 

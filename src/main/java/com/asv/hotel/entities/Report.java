@@ -3,11 +3,14 @@ package com.asv.hotel.entities;
 import com.asv.hotel.entities.enums.ReportStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "reports")
@@ -25,9 +28,9 @@ public class Report {
     @Enumerated(EnumType.STRING)
     private ReportStatus reportStatus;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdDate;
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
@@ -40,4 +43,8 @@ public class Report {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "staff_id", nullable = false)
     private User staff;
+
+    @OneToMany(mappedBy = "report",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    Set<ReportAttachment> reportAttachmentSet=new HashSet<>();
+
 }
