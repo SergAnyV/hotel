@@ -48,7 +48,7 @@ public class RoomController {
     @ApiResponse(responseCode = "201", description = "Номер создан")
     @ApiResponse(responseCode = "409", description = "Номер не создан")
     @PostMapping
-    public ResponseEntity<RoomDTO> createRoom( @RequestBody RoomDTO roomDTO) {
+    public ResponseEntity<RoomDTO> createRoom( @RequestBody @Valid RoomDTO roomDTO) {
         RoomDTO newRoomDTO = roomService.save(roomDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRoomDTO);
     }
@@ -58,11 +58,10 @@ public class RoomController {
     @ApiResponse(responseCode = "200", description = "Номер обновлен")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
     @ApiResponse(responseCode = "409", description = "Конфликт данных")
-    @PutMapping("/{number}")
+    @PutMapping
     public ResponseEntity<RoomDTO> updateRoom(
-            @PathVariable String number,
-            @RequestBody RoomDTO roomDTO) {
-        RoomDTO updatedRoom = roomService.update(number, roomDTO);
+            @RequestBody @Valid RoomDTO roomDTO) {
+        RoomDTO updatedRoom = roomService.update(roomDTO);
         return ResponseEntity.ok(updatedRoom);
     }
 

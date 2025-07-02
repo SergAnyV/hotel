@@ -1,40 +1,36 @@
 package com.asv.hotel.exceptions;
 
-import com.asv.hotel.exceptions.rooms.ErrorAnswer;
-import com.asv.hotel.exceptions.rooms.RoomAlreadyExistsException;
-import com.asv.hotel.exceptions.rooms.RoomNotFoundException;
+import com.asv.hotel.dto.ErrorMessage;
+import com.asv.hotel.exceptions.rooms.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.rooms.DataNotFoundException;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import java.util.HashMap;
-import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(RoomNotFoundException.class)
-    public ResponseEntity<ErrorAnswer> handleRoomNotFound(RoomNotFoundException ex) {
-        ErrorAnswer response = new ErrorAnswer("NOT_FOUND", ex.getMessage());
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleRoomNotFound(DataNotFoundException ex, String message) {
+        ErrorMessage response = new ErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
-    @ExceptionHandler(RoomAlreadyExistsException.class)
-    public ResponseEntity<ErrorAnswer> handleRoomAlreadyExists(RoomAlreadyExistsException ex) {
-        ErrorAnswer response = new ErrorAnswer("CONFLICT", ex.getMessage());
+    @ExceptionHandler(DataAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> handleRoomAlreadyExists(DataAlreadyExistsException ex, String message) {
+        ErrorMessage response = new ErrorMessage(HttpStatus.CONFLICT, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ErrorAnswer> handleDataIntegrityViolation(DataAccessException ex) {
-        ErrorAnswer response = new ErrorAnswer("BAD_REQUEST", "нарушение целостности базы данных");
+    public ResponseEntity<ErrorMessage> handleDataIntegrityViolation(DataAccessException ex,String message) {
+        ErrorMessage response = new ErrorMessage(HttpStatus.BAD_REQUEST, message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+//    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex,String message) {
 //        Map<String, String> errors = new HashMap<>();
 //        ex.getBindingResult().getFieldErrors().forEach(error ->
 //                errors.put(error.getField(), error.getDefaultMessage()));
@@ -42,10 +38,10 @@ public class GlobalExceptionHandler {
 //    }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorAnswer> handleAllExceptions(Exception ex) {
-        ErrorAnswer response = new ErrorAnswer(
-                "INTERNAL_SERVER_ERROR",
-                "Ошибка сервера");
+    public ResponseEntity<ErrorMessage> handleAllExceptions(Exception ex,String message) {
+        ErrorMessage response = new ErrorMessage(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

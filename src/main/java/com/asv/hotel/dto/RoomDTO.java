@@ -1,6 +1,7 @@
 package com.asv.hotel.dto;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
@@ -10,20 +11,40 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@Schema(name = "Модель данных номера отеля", description = "модель передачи данных через JSON")
 public class RoomDTO {
-//    @NotBlank(message = "номер комнты не должен быть пустым")
+
+    @Schema(description = "номер комнаты", example = "101")
+    @NotBlank(message = "номер комнты не должен быть пустым")
     private String number;
-//    @NotBlank(message = "тип комнты не должен быть пустым")
+
+    @Schema(description = "Тип комнаты (стандарт, люкс и т.д.)", example = "стандарт")
+    @NotBlank(message = "тип комнты не должен быть пустым")
     private String type;
+
+    @Schema(description = "Описание комнаты и удобств", example = "Номер с видом на море")
+    @NotBlank(message = "Описание комнты не должен быть пустым")
     private String description;
-//    @Min(value = 1, message = "Вместимость должна быть не менее 1")
+
+    @Schema(description = "Вместимость (количество человек)", example = "2", type = "integer")
+    @Min(value = 1, message = "Вместимость должна быть не менее 1")
+    @Max(value = 10, message = "Вместимость должна быть не менее 10")
     private Integer capacity;
-//    @Positive(message = "цена должна быть положительна")
+
+    @Schema(description = "Цена за ночь", example = "1500.00")
+    @Positive(message = "цена должна быть положительна")
     private BigDecimal pricePerNight;
+
+    @Schema(description = "Доступность номера для бронирования", example = "true")
+    @NotNull(message = "Поле isAvailable обязательно")
     private Boolean isAvailable;
-//    @PastOrPresent
+
+    @Schema(description = "Дата создания записи", example = "2023-01-01T12:00:00", accessMode = Schema.AccessMode.READ_ONLY)
+    @PastOrPresent
     private LocalDateTime createdAt;
-//    @FutureOrPresent
+
+    @Schema(description = "Дата последнего обновления", example = "2023-01-02T10:30:00", accessMode = Schema.AccessMode.READ_ONLY)
+    @FutureOrPresent
     private LocalDateTime updatedAt;
 
 }
