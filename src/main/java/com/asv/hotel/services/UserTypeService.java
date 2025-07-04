@@ -12,11 +12,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserTypeService {
-   private final UserTypeRepository userTypeRepository;
+    private final UserTypeRepository userTypeRepository;
 
     @Transactional
     public UserTypeDTO save(UserTypeDTO userTypeDTO) {
@@ -27,17 +30,35 @@ public class UserTypeService {
             }
             UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
             return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
-        } catch (DataAccessException ex){
-            log.warn("Error: проблема с доступом к базе данных , метода {}",new Object(){}.getClass().getEnclosingMethod().getName() );
+        } catch (DataAccessException ex) {
+            log.warn("Error: проблема с доступом к базе данных , метода {}", new Object() {
+            }.getClass().getEnclosingMethod().getName());
             throw new DataAlreadyExistsException(userTypeDTO.getRole());
         }
     }
 
     @Transactional
-    public void delete(String role){
-        if(userTypeRepository.deleteByRole(role)==0){
+    public List<UserTypeDTO> findAll(){
+     return userTypeRepository.findAll().stream()
+                .map(userType->UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void delete(String role) {
+        if (userTypeRepository.deleteByRole(role) == 0) {
             log.warn("Error: такая роль не существует {} ", role);
             throw new DataNotFoundException(role);
+        }
+    }
+
+    @Transactional
+    public void deleteAll() {
+        try {
+            userTypeRepository.deleteAll();
+        } catch (RuntimeException ex) {
+            log.warn("Error: не удалось очистить список user_types ");
+            throw new RuntimeException("не удалось очистить список user_types");
         }
     }
 
