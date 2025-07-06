@@ -55,7 +55,7 @@ public class Booking {
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "promo_code_id")
+    @JoinColumn(name = "promo_code_id",nullable =true)
     private PromoCode promoCode;
 
     @ManyToMany(mappedBy = "bookingSet",cascade = CascadeType.ALL,fetch = FetchType.LAZY)

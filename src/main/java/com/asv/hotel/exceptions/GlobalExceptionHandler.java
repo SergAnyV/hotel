@@ -12,30 +12,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(DataNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleRoomNotFound(DataNotFoundException ex, String message) {
+    public ResponseEntity<ErrorMessage> handleDataNotFound(DataNotFoundException ex) {
         ErrorMessage response = new ErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(DataAlreadyExistsException.class)
-    public ResponseEntity<ErrorMessage> handleRoomAlreadyExists(DataAlreadyExistsException ex, String message) {
+    public ResponseEntity<ErrorMessage> handleDataAlreadyExists(DataAlreadyExistsException ex) {
         ErrorMessage response = new ErrorMessage(HttpStatus.CONFLICT, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ErrorMessage> handleDataIntegrityViolation(DataAccessException ex,String message) {
-        ErrorMessage response = new ErrorMessage(HttpStatus.BAD_REQUEST, message);
+    public ResponseEntity<ErrorMessage> handleDataIntegrityViolation(DataAccessException ex) {
+        ErrorMessage response = new ErrorMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
-
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex,String message) {
-//        Map<String, String> errors = new HashMap<>();
-//        ex.getBindingResult().getFieldErrors().forEach(error ->
-//                errors.put(error.getField(), error.getDefaultMessage()));
-//        return ResponseEntity.badRequest().body(errors);
-//    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage> handleAllExceptions(Exception ex,String message) {
