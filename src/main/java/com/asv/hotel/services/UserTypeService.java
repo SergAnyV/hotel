@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +60,23 @@ public class UserTypeService {
         } catch (RuntimeException ex) {
             log.warn("Error: не удалось очистить список user_types ");
             throw new RuntimeException("не удалось очистить список user_types");
+        }
+    }
+
+    @Transactional
+    public UserTypeDTO findUserTypeByRole(String role){
+        try{
+         Optional<UserType> userTypeOptional=  userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+          if(userTypeOptional.isEmpty()){
+              log.warn("Error: роль не распознана среди доступных ,указана {}",role);
+              throw new DataNotFoundException("данная роль не распознана в базе");
+          }
+          return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
+        }catch (DataAccessException ex){
+            log.warn("Error: проблема с доступом к базе данных в классе {} методе {}"
+                    ,new Object() {}.getClass().getName()
+                    ,new Object() {}.getClass().getEnclosingMethod().getName() );
+            throw new DataAlreadyExistsException(role);
         }
     }
 

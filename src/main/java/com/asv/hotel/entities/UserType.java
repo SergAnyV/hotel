@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class UserType {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
