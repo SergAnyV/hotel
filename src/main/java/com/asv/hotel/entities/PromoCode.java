@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @Entity
 @Table(name = "promo_codes")
@@ -31,10 +31,10 @@ public class PromoCode {
     private BigDecimal discountValue;
 
     @Column(name = "valid_from", nullable = false)
-    private LocalDateTime validFromDate;
+    private LocalDate validFromDate;
 
     @Column(name = "valid_until", nullable = false)
-    private LocalDateTime validUntilDate;
+    private LocalDate validUntilDate;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
