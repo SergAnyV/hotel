@@ -1,4 +1,4 @@
-package com.asv.hotel.exceptions.rooms;
+package com.asv.hotel.exceptions.mistakes;
 
 public class DataAlreadyExistsException extends RuntimeException{
     public DataAlreadyExistsException(String message) {

@@ -1,13 +1,11 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.RoomDTO;
-import com.asv.hotel.exceptions.rooms.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.rooms.DataNotFoundException;
+import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
 import com.asv.hotel.repositories.RoomRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
@@ -15,7 +13,6 @@ import org.springframework.test.context.TestConstructor;
 import javax.sql.DataSource;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

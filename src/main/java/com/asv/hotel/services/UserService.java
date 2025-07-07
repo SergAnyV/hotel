@@ -4,7 +4,7 @@ import com.asv.hotel.dto.UserDTO;
 import com.asv.hotel.dto.mapper.UserMapper;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.entities.UserType;
-import com.asv.hotel.exceptions.rooms.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
 import com.asv.hotel.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,9 @@ public class UserService {
             UserType userType = userTypeService.findUserTypeByRoleReturnUserType(userDTO.getRole());
             log.info("{}", userType);
             User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
+            log.info("{}", user);
             user.setRole(userType);
+            log.info("{}", user);
             return UserMapper.INSTANCE.userToUserDTO(userRepository.save(user));
         } catch (DataAccessException e) {
             log.warn("Error: проблема с доступом к базе данных"

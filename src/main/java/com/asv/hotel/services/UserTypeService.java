@@ -3,8 +3,8 @@ package com.asv.hotel.services;
 import com.asv.hotel.dto.UserTypeDTO;
 import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
-import com.asv.hotel.exceptions.rooms.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.rooms.DataNotFoundException;
+import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.mistakes.DataNotFoundException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +32,7 @@ public class UserTypeService {
             UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
             return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
         } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных , метода {}", new Object() {
-            }.getClass().getEnclosingMethod().getName());
+            log.warn("Error: проблема с доступом к базе данных ", ex);
             throw new DataAlreadyExistsException(userTypeDTO.getRole());
         }
     }
@@ -58,7 +57,7 @@ public class UserTypeService {
         try {
             userTypeRepository.deleteAll();
         } catch (RuntimeException ex) {
-            log.warn("Error: не удалось очистить список user_types ");
+            log.warn("Error: не удалось очистить список user_types ",ex);
             throw new RuntimeException("не удалось очистить список user_types");
         }
     }

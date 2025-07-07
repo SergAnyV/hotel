@@ -1,8 +1,8 @@
 package com.asv.hotel.exceptions;
 
 import com.asv.hotel.dto.ErrorMessage;
-import com.asv.hotel.exceptions.rooms.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.rooms.DataNotFoundException;
+import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.mistakes.DataNotFoundException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
