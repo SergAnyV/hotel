@@ -73,9 +73,24 @@ public class UserTypeService {
           }
           return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
         }catch (DataAccessException ex){
-            log.warn("Error: проблема с доступом к базе данных в классе {} методе {}"
-                    ,new Object() {}.getClass().getName()
-                    ,new Object() {}.getClass().getEnclosingMethod().getName() );
+            log.warn("Error: проблема с доступом к базе данных ",
+                    ex );
+            throw new DataAlreadyExistsException(role);
+        }
+    }
+
+    @Transactional
+   public UserType findUserTypeByRoleReturnUserType(String role){
+        try{
+            Optional<UserType> userTypeOptional=  userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+            if(userTypeOptional.isEmpty()){
+                log.warn("Error: роль не распознана среди доступных ,указана {}",role);
+                throw new DataNotFoundException("данная роль не распознана в базе");
+            }
+            return userTypeOptional.get();
+        }catch (DataAccessException ex){
+            log.warn("Error: проблема с доступом к базе данных ",
+                    ex );
             throw new DataAlreadyExistsException(role);
         }
     }

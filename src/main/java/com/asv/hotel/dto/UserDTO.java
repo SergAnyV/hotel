@@ -1,10 +1,9 @@
 package com.asv.hotel.dto;
 
 
+import com.asv.hotel.entities.Booking;
 import com.asv.hotel.entities.Report;
-import com.asv.hotel.entities.UserType;
 import lombok.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Builder
@@ -34,11 +33,11 @@ public class UserDTO {
 
 
     private String role;
-
+// никаких сущностей
     @EqualsAndHashCode.Exclude
-    private Set<BookingDTO> bookingDTOSet = new HashSet<>();
+    private Set<Booking> bookingSet;
 
-
+    // никаких сущностей
     @EqualsAndHashCode.Exclude
-    private Set<Report> reports = new HashSet<>();
+    private Set<Report> reports;
 }
