@@ -9,6 +9,9 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface RoomMapper {
     RoomMapper INSTANCE= Mappers.getMapper(RoomMapper.class);
+
     RoomDTO roomToRoomDTO(Room room);
+
     Room roomDTOTORomm(RoomDTO roomDTO);
+
 }
