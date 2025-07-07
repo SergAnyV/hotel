@@ -27,7 +27,7 @@ public class PromoCode {
     @Enumerated(value = EnumType.STRING)
     private TypeOfPromoCode typeOfPromoCode;
 
-    @Column(name = "discount_value", nullable = false, precision = 4, scale = 2)
+    @Column(name = "discount_value", nullable = false, precision = 8, scale = 2)
     private BigDecimal discountValue;
 
     @Column(name = "valid_from", nullable = false)
