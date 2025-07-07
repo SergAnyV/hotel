@@ -5,6 +5,7 @@ import com.asv.hotel.dto.mapper.UserMapper;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.mistakes.DataNotFoundException;
 import com.asv.hotel.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,21 +36,21 @@ public class UserService {
             log.info("{}", user);
             return UserMapper.INSTANCE.userToUserDTO(userRepository.save(user));
         } catch (DataAccessException e) {
-            log.warn("Error: проблема с доступом к базе данных"
-                    ,e);
+            log.error("Error: проблема с доступом к базе данных"
+                    , e);
             throw new DataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
         }
     }
 
-//    @Transactional
-//    public UserDTO findUserByLastNameAndFirstName(String lastName, String firstName){
-//        try {
-//
-//            return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName,firstName).get());
-//        }catch (DataNotFoundException ex){
-//
-//        }
-//    }
+    @Transactional
+    public UserDTO findUserByLastNameAndFirstName(String lastName, String firstName) {
+        try {
+            return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
+        } catch (Exception ex) {
+            log.error("Error : такого юзера не существует", ex);
+            throw new DataNotFoundException(" такого юзера не существует");
+        }
+    }
 
 
 }

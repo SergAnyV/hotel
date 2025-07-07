@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
 
 @Query(value = "SELECT * FROM users WHERE last_name ILIKE :last_name AND first_name ILIKE :first_name",nativeQuery = true)
-List<User> findUserByLastNameAndFirstName(@Param("last_name") String lastName
+Optional<User> findUserByLastNameAndFirstName(@Param("last_name") String lastName
         , @Param("first_name") String firstName);
 
 }
