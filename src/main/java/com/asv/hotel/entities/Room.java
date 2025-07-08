@@ -3,13 +3,14 @@ package com.asv.hotel.entities;
 import jakarta.persistence.*;
 
 
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -50,5 +51,9 @@ public class Room {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Booking> bookings = new HashSet<>();
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    private Set<Report> reports = new HashSet<>();
 }

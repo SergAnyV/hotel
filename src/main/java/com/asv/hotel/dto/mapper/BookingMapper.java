@@ -10,8 +10,8 @@ import org.mapstruct.factory.Mappers;
 public interface BookingMapper {
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    @Mapping(target = "checkInDate", source = "checkInDate")
-    @Mapping(target = "checkOutDate", source = "checkOutDate")
+    @Mapping(target = "checkInDate", source = "checkInDate",dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "checkOutDate", source = "checkOutDate",dateFormat = "yyyy-MM-dd")
     @Mapping(target = "persons", source = "persons")
     @Mapping(target = "roomNumber", source = "room.number")
     @Mapping(target = "userSimpleDTO", source = "user")

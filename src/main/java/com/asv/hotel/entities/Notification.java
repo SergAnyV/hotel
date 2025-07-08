@@ -25,11 +25,11 @@ public class Notification {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne
+    @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 

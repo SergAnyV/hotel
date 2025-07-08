@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,10 +25,10 @@ public class Booking {
 
 
     @Column(name = "check_in_date", nullable = false)
-    private LocalDateTime checkInDate;
+    private LocalDate checkInDate;
 
     @Column(name = "check_out_date", nullable = false)
-    private LocalDateTime checkOutDate;
+    private LocalDate checkOutDate;
 
     @Column(name = "persons", nullable = false, scale = 0)
     private Integer persons;
@@ -46,15 +47,15 @@ public class Booking {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "promo_code_id")
     private PromoCode promoCode;
 

@@ -34,7 +34,7 @@ public class Report {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedDate;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 

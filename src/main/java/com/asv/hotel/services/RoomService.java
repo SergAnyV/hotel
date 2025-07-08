@@ -97,5 +97,10 @@ public class RoomService {
             throw new DataNotFoundException(number);
         }
     }
+    @Transactional(readOnly = true)
+    public Room findByNumberReturnRoom(String number) {
+        return roomRepository.findRoomByNumberLikeIgnoreCase(number).get();
+    }
+
 
 }

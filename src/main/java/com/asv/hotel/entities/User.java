@@ -55,9 +55,9 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private UserType role;
 
-    @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Booking> bookingSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Report> reports = new HashSet<>();
 }
