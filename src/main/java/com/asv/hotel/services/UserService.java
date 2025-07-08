@@ -29,11 +29,8 @@ public class UserService {
                 throw new DataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
             }
             UserType userType = userTypeService.findUserTypeByRoleReturnUserType(userDTO.getRole());
-            log.info("{}", userType);
             User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
-            log.info("{}", user);
             user.setRole(userType);
-            log.info("{}", user);
             return UserMapper.INSTANCE.userToUserDTO(userRepository.save(user));
         } catch (DataAccessException e) {
             log.error("Error: проблема с доступом к базе данных"
@@ -48,6 +45,16 @@ public class UserService {
             return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
         } catch (Exception ex) {
             log.error("Error : такого юзера не существует", ex);
+            throw new DataNotFoundException(" такого юзера не существует");
+        }
+    }
+
+    @Transactional
+    public User findUserByLastNameAndFirstNameReturnUser(String lastName, String firstName) {
+        try {
+            return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
+        } catch (Exception ex) {
+            log.warn("Error : такого юзера не существует", ex);
             throw new DataNotFoundException(" такого юзера не существует");
         }
     }
