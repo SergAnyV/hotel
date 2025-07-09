@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class UserTypeService {
+
     private final UserTypeRepository userTypeRepository;
 
     @Transactional
@@ -38,9 +39,9 @@ public class UserTypeService {
     }
 
     @Transactional
-    public List<UserTypeDTO> findAll(){
-     return userTypeRepository.findAll().stream()
-                .map(userType->UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType))
+    public List<UserTypeDTO> findAll() {
+        return userTypeRepository.findAll().stream()
+                .map(userType -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType))
                 .collect(Collectors.toList());
     }
 
@@ -57,41 +58,70 @@ public class UserTypeService {
         try {
             userTypeRepository.deleteAll();
         } catch (RuntimeException ex) {
-            log.warn("Error: не удалось очистить список user_types ",ex);
+            log.warn("Error: не удалось очистить список user_types ", ex);
             throw new RuntimeException("не удалось очистить список user_types");
         }
     }
 
     @Transactional
-    public UserTypeDTO findUserTypeByRole(String role){
-        try{
-         Optional<UserType> userTypeOptional=  userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-          if(userTypeOptional.isEmpty()){
-              log.warn("Error: роль не распознана среди доступных ,указана {}",role);
-              throw new DataNotFoundException("данная роль не распознана в базе");
-          }
-          return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
-        }catch (DataAccessException ex){
+    public UserTypeDTO findUserTypeByRole(String role) {
+        try {
+            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+            if (userTypeOptional.isEmpty()) {
+                log.warn("Error: роль не распознана среди доступных ,указана {}", role);
+                throw new DataNotFoundException("данная роль не распознана в базе");
+            }
+            return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
+        } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
-                    ex );
+                    ex);
             throw new DataAlreadyExistsException(role);
         }
     }
 
     @Transactional
-   public UserType findUserTypeByRoleReturnUserType(String role){
-        try{
-            Optional<UserType> userTypeOptional=  userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if(userTypeOptional.isEmpty()){
-                log.warn("Error: роль не распознана среди доступных ,указана {}",role);
+    public UserType findUserTypeByRoleReturnUserType(String role) {
+        try {
+            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+            if (userTypeOptional.isEmpty()) {
+                log.warn("Error: роль не распознана среди доступных ,указана {}", role);
                 throw new DataNotFoundException("данная роль не распознана в базе");
             }
             return userTypeOptional.get();
-        }catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
-                    ex );
+                    ex);
             throw new DataAlreadyExistsException(role);
         }
+    }
+
+    @Transactional
+    public UserTypeDTO updateUserType(UserTypeDTO userTypeDTO) {
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole());
+        if (userTypeOptional.isEmpty()) {
+            log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getRole());
+            throw new DataNotFoundException("данная роль не распознана в базе");
+        }
+        var userType = userTypeOptional.get();
+        if (!userType.getDescription().equals(userTypeDTO.getDescription())) {
+            userType.setDescription(userTypeDTO.getDescription());
+        }
+        if (!userType.getJobTypeList().equals(userTypeDTO.getJobTypeList())) {
+            userType.setJobTypeList(userTypeDTO.getJobTypeList());
+        }
+        if (!userType.getIsActive().equals(userTypeDTO.getIsActive())) {
+            userType.setIsActive(userTypeDTO.getIsActive());
+        }
+        int updated = userTypeRepository.updateUserType(userType.getId()
+                , userType.getRole()
+                , userType.getDescription()
+                , userType.getIsActive());
+        if (updated == 0) {
+            throw new DataAccessException("Не удалось обновить тип пользователя") {
+            };
+        }
+        userTypeRepository.save(userType);
+        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType);
     }
 
 }

@@ -57,6 +57,7 @@ private final UserTypeService userTypeService;
         userTypeService.delete(role);
         return ResponseEntity.noContent().build();
     }
+
     @Operation(summary = "Удалить данные тип юзера",
             description = "Удалить данные существующего тип юзера")
     @ApiResponse(responseCode = "204", description = "тип юзера Удален")
@@ -66,4 +67,14 @@ private final UserTypeService userTypeService;
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Обновить данные типа юзера",
+            description = "обновляет данные существующего типа юзера")
+    @ApiResponse(responseCode = "200", description = "типа юзера обновлен")
+    @ApiResponse(responseCode = "404", description = "типа юзера не найден")
+    @ApiResponse(responseCode = "409", description = "Конфликт данных")
+    @PutMapping
+    public ResponseEntity<UserTypeDTO> update(@RequestBody @Valid UserTypeDTO userTypeDTO){
+        UserTypeDTO updatedUserTypeDto=userTypeService.updateUserType(userTypeDTO);
+        return ResponseEntity.ok(updatedUserTypeDto);
+    }
 }
