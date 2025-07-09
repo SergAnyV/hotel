@@ -1,6 +1,7 @@
 package com.asv.hotel.dto.mapper;
 
 import com.asv.hotel.dto.BookingDTO;
+import com.asv.hotel.dto.BookingSimpleDTO;
 import com.asv.hotel.entities.Booking;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,5 +31,9 @@ public interface BookingMapper {
     @Mapping(target = "statusOfBooking", ignore = true) // Устанавливается по умолчанию
     Booking bookingDTOToBoking(BookingDTO bookingDTO);
 
-
+    @Mapping(target = "createdAt", source = "createdAt",dateFormat = "yyyy-MM-dd")
+    @Mapping(target = "roomSimpleDTO",source = "room")
+    @Mapping(target = "userSimpleDTO",source = "user")
+    @Mapping(target = "promoCodeDTO", source = "promoCode")
+    BookingSimpleDTO bookingToBookingSimpleDTO(Booking booking);
 }
