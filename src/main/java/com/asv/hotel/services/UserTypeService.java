@@ -103,15 +103,8 @@ public class UserTypeService {
             throw new DataNotFoundException("данная роль не распознана в базе");
         }
         var userType = userTypeOptional.get();
-        if (!userType.getDescription().equals(userTypeDTO.getDescription())) {
-            userType.setDescription(userTypeDTO.getDescription());
-        }
-        if (!userType.getJobTypeList().equals(userTypeDTO.getJobTypeList())) {
-            userType.setJobTypeList(userTypeDTO.getJobTypeList());
-        }
-        if (!userType.getIsActive().equals(userTypeDTO.getIsActive())) {
-            userType.setIsActive(userTypeDTO.getIsActive());
-        }
+
+        UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO,userType);
         int updated = userTypeRepository.updateUserType(userType.getId()
                 , userType.getRole()
                 , userType.getDescription()
