@@ -43,11 +43,7 @@ public class RoomService {
     public List<RoomDTO> findByType(String type) {
         return roomRepository.findRoomByTypeLikeIgnoreCase(type).stream()
                 .map(roomOptional -> {
-                    if (roomOptional.isEmpty()) {
-                        log.warn("Error: не существует типа комнаты {}", roomOptional.get().getType());
-                        throw new DataNotFoundException("Не существует комнаты с типом " + roomOptional.get().getType());
-                    }
-                    return RoomMapper.INSTANCE.roomToRoomDTO(roomOptional.get());
+                  return    RoomMapper.INSTANCE.roomToRoomDTO(roomOptional);
                 })
                 .collect(Collectors.toList());
     }
@@ -75,8 +71,7 @@ public class RoomService {
     public RoomDTO update( RoomDTO newRoomDTO) {
         Room existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(newRoomDTO.getNumber())
                 .orElseThrow(() -> {
-                    log.warn("Error:Не существует комнаты с номером {} оошибка в методе {}", newRoomDTO.getNumber()
-                            ,new Object(){}.getClass().getEnclosingMethod().getName());
+                    log.warn("Error:Не существует комнаты с номером {} метод update в RoomService", newRoomDTO.getNumber());
                     return new DataNotFoundException("Не существует комнаты с номером " + newRoomDTO.getNumber());
                 });
 

@@ -15,11 +15,12 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
     List<Room> findAll();
+
     @Query(value = "SELECT * FROM rooms WHERE number ILIKE :number ", nativeQuery = true)
     Optional<Room> findRoomByNumberLikeIgnoreCase(String number);
 
     @Query(value = "SELECT * FROM rooms WHERE type ILIKE :type ", nativeQuery = true)
-    List<Optional<Room>> findRoomByTypeLikeIgnoreCase(String type);
+    List<Room> findRoomByTypeLikeIgnoreCase(String type);
 
     @Query(value = "SELECT * FROM rooms WHERE pricePerNight BETWEEN :min AND :max", nativeQuery = true)
     List<Room> findRoomByPricePerNightBetween(@Param("min") BigDecimal min,@Param("max") BigDecimal max);
