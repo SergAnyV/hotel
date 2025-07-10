@@ -1,6 +1,6 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.UserTypeDTO;
+import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.services.UserTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

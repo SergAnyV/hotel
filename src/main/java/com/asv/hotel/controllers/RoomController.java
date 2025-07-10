@@ -1,6 +1,6 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.RoomDTO;
+import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.services.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,7 +66,7 @@ public class RoomController {
     }
 
     @Operation(summary = "Удалить номер",
-            description = "обновляет данные существующего номера")
+            description = "удвляет данные существующего номера")
     @ApiResponse(responseCode = "204", description = "Номер удален")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
     @DeleteMapping("/{number}")

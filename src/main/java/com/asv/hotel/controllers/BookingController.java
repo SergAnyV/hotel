@@ -1,7 +1,7 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.BookingDTO;
-import com.asv.hotel.dto.BookingSimpleDTO;
+import com.asv.hotel.dto.bookingdto.BookingDTO;
+import com.asv.hotel.dto.bookingdto.BookingSimpleDTO;
 import com.asv.hotel.services.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

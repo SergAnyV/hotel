@@ -1,7 +1,7 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.mapper.RoomMapper;
-import com.asv.hotel.dto.RoomDTO;
+import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.entities.Room;
 import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
 import com.asv.hotel.exceptions.mistakes.DataNotFoundException;

@@ -1,7 +1,7 @@
 package com.asv.hotel.dto.mapper;
 
-import com.asv.hotel.dto.BookingDTO;
-import com.asv.hotel.dto.BookingSimpleDTO;
+import com.asv.hotel.dto.bookingdto.BookingDTO;
+import com.asv.hotel.dto.bookingdto.BookingSimpleDTO;
 import com.asv.hotel.entities.Booking;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

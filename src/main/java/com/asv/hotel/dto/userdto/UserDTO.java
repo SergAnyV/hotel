@@ -1,6 +1,7 @@
-package com.asv.hotel.dto;
+package com.asv.hotel.dto.userdto;
 
 
+import com.asv.hotel.dto.bookingdto.BookingSimpleDTO;
 import com.asv.hotel.entities.Report;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

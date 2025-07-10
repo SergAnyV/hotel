@@ -1,6 +1,6 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.PromoCodeDTO;
+import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
 import com.asv.hotel.dto.mapper.PromoCodeMapper;
 import com.asv.hotel.entities.PromoCode;
 import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;

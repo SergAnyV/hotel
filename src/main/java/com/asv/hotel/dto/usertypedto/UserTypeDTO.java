@@ -1,4 +1,4 @@
-package com.asv.hotel.dto;
+package com.asv.hotel.dto.usertypedto;
 
 import com.asv.hotel.entities.JobType;
 import io.swagger.v3.oas.annotations.media.Schema;

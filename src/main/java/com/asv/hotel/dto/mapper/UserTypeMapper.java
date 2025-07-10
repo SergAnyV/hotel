@@ -1,6 +1,6 @@
 package com.asv.hotel.dto.mapper;
 
-import com.asv.hotel.dto.UserTypeDTO;
+import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.entities.UserType;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

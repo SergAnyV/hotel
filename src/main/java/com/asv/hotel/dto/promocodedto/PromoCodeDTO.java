@@ -1,4 +1,4 @@
-package com.asv.hotel.dto;
+package com.asv.hotel.dto.promocodedto;
 
 import com.asv.hotel.entities.enums.TypeOfPromoCode;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,12 +1,9 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.UserDTO;
+import com.asv.hotel.dto.userdto.UserDTO;
 import com.asv.hotel.services.UserService;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

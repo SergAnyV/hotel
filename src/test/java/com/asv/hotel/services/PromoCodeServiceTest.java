@@ -1,6 +1,6 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.PromoCodeDTO;
+import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
 import com.asv.hotel.entities.enums.TypeOfPromoCode;
 import com.asv.hotel.repositories.PromoCodeRepository;
 import org.junit.jupiter.api.*;

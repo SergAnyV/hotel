@@ -1,8 +1,8 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.UserDTO;
-import com.asv.hotel.dto.UserSimpleDTO;
-import com.asv.hotel.dto.UserTypeDTO;
+import com.asv.hotel.dto.userdto.UserDTO;
+import com.asv.hotel.dto.userdto.UserSimpleDTO;
+import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.repositories.UserRepository;
 import com.asv.hotel.repositories.UserTypeRepository;

@@ -1,6 +1,6 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.PromoCodeDTO;
+import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
 import com.asv.hotel.services.PromoCodeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

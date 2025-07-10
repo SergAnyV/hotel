@@ -1,6 +1,8 @@
-package com.asv.hotel.dto;
+package com.asv.hotel.dto.bookingdto;
 
 
+import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
+import com.asv.hotel.dto.userdto.UserSimpleDTO;
 import com.asv.hotel.entities.Service;
 import lombok.Builder;
 import lombok.Data;

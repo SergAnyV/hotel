@@ -1,6 +1,11 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.*;
+import com.asv.hotel.dto.bookingdto.BookingDTO;
+import com.asv.hotel.dto.bookingdto.BookingSimpleDTO;
+import com.asv.hotel.dto.roomdto.RoomDTO;
+import com.asv.hotel.dto.userdto.UserDTO;
+import com.asv.hotel.dto.userdto.UserSimpleDTO;
+import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.repositories.BookingRepository;
 import com.asv.hotel.repositories.RoomRepository;
 import com.asv.hotel.repositories.UserRepository;

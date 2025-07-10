@@ -1,7 +1,7 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.BookingDTO;
-import com.asv.hotel.dto.BookingSimpleDTO;
+import com.asv.hotel.dto.bookingdto.BookingDTO;
+import com.asv.hotel.dto.bookingdto.BookingSimpleDTO;
 import com.asv.hotel.dto.mapper.BookingMapper;
 import com.asv.hotel.entities.Booking;
 import com.asv.hotel.entities.Room;

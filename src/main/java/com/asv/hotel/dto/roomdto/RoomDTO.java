@@ -1,4 +1,4 @@
-package com.asv.hotel.dto;
+package com.asv.hotel.dto.roomdto;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;

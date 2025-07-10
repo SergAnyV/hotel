@@ -1,7 +1,7 @@
 package com.asv.hotel.dto.mapper;
 
-import com.asv.hotel.dto.UserDTO;
-import com.asv.hotel.dto.UserSimpleDTO;
+import com.asv.hotel.dto.userdto.UserDTO;
+import com.asv.hotel.dto.userdto.UserSimpleDTO;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.services.UserTypeService;
 import org.mapstruct.*;

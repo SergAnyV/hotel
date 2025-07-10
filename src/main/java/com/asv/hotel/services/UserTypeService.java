@@ -1,7 +1,6 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.UserDTO;
-import com.asv.hotel.dto.UserTypeDTO;
+import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
