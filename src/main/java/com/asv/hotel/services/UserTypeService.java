@@ -1,5 +1,6 @@
 package com.asv.hotel.services;
 
+import com.asv.hotel.dto.UserDTO;
 import com.asv.hotel.dto.UserTypeDTO;
 import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
@@ -115,6 +116,23 @@ public class UserTypeService {
         }
         userTypeRepository.save(userType);
         return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType);
+    }
+
+    @Transactional
+    public UserType findActiveUserTypeByRole(String role){
+        try {
+            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+            if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {
+                log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
+                throw new DataNotFoundException("данная роль не распознана в базе");
+            }
+
+            return userTypeOptional.get();
+        } catch (DataAccessException ex) {
+            log.warn("Error: проблема с доступом к базе данных ",
+                    ex);
+            throw new DataAlreadyExistsException(role);
+        }
     }
 
 }
