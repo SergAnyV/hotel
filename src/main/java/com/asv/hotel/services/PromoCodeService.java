@@ -12,6 +12,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -57,6 +60,19 @@ public class PromoCodeService {
             log.error("Error проблема судалением промокода {}", ex);
             throw ex;
         }
+    }
+
+    @Transactional
+    public List<PromoCodeDTO> findAll(){
+        List<PromoCode> listPromo= promoCodeRepository.findAll();
+       if( listPromo.isEmpty()){
+           log.warn("Warning промокодов нет");
+           throw new DataNotFoundException("промокодов нет" );
+       }
+       return listPromo.stream().map(promo-> {
+           return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promo);
+
+       }).collect(Collectors.toList());
     }
 
 

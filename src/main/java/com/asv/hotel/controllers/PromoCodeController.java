@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/promo-codes")
 @RequiredArgsConstructor
@@ -23,8 +25,8 @@ public class PromoCodeController {
     @ApiResponse(responseCode = "201", description = "промокод создан")
     @ApiResponse(responseCode = "409", description = "промокод не создан")
     @PostMapping
-    ResponseEntity<PromoCodeDTO> createPromoCode(@RequestBody @Valid PromoCodeDTO promoCodeDTO){
-        PromoCodeDTO promoCodeDTOnew=promoCodeService.createPromoCode(promoCodeDTO);
+    ResponseEntity<PromoCodeDTO> createPromoCode(@RequestBody @Valid PromoCodeDTO promoCodeDTO) {
+        PromoCodeDTO promoCodeDTOnew = promoCodeService.createPromoCode(promoCodeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(promoCodeDTOnew);
     }
 
@@ -33,10 +35,15 @@ public class PromoCodeController {
     @ApiResponse(responseCode = "204", description = "промокод удален")
     @ApiResponse(responseCode = "404", description = "промокод не найден")
     @DeleteMapping("/{code}")
-    public ResponseEntity<Void> delete(@PathVariable String code){
+    public ResponseEntity<Void> delete(@PathVariable String code) {
         promoCodeService.delete(code);
         return ResponseEntity.noContent().build();
     }
-
-
+    @Operation(summary = "вернуть все промокоды ",
+            description = "вернуть все промокоды ")
+    @ApiResponse(responseCode = "200", description = "Успешный запрос")
+    @GetMapping
+    public ResponseEntity<List<PromoCodeDTO>> getAll() {
+    return ResponseEntity.ok(promoCodeService.findAll());
+    }
 }
