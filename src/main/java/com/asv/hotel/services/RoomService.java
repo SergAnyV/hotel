@@ -3,6 +3,7 @@ package com.asv.hotel.services;
 import com.asv.hotel.dto.mapper.RoomMapper;
 import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.entities.Room;
+import com.asv.hotel.entities.enums.RoomType;
 import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
 import com.asv.hotel.exceptions.mistakes.DataNotFoundException;
 import com.asv.hotel.repositories.RoomRepository;
@@ -40,7 +41,7 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomDTO> findByType(String type) {
+    public List<RoomDTO> findByType(RoomType type) {
         return roomRepository.findRoomByTypeLikeIgnoreCase(type).stream()
                 .map(roomOptional -> {
                   return    RoomMapper.INSTANCE.roomToRoomDTO(roomOptional);
@@ -69,19 +70,23 @@ public class RoomService {
 
     @Transactional
     public RoomDTO update( RoomDTO newRoomDTO) {
-        Room existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(newRoomDTO.getNumber())
+        var existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(newRoomDTO.getNumber())
                 .orElseThrow(() -> {
                     log.warn("Error:Не существует комнаты с номером {} метод update в RoomService", newRoomDTO.getNumber());
                     return new DataNotFoundException("Не существует комнаты с номером " + newRoomDTO.getNumber());
                 });
 
-        existingRoom.setNumber(newRoomDTO.getNumber());
-        existingRoom.setCapacity(newRoomDTO.getCapacity());
-        existingRoom.setType(newRoomDTO.getType());
-        existingRoom.setDescription(newRoomDTO.getDescription());
-        existingRoom.setPricePerNight(newRoomDTO.getPricePerNight());
-        existingRoom.setIsAvailable(newRoomDTO.getIsAvailable());
-
+       RoomMapper.INSTANCE.updateRoomFromDTO(newRoomDTO,existingRoom);
+        try {
+//       roomRepository.updateRoom(existingRoom.getId(), existingRoom.getNumber(), existingRoom.getType(),
+//               existingRoom.getDescription(),existingRoom.getCapacity(),existingRoom.getPricePerNight()
+//       ,existingRoom.getIsAvailable());
+       roomRepository.save(existingRoom);
+        } catch (DataAccessException ex) {
+            log.error("Error проблема с обновлением комнаты {}", existingRoom, ex);
+            throw new DataAccessException("Проблема с обновлением данных в комнате ") {
+            };
+        }
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(existingRoom));
     }
 
@@ -92,6 +97,7 @@ public class RoomService {
             throw new DataNotFoundException(number);
         }
     }
+
     @Transactional(readOnly = true)
     public Room findByNumberReturnRoom(String number) {
         return roomRepository.findRoomByNumberLikeIgnoreCase(number).get();

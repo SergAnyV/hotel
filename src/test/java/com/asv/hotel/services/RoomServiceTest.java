@@ -1,6 +1,7 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.roomdto.RoomDTO;
+import com.asv.hotel.entities.enums.RoomType;
 import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
 import com.asv.hotel.repositories.RoomRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +41,7 @@ class RoomServiceTest {
     void before() {
         testRoomDTO = RoomDTO.builder()
                 .number("101")
-                .type("Standard")
+                .type(RoomType.ECONOM)
                 .description("Test room")
                 .capacity(2)
                 .pricePerNight(BigDecimal.valueOf(1000))
@@ -87,7 +88,7 @@ class RoomServiceTest {
         roomService.save(testRoomDTO);
         RoomDTO secondRoomDTO= RoomDTO.builder()
                 .number("102")
-                .type("Economy")
+                .type(RoomType.DELUXE)
                 .description("Test room2")
                 .capacity(2)
                 .pricePerNight(BigDecimal.valueOf(1000))
@@ -116,12 +117,12 @@ class RoomServiceTest {
     @Test
     void updateRoom_ShouldUpdateExistingRoom() {
         RoomDTO savedRoom = roomService.save(testRoomDTO);
-        savedRoom.setType("Deluxe");
+        savedRoom.setType(RoomType.DELUXE);
         savedRoom.setPricePerNight(BigDecimal.valueOf(1500));
 
         RoomDTO updatedRoom = roomService.update(savedRoom);
 
-        assertThat(updatedRoom.getType()).isEqualTo("Deluxe");
+        assertThat(updatedRoom.getType()).isEqualTo(RoomType.DELUXE);
         assertThat(updatedRoom.getPricePerNight()).isEqualByComparingTo("1500");
     }
 

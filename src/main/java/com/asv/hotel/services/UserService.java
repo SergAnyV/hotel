@@ -49,7 +49,7 @@ public class UserService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public User findUserByLastNameAndFirstNameReturnUser(String lastName, String firstName) {
         try {
             return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
@@ -83,16 +83,16 @@ public class UserService {
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         UserMapper.INSTANCE.updateUserFromDto(userDTO, existingUser, userTypeService);
         try {
-            userRepository.updateUser(
-                    existingUser.getId()
-                    , existingUser.getNickName()
-                    , existingUser.getFirstName()
-                    , existingUser.getFathersName()
-                    , existingUser.getLastName()
-                    , existingUser.getEmail(),
-                    existingUser.getPhoneNumber(),
-                    existingUser.getPassword()
-                    , existingUser.getRole().getRole());
+//            userRepository.updateUser(
+//                    existingUser.getId()
+//                    , existingUser.getNickName()
+//                    , existingUser.getFirstName()
+//                    , existingUser.getFathersName()
+//                    , existingUser.getLastName()
+//                    , existingUser.getEmail(),
+//                    existingUser.getPhoneNumber(),
+//                    existingUser.getPassword()
+//                    , existingUser.getRole().getRole());
             userRepository.save(existingUser);
         } catch (DataAccessException ex) {
             log.error("Error проблема с обновлением юзера {}", existingUser, ex);

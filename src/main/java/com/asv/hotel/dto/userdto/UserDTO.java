@@ -1,13 +1,16 @@
 package com.asv.hotel.dto.userdto;
 
 
-import com.asv.hotel.dto.bookingdto.BookingSimpleDTO;
+import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.entities.Report;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import java.util.Set;
 
 @Builder
@@ -77,7 +80,8 @@ public class UserDTO {
 
     @Schema(description = "Бронирования пользователя")
     @EqualsAndHashCode.Exclude
-    private Set<BookingSimpleDTO> bookingSet;
+    private Set<BookingDTO> bookingSet;
+
 
     @Schema(description = "Отчеты пользователя")
     @EqualsAndHashCode.Exclude

@@ -1,6 +1,7 @@
 package com.asv.hotel.dto.roomdto;
 
 
+import com.asv.hotel.entities.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -18,10 +19,9 @@ public class RoomDTO {
     @NotBlank(message = "номер комнты не должен быть пустым")
     private String number;
 
-    @Schema(description = "Тип комнаты (стандарт, люкс и т.д.)", example = "стандарт")
-    @NotBlank(message = "тип комнты не должен быть пустым")
-    @Size(min = 3,max = 30,message = "количество символов 3-30")
-    private String type;
+    @Schema(description = "Тип комнаты (стандарт, люкс и т.д.)",allowableValues = {"ECONOM", "STANDART","LUXE","DELUXE"})
+    @NotNull
+    private RoomType type;
 
     @Schema(description = "Описание комнаты и удобств", example = "Номер с видом на море")
     @NotBlank(message = "Описание комнты не должен быть пустым")
@@ -30,7 +30,7 @@ public class RoomDTO {
 
     @Schema(description = "Вместимость (количество человек)", example = "2", type = "integer")
     @Min(value = 1, message = "Вместимость должна быть не менее 1")
-    @Max(value = 10, message = "Вместимость должна быть не менее 10")
+    @Max(value = 10, message = "Вместимость должна быть не более 10")
     private Integer capacity;
 
     @Schema(description = "Цена за ночь", example = "1500.00")

@@ -1,5 +1,6 @@
 package com.asv.hotel.entities;
 
+import com.asv.hotel.entities.enums.RoomType;
 import jakarta.persistence.*;
 
 
@@ -29,7 +30,7 @@ public class Room {
     private String number;
 
     @Column(name = "type", nullable = false, length = 50)
-    private String type;
+    private RoomType type;
 
     @Column(name = "description")
     private String description;

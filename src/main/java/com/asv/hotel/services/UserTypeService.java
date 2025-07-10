@@ -105,15 +105,21 @@ public class UserTypeService {
         var userType = userTypeOptional.get();
 
         UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO,userType);
-        int updated = userTypeRepository.updateUserType(userType.getId()
-                , userType.getRole()
-                , userType.getDescription()
-                , userType.getIsActive());
-        if (updated == 0) {
-            throw new DataAccessException("Не удалось обновить тип пользователя") {
-            };
-        }
+//        int updated = userTypeRepository.updateUserType(userType.getId()
+//                , userType.getRole()
+//                , userType.getDescription()
+//                , userType.getIsActive());
+//        if (updated == 0) {
+//            throw new DataAccessException("Не удалось обновить тип пользователя") {
+//            };
+//        }
+        try{
         userTypeRepository.save(userType);
+        }catch (DataAccessException ex){
+            log.error("Error: проблема доступа к базе ",ex);
+            throw ex;
+        }
+
         return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType);
     }
 
