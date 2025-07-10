@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
     private UserService userService;
     private UserRepository userRepository;
-    private UserTypeDTO testUserTypeDTO;
+    private UserTypeDTO testUserTypeDTO,testUserTypeDTO2;
     private UserTypeService userTypeService;
     private UserTypeRepository userTypeRepository;
-    private UserDTO testUserDTO;
+    private UserDTO testUserDTO,testUserDTO2;
     private UserSimpleDTO testUserSimpleDTO;
 
     public UserServiceTest(UserService userService, UserRepository userRepository,
@@ -38,10 +38,13 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         testUserTypeDTO = UserTypeDTO.builder().role("Client").description("just a client").isActive(true).build();
+        testUserTypeDTO2 = UserTypeDTO.builder().role("Admin").description("just a admin").isActive(true).build();
         testUserDTO = UserDTO.builder().role("Client").email("ghi@j.hj").firstName("Sergey")
                 .fathersName("Vladimirivich").lastName("Numm").nickName("Best").phoneNumber("86866").password("1234").build();
         testUserSimpleDTO=UserSimpleDTO.builder().firstName("Sergey").fathersName("Vladimirivich").lastName("Numm")
                 .phoneNumber("96").build();
+        testUserDTO2 = UserDTO.builder().role("Client").email("sdgs@j.hj").firstName("Nikola")
+                .fathersName("Vladimirivich").lastName("Ginn").nickName("YoloPuki").phoneNumber("86866").password("1234").build();
 
     }
 
@@ -75,6 +78,20 @@ class UserServiceTest {
         User user=userService.findUserByLastNameAndFirstNameReturnUser(testUserSimpleDTO.getLastName()
                 , testUserSimpleDTO.getFirstName());
         assertEquals(user.getFirstName(),testUserSimpleDTO.getFirstName());
+
+    }
+
+    @Test
+    void updateUserByUserDTOShoildBeUpdated(){
+        userTypeService.save(testUserTypeDTO);
+        userTypeService.save(testUserTypeDTO2);
+        userService.save(testUserDTO);
+        testUserDTO.setRole("Admin");
+        userService.updateUser(testUserDTO);
+        var updatedUser=userService.findUserByLastNameAndFirstNameReturnUser(testUserDTO.getLastName(), testUserDTO.getFirstName());
+        assertFalse(testUserDTO.getRole().equals("Client"));
+        assertTrue(testUserDTO.getFirstName().equals(updatedUser.getFirstName()));
+
 
     }
 }

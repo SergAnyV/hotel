@@ -1,6 +1,7 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.UserDTO;
+import com.asv.hotel.dto.UserSimpleDTO;
 import com.asv.hotel.dto.mapper.UserMapper;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.entities.UserType;
@@ -44,8 +45,8 @@ public class UserService {
         try {
             return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
         } catch (Exception ex) {
-            log.error("Error : такого юзера не существует", ex);
-            throw new DataNotFoundException(" такого юзера не существует");
+            log.error("Error : такого юзера не существует {} {} ", lastName, firstName, ex);
+            throw new DataNotFoundException(" такого юзера не существует ");
         }
     }
 
@@ -59,5 +60,48 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public void deleteUserByLastNameAndFirstName(String lastName, String firstName) {
+        if (userRepository.deleteUserByLastNameAndFirstName(lastName, firstName) == 0) {
+            log.warn("Error : такого юзера не существует для удаления");
+            throw new DataNotFoundException(" такого юзера не существует");
+        }
+    }
+
+    @Transactional
+    public UserDTO findUserByLPhoneNumber(String phoneNumber) {
+        try {
+            return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByPhoneNumber(phoneNumber).get());
+        } catch (Exception ex) {
+            log.error("Error : такого юзера не существует", ex);
+            throw new DataNotFoundException(" такого юзера не существует");
+        }
+    }
+
+    @Transactional
+    public UserDTO updateUser(UserDTO userDTO) {
+        var existingUser = userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName())
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
+        UserMapper.INSTANCE.updateUserFromDto(userDTO, existingUser, userTypeService);
+        try {
+            userRepository.updateUser(
+                    existingUser.getId()
+                    , existingUser.getNickName()
+                    , existingUser.getFirstName()
+                    , existingUser.getFathersName()
+                    , existingUser.getLastName()
+                    , existingUser.getEmail(),
+                    existingUser.getPhoneNumber(),
+                    existingUser.getPassword()
+                    , existingUser.getRole().getRole());
+            userRepository.save(existingUser);
+        } catch (DataAccessException ex) {
+            log.error("Error проблема с обновлением юзера {}", existingUser, ex);
+            throw new DataAccessException("Проблема с обновлением юзера ") {
+            };
+        }
+
+        return UserMapper.INSTANCE.userToUserDTO(existingUser);
+    }
 
 }

@@ -3,9 +3,10 @@ package com.asv.hotel.dto.mapper;
 import com.asv.hotel.dto.UserDTO;
 import com.asv.hotel.dto.UserSimpleDTO;
 import com.asv.hotel.entities.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import com.asv.hotel.services.UserTypeService;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
 
 @Mapper(uses = UserTypeMapper.class)
 public interface UserMapper {
@@ -38,5 +39,17 @@ public interface UserMapper {
     @Mapping(target = "reports", ignore = true)
     UserDTO userSimpleDTOToUseDTO(UserSimpleDTO userSimpleDTO);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "role", ignore = true) // Обрабатывается отдельно в updateUserFromDto
+    void updateUserFieldsFromDto(UserDTO dto, @MappingTarget User user);
+
+    default void updateUserFromDto(UserDTO dto, @MappingTarget User user, UserTypeService userTypeService) {
+        updateUserFieldsFromDto(dto, user);
+
+        // роль отдельно обрабатывается
+        if (dto.getRole() != null) {
+            user.setRole(userTypeService.findActiveUserTypeByRole(dto.getRole()));
+        }
+    }
 
 }
