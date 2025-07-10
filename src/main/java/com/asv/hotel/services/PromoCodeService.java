@@ -36,17 +36,28 @@ public class PromoCodeService {
     }
 
     @Transactional
-    public PromoCode findActivePromoCodeByName(String code){
+    public PromoCode findActivePromoCodeByName(String code) {
         try {
-            return   promoCodeRepository.findActivePromoCodeByCode(code).get();
-        }catch (DataNotFoundException ex){
+            return promoCodeRepository.findActivePromoCodeByCode(code).get();
+        } catch (DataNotFoundException ex) {
             log.error("Error: прокод не найден", ex);
-            throw new DataNotFoundException("Промокода не существует "+ code);
+            throw new DataNotFoundException("Промокода не существует " + code);
         }
 
     }
 
-
+    @Transactional
+    public void delete(String code) {
+        try {
+            if (promoCodeRepository.deleteByCode(code) == 0) {
+                log.warn("Warning такого промокода не  существет", code);
+                throw new DataNotFoundException("данный промок не существует" + code);
+            }
+        } catch (DataAccessException ex) {
+            log.error("Error проблема судалением промокода {}", ex);
+            throw ex;
+        }
+    }
 
 
 }
