@@ -51,7 +51,7 @@ public class UserDTO {
     )
     private String lastName;
 
-    @Schema(description = "Маил  пользователя", example = "Николай")
+    @Schema(description = "Маил  пользователя", example = "Bugul@Nikol.con")
     @Size(min = 3,max = 30,message = "количество символов 3-300")
     @Pattern(
             regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
@@ -59,12 +59,12 @@ public class UserDTO {
     )
     private String email;
 
-    @Schema(description = "Телефон  пользователя", example = "123456789")
+    @Schema(description = "Телефон  пользователя", example = "89876543322")
     @NotBlank(message = "Телефон пользователя, не должен быть пустым")
     @Size(min = 3,max = 20,message = "количество символов 3-20")
     @Pattern(
             regexp = "^[0-9]",
-            message = "Некорректный email. Пример: user@example.com"
+            message = "Некорректный номер. Пример: 89065554433"
     )
     private String phoneNumber;
 
@@ -78,12 +78,12 @@ public class UserDTO {
     @Size(min = 3,max = 20,message = "количество символов 3-20")
     private String role;
 
-    @Schema(description = "Бронирования пользователя")
+    @Schema(description = "Бронирования пользователя", accessMode = Schema.AccessMode.READ_ONLY)
     @EqualsAndHashCode.Exclude
     private Set<BookingDTO> bookingSet;
 
 
-    @Schema(description = "Отчеты пользователя")
+    @Schema(description = "Отчеты пользователя", accessMode = Schema.AccessMode.READ_ONLY)
     @EqualsAndHashCode.Exclude
     private Set<Report> reports;
 }

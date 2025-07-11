@@ -8,8 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 
-
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -31,6 +29,6 @@ public class UserTypeDTO {
     @NotNull(message = "Поле isActive обязательно")
     private Boolean isActive;
 
-    @Schema(description = "какие работы выполняет пользователь в системе отеля ,для клиента null , JobType")
-    private Set<JobType> jobTypeList = new HashSet<>();
+    @Schema(description = "какие работы выполняет пользователь в системе отеля ,для клиента null , JobType",accessMode = Schema.AccessMode.READ_ONLY)
+    private Set<JobType> jobTypeList ;
 }
