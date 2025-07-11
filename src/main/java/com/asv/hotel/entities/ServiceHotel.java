@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Service {
+public class ServiceHotel {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
