@@ -21,7 +21,7 @@ public class ServiceHotelDTO {
     @NotBlank(message = " не должен быть пустым")
     private String description;
 
-    @Schema(description = "Цена за сервис в сутки", example = "150.00")
+    @Schema(description = "Цена за сервис в сутки,три знака перед. и два после", example = "150.00")
     @Positive(message = "цена должна быть положительна")
     private BigDecimal price;
 }
