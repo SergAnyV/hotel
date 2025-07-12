@@ -92,8 +92,19 @@ public class ServiceHotelService {
             log.error("Error проблема с сохранением и обновление сервиса отеля {} , {}" ,serviceHotelDTO,ex );
             throw ex;
         }
-
-
-
+    }
+    @Transactional
+    public ServiceHotel findByTitleReturnEntity(String title) {
+        try {
+            Optional<ServiceHotel> serviceOptional =
+                    serviceHotelRepository.findByTitle(title);
+            if (serviceOptional.isEmpty()) {
+                throw new DataNotFoundException("не существует такого сервиса");
+            }
+            return serviceOptional.get();
+        } catch (DataAccessException | DataNotFoundException ex) {
+            log.error(" Error ", ex);
+            throw ex;
+        }
     }
 }

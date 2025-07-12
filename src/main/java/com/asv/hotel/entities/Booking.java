@@ -1,5 +1,6 @@
 package com.asv.hotel.entities;
 
+import com.asv.hotel.entities.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +9,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -36,8 +36,9 @@ public class Booking {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)
-    private String statusOfBooking;
+    private BookingStatus statusOfBooking;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -60,6 +61,6 @@ public class Booking {
     private PromoCode promoCode;
 
     @ManyToMany(mappedBy = "bookingSet",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private Set<Service> serviceSet=new HashSet<>();
+    private Set<ServiceHotel> serviceSet;
 
 }

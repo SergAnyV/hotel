@@ -46,7 +46,6 @@ public class RoomDTO {
     private LocalDateTime createdAt;
 
     @Schema(description = "Дата последнего обновления", example = "2023-01-02T10:30:00", accessMode = Schema.AccessMode.READ_ONLY)
-    @FutureOrPresent
     private LocalDateTime updatedAt;
 
 }
