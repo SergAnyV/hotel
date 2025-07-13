@@ -38,8 +38,8 @@ public class PromoCodeService {
         }
     }
 
-    @Transactional
-    public PromoCode findActivePromoCodeByName(String code) {
+
+    protected PromoCode findActivePromoCodeByName(String code) {
         try {
             return promoCodeRepository.findActivePromoCodeByCode(code).get();
         } catch (DataNotFoundException ex) {

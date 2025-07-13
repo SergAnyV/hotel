@@ -44,21 +44,26 @@ public class BookingService {
                 };
             }
             Booking booking = BookingMapper.INSTANCE.bookingSimpleDTOToBooking(bookingSimplDTO);
+//            поиск юзера и возвращение сущности
+
             User user = userService.findUserByLastNameAndFirstNameReturnUser(
                     bookingSimplDTO.getUserSimpleDTO().getLastName(), bookingSimplDTO.getUserSimpleDTO().getFirstName());
-            booking.setUser(user);
 
+//            внесенеие в бронирование
+            booking.setUser(user);
             booking.setRoom(room);
             booking.setStatusOfBooking(BookingStatus.CONFIRMED);
 
             //расчет стоимости за номер
             Set<ServiceHotel> serviceHotel = findAllServices(bookingSimplDTO.getServiceSet());
-            BigDecimal livingDays=BookingUtils.calculateLivingDays(bookingSimplDTO.getCheckInDate(), bookingSimplDTO.getCheckOutDate());
-            BigDecimal totalPriceForServices=BigDecimal.ZERO;
+            BigDecimal livingDays = BookingUtils.calculateLivingDays(bookingSimplDTO.getCheckInDate(), bookingSimplDTO.getCheckOutDate());
+
+            BigDecimal totalPriceForServices = BigDecimal.ZERO;
+
             if (!serviceHotel.isEmpty()) {
-                totalPriceForServices=serviceHotel.stream().map(serviceHotelentity -> {
+                totalPriceForServices = serviceHotel.stream().map(serviceHotelentity -> {
                     return serviceHotelentity.getPrice().multiply(livingDays);
-                }).reduce(BigDecimal.ZERO,(sum,price)->sum.add(price));
+                }).reduce(BigDecimal.ZERO, (sum, price) -> sum.add(price));
             }
             booking.setServiceSet(serviceHotel);
             booking.setTotalPrice(room.getPricePerNight()
@@ -104,11 +109,11 @@ public class BookingService {
         }
     }
 
-    private Set<ServiceHotel> findAllServices(Set<ServiceHotelDTO> serviceHotelDTOS){
-        if(serviceHotelDTOS.isEmpty()){
+    private Set<ServiceHotel> findAllServices(Set<ServiceHotelDTO> serviceHotelDTOS) {
+        if (serviceHotelDTOS.isEmpty()) {
             return null;
         }
-     return serviceHotelDTOS.stream().map(serviceHotelDTO -> {
+        return serviceHotelDTOS.stream().map(serviceHotelDTO -> {
             return serviceHotelService.findByTitleReturnEntity(serviceHotelDTO.getTitle());
         }).collect(Collectors.toSet());
     }

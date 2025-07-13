@@ -79,7 +79,7 @@ public class UserTypeService {
         }
     }
 
-    @Transactional
+
     public UserType findUserTypeByRoleReturnUserType(String role) {
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
@@ -105,14 +105,6 @@ public class UserTypeService {
         var userType = userTypeOptional.get();
 
         UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO,userType);
-//        int updated = userTypeRepository.updateUserType(userType.getId()
-//                , userType.getRole()
-//                , userType.getDescription()
-//                , userType.getIsActive());
-//        if (updated == 0) {
-//            throw new DataAccessException("Не удалось обновить тип пользователя") {
-//            };
-//        }
         try{
         userTypeRepository.save(userType);
         }catch (DataAccessException ex){
@@ -124,7 +116,7 @@ public class UserTypeService {
     }
 
 
-    protected UserType findActiveUserTypeByRole(String role){
+    public UserType findActiveUserTypeByRole(String role){
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {
