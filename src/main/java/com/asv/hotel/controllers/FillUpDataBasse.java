@@ -2,6 +2,7 @@ package com.asv.hotel.controllers;
 
 import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
 import com.asv.hotel.dto.roomdto.RoomDTO;
+import com.asv.hotel.dto.servicehoteldto.ServiceHotelDTO;
 import com.asv.hotel.dto.userdto.UserDTO;
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.entities.enums.RoomType;
@@ -43,11 +44,13 @@ public class FillUpDataBasse {
             description = "заполнение базы данных")
     @ApiResponse(responseCode = "204", description = " создан")
     @PostMapping
+    @Transactional
     public ResponseEntity<Void> fillUpDB() {
         creatUserTypes();
         creatUsers();
         createPromoCodes();
         createRooms();
+        createServices();
         return ResponseEntity.noContent().build();
     }
 
@@ -183,5 +186,34 @@ public class FillUpDataBasse {
         roomService.save(testRoomDTO5);
 
     }
+
+    private void createServices(){
+        ServiceHotelDTO serviceHotelDTO=ServiceHotelDTO.builder()
+                .title("Уборка")
+                .description("уборка номера")
+                .price(BigDecimal.valueOf(23))
+                .build();
+         ServiceHotelDTO serviceHotelDTO2=ServiceHotelDTO.builder()
+                .title("Замена одноразовых принадлежностей")
+                .description("Замена одноразовых принадлежностей")
+                .price(BigDecimal.valueOf(10))
+                .build();
+        ServiceHotelDTO serviceHotelDTO3=ServiceHotelDTO.builder()
+                .title("Завтрак в номер")
+                .description("для тех кто готов доплатить")
+                .price(BigDecimal.valueOf(25))
+                .build();
+          ServiceHotelDTO serviceHotelDTO4=ServiceHotelDTO.builder()
+                .title("Прыжки на батуте")
+                .description("для тех кто любит отдыхать по полной")
+                .price(BigDecimal.valueOf(100))
+                .build();
+          serviceHotelService.save(serviceHotelDTO);
+          serviceHotelService.save(serviceHotelDTO2);
+          serviceHotelService.save(serviceHotelDTO3);
+          serviceHotelService.save(serviceHotelDTO4);
+
+    }
+
 
 }
