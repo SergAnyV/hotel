@@ -1,0 +1,187 @@
+package com.asv.hotel.controllers;
+
+import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
+import com.asv.hotel.dto.roomdto.RoomDTO;
+import com.asv.hotel.dto.userdto.UserDTO;
+import com.asv.hotel.dto.usertypedto.UserTypeDTO;
+import com.asv.hotel.entities.enums.RoomType;
+import com.asv.hotel.entities.enums.TypeOfPromoCode;
+import com.asv.hotel.repositories.*;
+import com.asv.hotel.services.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@RestController
+@RequestMapping("/db")
+@RequiredArgsConstructor
+@Tag(name = "DATABASE Management", description = "Заполняет базу данных по несколько позиций для каждого")
+public class FillUpDataBasse {
+    private final BookingService bookingService;
+    private final PromoCodeService promoCodeService;
+    private final RoomService roomService;
+    private final ServiceHotelService serviceHotelService;
+    private final UserService userService;
+    private final UserTypeService userTypeService;
+    private final UserRepository userRepository;
+    private final PromoCodeRepository promoCodeRepository;
+    private final RoomRepository roomRepository;
+    private final ServiceHotelRepository serviceHotelRepository;
+    private final BookingRepository bookingRepository;
+
+    @Operation(summary = "заполнение базы данных",
+            description = "заполнение базы данных")
+    @ApiResponse(responseCode = "204", description = " создан")
+    @PostMapping
+    public ResponseEntity<Void> fillUpDB() {
+        creatUserTypes();
+        creatUsers();
+        createPromoCodes();
+        createRooms();
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "удаление данных базы данных",
+            description = "удаление данных  базы данных")
+    @ApiResponse(responseCode = "204", description = " удалено")
+    @DeleteMapping
+    @Transactional
+    public ResponseEntity<Void> deleteAllDB() {
+        bookingRepository.deleteAll();
+        userRepository.deleteAll();
+        userTypeService.deleteAll();
+        promoCodeRepository.deleteAll();
+        roomRepository.deleteAll();
+        serviceHotelRepository.deleteAll();
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    private void creatUserTypes() {
+        UserTypeDTO testUserTypeDTO = UserTypeDTO.builder()
+                .role("Администратор")
+                .description("просто админ")
+                .isActive(true)
+                .build();
+        UserTypeDTO testUserTypeDTO2 = UserTypeDTO.builder()
+                .role("Работник")
+                .description("просто работник")
+                .isActive(true)
+                .build();
+        UserTypeDTO testUserTypeDTO3 = UserTypeDTO.builder()
+                .role("Клиент")
+                .description("просто клиент")
+                .isActive(true)
+                .build();
+
+        userTypeService.save(testUserTypeDTO);
+        userTypeService.save(testUserTypeDTO2);
+        userTypeService.save(testUserTypeDTO3);
+    }
+
+    private void creatUsers() {
+        UserDTO testUserDTO = UserDTO.builder().role("Клиент").email("ghi@j.hj").firstName("Клиент")
+                .fathersName("Владимирович").lastName("А").nickName("Фыва").phoneNumber("86866").password("1234").build();
+        UserDTO testUserDTO2 = UserDTO.builder().role("Клиент").email("new@j.hj").firstName("Максим")
+                .fathersName("Николаевич").lastName("Бугульма").nickName("BigBro").phoneNumber("8686643").password("123sfg344").build();
+        UserDTO testUserDTO3 = UserDTO.builder().role("Администратор").email("newS@j.hj").firstName("Валентина")
+                .fathersName("Максимовна").lastName("Бзик").nickName("BigSister").phoneNumber("89998686643").password("13f4234").build();
+        UserDTO testUserDTO4 = UserDTO.builder().role("Администратор").email("neSS@j.hj").firstName("Елизавета")
+                .fathersName("Артемовна").lastName("Бузиника").nickName("Sister").phoneNumber("89911643").password("19874").build();
+        UserDTO testUserDTO5 = UserDTO.builder().role("Работник").email("nehg@j.hj").firstName("Денис")
+                .fathersName("Николаевичч").lastName("Бузиника").nickName("Oseter").phoneNumber("8996432268").password("12342fs34").build();
+
+        userService.save(testUserDTO);
+        userService.save(testUserDTO2);
+        userService.save(testUserDTO3);
+        userService.save(testUserDTO4);
+        userService.save(testUserDTO5);
+    }
+
+    private void createPromoCodes() {
+
+        PromoCodeDTO testPromoCodeDTO = PromoCodeDTO.builder().code("some")
+                .typeOfPromoCode(TypeOfPromoCode.FIXED)
+                .isActive(true)
+                .validFromDate(LocalDate.of(2023, 7, 12))
+                .validUntilDate(LocalDate.of(2024, 10, 23))
+                .discountValue(new BigDecimal(32)).build();
+        PromoCodeDTO testPromoCodeDTO2 = PromoCodeDTO.builder().code("newYear2024")
+                .typeOfPromoCode(TypeOfPromoCode.FIXED)
+                .isActive(true)
+                .validFromDate(LocalDate.of(2023, 11, 15))
+                .validUntilDate(LocalDate.of(2024, 1, 30))
+                .discountValue(BigDecimal.valueOf(15)).build();
+        PromoCodeDTO testPromoCodeDTO3 = PromoCodeDTO.builder().code("oldYear")
+                .typeOfPromoCode(TypeOfPromoCode.PERCENT)
+                .isActive(true)
+                .validFromDate(LocalDate.of(2023, 11, 15))
+                .validUntilDate(LocalDate.of(2025, 12, 30))
+                .discountValue(BigDecimal.valueOf(10)).build();
+        promoCodeService.createPromoCode(testPromoCodeDTO);
+        promoCodeService.createPromoCode(testPromoCodeDTO2);
+        promoCodeService.createPromoCode(testPromoCodeDTO3);
+
+    }
+
+    private void createRooms() {
+        RoomDTO testRoomDTO = RoomDTO.builder()
+                .number("101")
+                .type(RoomType.ECONOM)
+                .description("Test room ECONOM")
+                .capacity(2)
+                .pricePerNight(BigDecimal.valueOf(100))
+                .isAvailable(true)
+                .build();
+        RoomDTO testRoomDTO2 = RoomDTO.builder()
+                .number("102")
+                .type(RoomType.STANDART)
+                .description("Test room STANDART")
+                .capacity(2)
+                .pricePerNight(BigDecimal.valueOf(500))
+                .isAvailable(true)
+                .build();
+        RoomDTO testRoomDTO3 = RoomDTO.builder()
+                .number("103")
+                .type(RoomType.LUXE)
+                .description("Test room LUXE")
+                .capacity(2)
+                .pricePerNight(BigDecimal.valueOf(1200))
+                .isAvailable(true)
+                .build();
+        RoomDTO testRoomDTO4 = RoomDTO.builder()
+                .number("104")
+                .type(RoomType.DELUXE)
+                .description("Test room DELUXE")
+                .capacity(2)
+                .pricePerNight(BigDecimal.valueOf(1500))
+                .isAvailable(true)
+                .build();
+        RoomDTO testRoomDTO5 = RoomDTO.builder()
+                .number("105")
+                .type(RoomType.ECONOM)
+                .description("Test room ECONOM недоступная")
+                .capacity(2)
+                .pricePerNight(BigDecimal.valueOf(100))
+                .isAvailable(false)
+                .build();
+        roomService.save(testRoomDTO);
+        roomService.save(testRoomDTO2);
+        roomService.save(testRoomDTO3);
+        roomService.save(testRoomDTO4);
+        roomService.save(testRoomDTO5);
+
+    }
+
+}
