@@ -98,8 +98,8 @@ public class RoomService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public Room findByNumberReturnRoom(String number) {
+
+    protected Room findByNumberReturnRoom(String number) {
         return roomRepository.findRoomByNumberLikeIgnoreCase(number).get();
     }
 

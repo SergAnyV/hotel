@@ -93,8 +93,8 @@ public class ServiceHotelService {
             throw ex;
         }
     }
-    @Transactional
-    public ServiceHotel findByTitleReturnEntity(String title) {
+
+    protected ServiceHotel findByTitleReturnEntity(String title) {
         try {
             Optional<ServiceHotel> serviceOptional =
                     serviceHotelRepository.findByTitle(title);

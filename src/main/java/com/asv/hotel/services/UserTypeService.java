@@ -123,8 +123,8 @@ public class UserTypeService {
         return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType);
     }
 
-    @Transactional
-    public UserType findActiveUserTypeByRole(String role){
+
+    protected UserType findActiveUserTypeByRole(String role){
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {

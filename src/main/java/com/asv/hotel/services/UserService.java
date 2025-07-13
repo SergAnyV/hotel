@@ -49,8 +49,8 @@ public class UserService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public User findUserByLastNameAndFirstNameReturnUser(String lastName, String firstName) {
+
+    protected User findUserByLastNameAndFirstNameReturnUser(String lastName, String firstName) {
         try {
             return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
         } catch (Exception ex) {
