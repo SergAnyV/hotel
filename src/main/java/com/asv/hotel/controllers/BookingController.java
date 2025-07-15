@@ -25,17 +25,17 @@ public class BookingController {
 
     @Operation(summary = "Создать новое бонирование",
             description = "создает новый бонирование")
-    @ApiResponse(responseCode = "201", description = "бонирование создан")
-    @ApiResponse(responseCode = "409", description = "бонирование не создан")
+    @ApiResponse(responseCode = "201", description = "бонирование создано")
+    @ApiResponse(responseCode = "409", description = "бонирование не создано")
     @PostMapping
-    public ResponseEntity<BookingDTO> createBookng(@RequestBody @Valid BookingSimplDTO bookingSimplDTO) {
+    public ResponseEntity<BookingDTO> createBooking(@RequestBody @Valid BookingSimplDTO bookingSimplDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.save(bookingSimplDTO));
     }
 
     @Operation(summary = "Удалить бонирование",
-            description = "удвляет данные существующего бонирование по id")
-    @ApiResponse(responseCode = "204", description = "бонирование удален")
-    @ApiResponse(responseCode = "404", description = "бонирование не найден")
+            description = "удаляет данные существующего бонирование по id")
+    @ApiResponse(responseCode = "204", description = "бонирование удалено")
+    @ApiResponse(responseCode = "404", description = "бонирование не найдено")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         bookingService.deleteById(id);
@@ -43,7 +43,7 @@ public class BookingController {
     }
 
     @Operation(summary = "Найти бонирование по номеру комнаты",
-            description = "Возвращает данные бонирование по номеру комнаты")
+            description = "Возвращает данные бонирования по номеру комнаты")
     @ApiResponse(responseCode = "200", description = "бонирование найдены")
     @ApiResponse(responseCode = "404", description = "бонирование не найдены")
     @GetMapping("/{number}")
