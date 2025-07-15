@@ -16,16 +16,17 @@ import java.time.LocalDateTime;
 public class RoomDTO {
 
     @Schema(description = "номер комнаты", example = "101")
-    @NotBlank(message = "номер комнты не должен быть пустым")
+    @NotBlank(message = "номер комнаты не должен быть пустым")
+    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
     private String number;
 
-    @Schema(description = "Тип комнаты (стандарт, люкс и т.д.)",allowableValues = {"ECONOM", "STANDART","LUXE","DELUXE"})
+    @Schema(description = "Тип комнаты (стандарт, люкс и т.д.)", allowableValues = {"ECONOM", "STANDART", "LUXE", "DELUXE"})
     @NotNull
     private RoomType type;
 
     @Schema(description = "Описание комнаты и удобств", example = "Номер с видом на море")
-    @NotBlank(message = "Описание комнты не должен быть пустым")
-    @Size(min = 3,max = 100,message = "количество символов 3-100")
+    @NotBlank(message = "Описание комнаты не должен быть пустым")
+    @Size(min = 3, max = 100, message = "количество символов 3-100")
     private String description;
 
     @Schema(description = "Вместимость (количество человек)", example = "2", type = "integer")
@@ -37,7 +38,7 @@ public class RoomDTO {
     @Positive(message = "цена должна быть положительна")
     private BigDecimal pricePerNight;
 
-    @Schema(description = "Доступность номера для бронирования", example = "true")
+    @Schema(description = "Доступность номера для бронирования", example = "true", allowableValues = {"true", "false"})
     @NotNull(message = "Поле isAvailable обязательно")
     private Boolean isAvailable;
 

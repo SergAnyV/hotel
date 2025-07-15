@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -23,31 +26,38 @@ import java.util.List;
 public class BookingController {
     private final BookingService bookingService;
 
-    @Operation(summary = "Создать новое бонирование",
-            description = "создает новый бонирование")
-    @ApiResponse(responseCode = "201", description = "бонирование создано")
-    @ApiResponse(responseCode = "409", description = "бонирование не создано")
+    @Operation(summary = "Создать новое бронирование",
+            description = "создает новое бронирование")
+    @ApiResponse(responseCode = "201", description = "бронирование создано")
+    @ApiResponse(responseCode = "409", description = "бронирование не создано")
     @PostMapping
     public ResponseEntity<BookingDTO> createBooking(@RequestBody @Valid BookingSimplDTO bookingSimplDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.save(bookingSimplDTO));
     }
 
-    @Operation(summary = "Удалить бонирование",
-            description = "удаляет данные существующего бонирование по id")
-    @ApiResponse(responseCode = "204", description = "бонирование удалено")
-    @ApiResponse(responseCode = "404", description = "бонирование не найдено")
+    @Operation(summary = "Удалить бронирование",
+            description = "удаляет данные существующего бронирования по id")
+    @ApiResponse(responseCode = "204", description = "бронирование удалено")
+    @ApiResponse(responseCode = "404", description = "бронирование не найдено")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(
+            @PathVariable
+            @NotNull
+            Long id) {
         bookingService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Найти бонирование по номеру комнаты",
-            description = "Возвращает данные бонирования по номеру комнаты")
-    @ApiResponse(responseCode = "200", description = "бонирование найдены")
-    @ApiResponse(responseCode = "404", description = "бонирование не найдены")
+    @Operation(summary = "Найти бронирование по номеру комнаты",
+            description = "Возвращает данные бронирования по номеру комнаты")
+    @ApiResponse(responseCode = "200", description = "бронирования найдены")
+    @ApiResponse(responseCode = "404", description = "бронирования не найдены")
     @GetMapping("/{number}")
-    public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber9(@PathVariable String number) {
+    public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber(
+            @PathVariable
+            @NotBlank(message = "номер комнаты не должен быть пустым")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
+            String number) {
         return ResponseEntity.ok(bookingService.findAllByRoomNumber(number));
     }
 }

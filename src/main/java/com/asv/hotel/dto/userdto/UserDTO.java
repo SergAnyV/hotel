@@ -26,7 +26,7 @@ public class UserDTO {
 
     @Schema(description = "имя пользователя", example = "Николай")
     @NotBlank(message = "имя пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3,max = 50,message = "количество символов 3-50")
     @Pattern(
             regexp = "^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)*$",
             message = "Имя может содержать только русские буквы, дефисы"
@@ -35,7 +35,7 @@ public class UserDTO {
 
     @Schema(description = "Отчество пользователя", example = "Иванович")
     @NotBlank(message = "Отчество пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3,max = 50,message = "количество символов 3-50")
     @Pattern(
             regexp = "^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)*$",
             message = "Отчество может содержать только русские буквы, дефисы"
@@ -44,7 +44,7 @@ public class UserDTO {
 
     @Schema(description = "Фамилия  пользователя", example = "Бугульма")
     @NotBlank(message = "Фамилия пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3,max = 50,message = "количество символов 3-50")
     @Pattern(
             regexp = "^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)*$",
             message = "Фамилия может содержать только русские буквы, дефисы"
@@ -52,7 +52,7 @@ public class UserDTO {
     private String lastName;
 
     @Schema(description = "Маил  пользователя", example = "Bugul@Nikol.con")
-    @Size(min = 3,max = 30,message = "количество символов 3-300")
+    @Size(min = 3,max = 50,message = "количество символов 3-50")
     @Pattern(
             regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
             message = "Некорректный email. Пример: user@example.com"

@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class ServiceController {
             description = "Возвращает список всех сервисов включая неактивные")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
-    public ResponseEntity<List<ServiceHotelDTO>> getAll(){
+    public ResponseEntity<List<ServiceHotelDTO>> getAll() {
         return ResponseEntity.ok(serviceHotelService.findAll());
     }
 
@@ -33,7 +35,11 @@ public class ServiceController {
     @ApiResponse(responseCode = "200", description = "service найден")
     @ApiResponse(responseCode = "404", description = "service не найден")
     @GetMapping("/{title}")
-    public  ResponseEntity<ServiceHotelDTO> getByTitle(@PathVariable String title){
+    public ResponseEntity<ServiceHotelDTO> getByTitle(
+            @PathVariable
+            @NotBlank(message = " не должен быть пустым")
+            @Size(min = 3, max = 20, message = "количество символов 3-20")
+            String title) {
         return ResponseEntity.ok(serviceHotelService.findByTitle(title));
     }
 
@@ -42,7 +48,7 @@ public class ServiceController {
     @ApiResponse(responseCode = "201", description = "тип service создан")
     @ApiResponse(responseCode = "409", description = "тип service не создан")
     @PostMapping
-    public ResponseEntity<ServiceHotelDTO> createServiceHotel(@RequestBody @Valid ServiceHotelDTO serviceHotelDTO){
+    public ResponseEntity<ServiceHotelDTO> createServiceHotel(@RequestBody @Valid ServiceHotelDTO serviceHotelDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceHotelService.save(serviceHotelDTO));
     }
 
@@ -51,11 +57,14 @@ public class ServiceController {
     @ApiResponse(responseCode = "204", description = "тип service Удален")
     @ApiResponse(responseCode = "404", description = "тип service не найден")
     @DeleteMapping("/{title}")
-    public ResponseEntity<ServiceHotelDTO> deleteByTitle(@PathVariable String title){
+    public ResponseEntity<ServiceHotelDTO> deleteByTitle(
+            @PathVariable
+            @NotBlank(message = " не должен быть пустым")
+            @Size(min = 3, max = 20, message = "количество символов 3-20")
+            String title) {
         serviceHotelService.deletByTtitle(title);
         return ResponseEntity.noContent().build();
     }
-
 
 
 }

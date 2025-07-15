@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +38,11 @@ public class RoomController {
     @ApiResponse(responseCode = "200", description = "Номер найден")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
     @GetMapping("/{number}")
-    public ResponseEntity<RoomDTO> getRoomByNumber(@PathVariable String number) {
+    public ResponseEntity<RoomDTO> getRoomByNumber(
+            @PathVariable
+            @NotBlank(message = "номер комнаты не должен быть пустым")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
+            String number) {
 
         RoomDTO roomDTO = roomService.findByNumber(number);
         return ResponseEntity.ok(roomDTO);
@@ -71,7 +77,11 @@ public class RoomController {
     @ApiResponse(responseCode = "204", description = "Номер удален")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
     @DeleteMapping("/{number}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable String number) {
+    public ResponseEntity<Void> deleteRoom(
+            @PathVariable
+            @NotBlank(message = "номер комнаты не должен быть пустым")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
+            String number) {
         roomService.delete(number);
         return ResponseEntity.noContent().build();
     }

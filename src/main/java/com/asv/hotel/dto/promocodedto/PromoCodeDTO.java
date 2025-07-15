@@ -41,7 +41,8 @@ public class PromoCodeDTO {
 
     @Schema(description = "Активен ли промокод true/false",
             example = "true",
-            defaultValue = "true")
+            defaultValue = "true",
+            allowableValues = {"true", "false"} )
     @NotNull(message = "активен или нет обязательно")
     private Boolean isActive;
 

@@ -17,16 +17,18 @@ import java.util.Set;
 @Builder
 public class BookingDTO {
 
-    @Schema(description = "уникальный номер броинрования", example = "1L")
-    @NotNull(message = "уникальный номер броинрования обязательна")
+    @Schema(description = "уникальный номер бронирования", example = "1L")
+    @NotNull(message = "уникальный номер бронирования обязателен")
     private Long id;
 
     @Schema(description = "Дата заезда", example = "2023-06-01")
     @NotNull(message = "Дата начала проживания обязательна")
+    @FutureOrPresent
     private LocalDate checkInDate;
 
     @Schema(description = "Дата окончания действия", example = "2023-07-01")
     @NotNull(message = "Дата выезда обязательна")
+    @Future
     private LocalDate checkOutDate;
 
     @Schema(description = "количество человек", example = "2", type = "integer")
@@ -34,7 +36,7 @@ public class BookingDTO {
     @Max(value = 10, message = "Вместимость должна быть не более 10")
     private Integer persons;
 
-    @Schema(description = "общая сумма не должна быть 0 или отриц ", example = "1000")
+    @Schema(description = "общая сумма не должна быть 0 или отрицательная ", example = "1000")
     @Positive(message = "цена должна быть положительна")
     private BigDecimal totalPrice;
 
@@ -55,5 +57,6 @@ public class BookingDTO {
     @Schema(description = "Название промокода")
     private String promoCodeDTO;
 
+    @Schema(description = "подключенные сервисы")
     private Set<ServiceHotelDTO> serviceHotelDTOS ;
 }

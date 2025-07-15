@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +20,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "User Type Managment", description = "REST API для управления типом пользователей")
 public class UserTypeController {
-private final UserTypeService userTypeService;
+    private final UserTypeService userTypeService;
 
     @Operation(summary = "Получить все типы пользователей",
             description = "Возвращает список всех типов пользователей")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
-    public ResponseEntity<List<UserTypeDTO>> getAllTypes(){
+    public ResponseEntity<List<UserTypeDTO>> getAllTypes() {
         return ResponseEntity.ok(userTypeService.findAll());
     }
 
@@ -33,9 +35,13 @@ private final UserTypeService userTypeService;
     @ApiResponse(responseCode = "200", description = "тип найден")
     @ApiResponse(responseCode = "404", description = "тип не найден")
     @GetMapping("/{role}")
-    public ResponseEntity<UserTypeDTO> getTypeByRole(@PathVariable String role){
-        UserTypeDTO userTypeDTO=userTypeService.findUserTypeByRole(role);
-      return ResponseEntity.ok(userTypeDTO);
+    public ResponseEntity<UserTypeDTO> getTypeByRole(
+            @PathVariable
+            @Size(min = 3, max = 100, message = "количество символов 3-100")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
+            String role) {
+        UserTypeDTO userTypeDTO = userTypeService.findUserTypeByRole(role);
+        return ResponseEntity.ok(userTypeDTO);
     }
 
     @Operation(summary = "Создать новый тип юзера",
@@ -43,8 +49,8 @@ private final UserTypeService userTypeService;
     @ApiResponse(responseCode = "201", description = "тип юзера создан")
     @ApiResponse(responseCode = "409", description = "тип юзера не создан")
     @PostMapping
-    public ResponseEntity<UserTypeDTO> createUserType(@RequestBody @Valid UserTypeDTO userTypeDTO){
-        UserTypeDTO newUserTypeDTO=userTypeService.save(userTypeDTO);
+    public ResponseEntity<UserTypeDTO> createUserType(@RequestBody @Valid UserTypeDTO userTypeDTO) {
+        UserTypeDTO newUserTypeDTO = userTypeService.save(userTypeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUserTypeDTO);
     }
 
@@ -53,7 +59,11 @@ private final UserTypeService userTypeService;
     @ApiResponse(responseCode = "204", description = "тип юзера Удален")
     @ApiResponse(responseCode = "404", description = "тип юзера не найден")
     @DeleteMapping("/{role}")
-    public ResponseEntity<UserTypeDTO> deleteUserType(@PathVariable String role){
+    public ResponseEntity<UserTypeDTO> deleteUserType(
+            @PathVariable
+            @Size(min = 3, max = 100, message = "количество символов 3-100")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
+            String role) {
         userTypeService.delete(role);
         return ResponseEntity.noContent().build();
     }
@@ -64,8 +74,8 @@ private final UserTypeService userTypeService;
     @ApiResponse(responseCode = "404", description = "типа юзера не найден")
     @ApiResponse(responseCode = "409", description = "Конфликт данных")
     @PutMapping
-    public ResponseEntity<UserTypeDTO> update(@RequestBody @Valid UserTypeDTO userTypeDTO){
-        UserTypeDTO updatedUserTypeDto=userTypeService.updateUserType(userTypeDTO);
+    public ResponseEntity<UserTypeDTO> update(@RequestBody @Valid UserTypeDTO userTypeDTO) {
+        UserTypeDTO updatedUserTypeDto = userTypeService.updateUserType(userTypeDTO);
         return ResponseEntity.ok(updatedUserTypeDto);
     }
 }

@@ -96,6 +96,7 @@ public class FillUpDataBasse {
     private void creatUsers() {
         UserDTO testUserDTO = UserDTO.builder().role("Клиент").email("ghi@j.hj").firstName("Клиент")
                 .fathersName("Владимирович").lastName("А").nickName("Фыва").phoneNumber("86866").password("1234").build();
+
         UserDTO testUserDTO2 = UserDTO.builder().role("Клиент").email("new@j.hj").firstName("Максим")
                 .fathersName("Николаевич").lastName("Бугульма").nickName("BigBro").phoneNumber("8686643").password("123sfg344").build();
         UserDTO testUserDTO3 = UserDTO.builder().role("Администратор").email("newS@j.hj").firstName("Валентина")
