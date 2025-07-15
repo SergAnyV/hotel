@@ -26,7 +26,7 @@ public class ServiceHotelService {
     public List<ServiceHotelDTO> findAll() {
         try {
             return serviceHotelRepository.findAll().stream().map(service ->
-                    ServiceHoteMapper.INSTANCE.ServiceToServiceDTO(service)
+                    ServiceHoteMapper.INSTANCE.serviceToServiceDTO(service)
             ).collect(Collectors.toList());
         } catch (DataAccessException ex) {
             log.error("Error проблема доступа к базе ", ex);
@@ -42,7 +42,7 @@ public class ServiceHotelService {
             if (serviceOptional.isEmpty()) {
                 throw new DataNotFoundException("не существует такого сервиса");
             }
-            return ServiceHoteMapper.INSTANCE.ServiceToServiceDTO(serviceOptional.get());
+            return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(serviceOptional.get());
         } catch (DataAccessException | DataNotFoundException ex) {
             log.error(" Error ", ex);
             throw ex;
@@ -56,9 +56,9 @@ public class ServiceHotelService {
                 log.warn("War такой сервис уже существует поиск по названи=ю {}", serviceHotelDTO);
                 throw new DataAlreadyExistsException("такой сервис уже существует в базе");
             }
-            return ServiceHoteMapper.INSTANCE.ServiceToServiceDTO(
+            return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(
                     serviceHotelRepository.save(
-                            ServiceHoteMapper.INSTANCE.ServiceDTOToService(serviceHotelDTO)));
+                            ServiceHoteMapper.INSTANCE.serviceDTOToService(serviceHotelDTO)));
         } catch (DataAccessException ex) {
             log.error("Error проблем сохранения сервиса", ex);
             throw ex;
@@ -87,7 +87,7 @@ public class ServiceHotelService {
         ServiceHotel serviceHotel=serviceHotelOptional.get();
         ServiceHoteMapper.INSTANCE.updateService(serviceHotelDTO,serviceHotel);
         try {
-            return ServiceHoteMapper.INSTANCE.ServiceToServiceDTO(serviceHotelRepository.save(serviceHotel));
+            return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(serviceHotelRepository.save(serviceHotel));
         }catch (DataAccessException ex){
             log.error("Error проблема с сохранением и обновление сервиса отеля {} , {}" ,serviceHotelDTO,ex );
             throw ex;

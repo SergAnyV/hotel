@@ -58,7 +58,7 @@ public class UserSimpleDTO {
     @NotBlank(message = "Телефон пользователя, не должен быть пустым")
     @Size(min = 3,max = 20,message = "количество символов 3-20")
     @Pattern(
-            regexp = "^[0-9]",
+            regexp = "^\\d+$",
             message = "Некорректный номер. Пример: 89065554433"
     )
     private String phoneNumber;

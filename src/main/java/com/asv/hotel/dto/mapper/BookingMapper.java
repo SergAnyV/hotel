@@ -15,6 +15,7 @@ public interface BookingMapper {
     @Mapping(target = "promoCodeDTO",source = "promoCode.code")
     @Mapping(target = "roomSimpleDTO", source = "room")
     @Mapping(target = "userSimpleDTO", source = "user")
+    @Mapping(target = "serviceHotelDTOS", source = "serviceSet")
     BookingDTO bookingToBookingDTO(Booking booking);
 
     Booking bookingDTOToBooking(BookingSimplDTO bookingSimplDTO);
@@ -23,6 +24,7 @@ public interface BookingMapper {
     @Mapping(target = "userSimpleDTO", source = "user")
     @Mapping(target = "promoCodeDTO",source = "promoCode.code")
     BookingSimplDTO bookingToBookingSimpleDTO(Booking booking);
+
 
     BookingDTO bookingSimpleToBookingDTO( BookingSimplDTO bookingSimplDTO);
 

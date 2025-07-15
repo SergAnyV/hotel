@@ -1,7 +1,7 @@
 package com.asv.hotel.dto.bookingdto;
 
 
-import com.asv.hotel.dto.servicehoteldto.ServiceHotelDTO;
+import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.dto.userdto.UserSimpleDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -45,6 +45,6 @@ public class BookingSimplDTO {
     private String promoCodeDTO;
 
     @Schema(description = "сервисы")
-    private Set<ServiceHotelDTO> serviceSet;
+    private Set<ServiceHotelSimpleDTO> serviceSet;
 
 }
