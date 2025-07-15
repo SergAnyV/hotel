@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +37,11 @@ public class PromoCodeController {
     @ApiResponse(responseCode = "204", description = "промокод удален")
     @ApiResponse(responseCode = "404", description = "промокод не найден")
     @DeleteMapping("/{code}")
-    public ResponseEntity<Void> delete(@PathVariable String code) {
+    public ResponseEntity<Void> delete(
+            @PathVariable
+            @Size(max = 20, message = "Длина промокода не должна превышать 20 символов")
+            @Pattern(regexp ="^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Промокод может содержать только буквы, цифры ")
+            String code) {
         promoCodeService.delete(code);
         return ResponseEntity.noContent().build();
     }
