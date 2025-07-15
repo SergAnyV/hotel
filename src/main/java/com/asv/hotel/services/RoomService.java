@@ -35,7 +35,8 @@ public class RoomService {
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.findRoomByNumberLikeIgnoreCase(number)
                 .orElseThrow(() -> {
                     log.warn("Error:Не существует комнаты с номером {} оошибка в методе {}", number
-                            ,new Object(){}.getClass().getEnclosingMethod().getName());
+                            , new Object() {
+                            }.getClass().getEnclosingMethod().getName());
                     return new DataNotFoundException("Не существует комнаты с номером " + number);
                 }));
     }
@@ -44,7 +45,7 @@ public class RoomService {
     public List<RoomDTO> findByType(RoomType type) {
         return roomRepository.findRoomByTypeLikeIgnoreCase(type).stream()
                 .map(roomOptional -> {
-                  return    RoomMapper.INSTANCE.roomToRoomDTO(roomOptional);
+                    return RoomMapper.INSTANCE.roomToRoomDTO(roomOptional);
                 })
                 .collect(Collectors.toList());
     }
@@ -54,7 +55,7 @@ public class RoomService {
     public RoomDTO save(RoomDTO roomDTO) {
         try {
             if (roomRepository.findRoomByNumberLikeIgnoreCase(roomDTO.getNumber()).isPresent()) {
-                log.warn("Error: такая комната уже существует {} ",roomDTO.getNumber());
+                log.warn("Error: такая комната уже существует {} ", roomDTO.getNumber());
                 throw new DataAlreadyExistsException(roomDTO.getNumber());
             }
             Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
@@ -62,32 +63,31 @@ public class RoomService {
             room.setUpdatedAt(LocalDateTime.now());
             return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(room));
         } catch (DataAccessException e) {
-            log.warn("Error: проблема с доступом к базе данных , метода {}",new Object(){}.getClass().getEnclosingMethod().getName() );
+            log.warn("Error: проблема с доступом к базе данных , метода {}", new Object() {
+            }.getClass().getEnclosingMethod().getName());
             throw new DataAlreadyExistsException(roomDTO.getNumber());
         }
     }
 
 
     @Transactional
-    public RoomDTO update( RoomDTO newRoomDTO) {
+    public RoomDTO update(RoomDTO newRoomDTO) {
         var existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(newRoomDTO.getNumber())
                 .orElseThrow(() -> {
                     log.warn("Error:Не существует комнаты с номером {} метод update в RoomService", newRoomDTO.getNumber());
                     return new DataNotFoundException("Не существует комнаты с номером " + newRoomDTO.getNumber());
                 });
 
-       RoomMapper.INSTANCE.updateRoomFromDTO(newRoomDTO,existingRoom);
+        RoomMapper.INSTANCE.updateRoomFromDTO(newRoomDTO, existingRoom);
         try {
-//       roomRepository.updateRoom(existingRoom.getId(), existingRoom.getNumber(), existingRoom.getType(),
-//               existingRoom.getDescription(),existingRoom.getCapacity(),existingRoom.getPricePerNight()
-//       ,existingRoom.getIsAvailable());
-       roomRepository.save(existingRoom);
+
+            return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(existingRoom));
         } catch (DataAccessException ex) {
             log.error("Error проблема с обновлением комнаты {}", existingRoom, ex);
             throw new DataAccessException("Проблема с обновлением данных в комнате ") {
             };
         }
-        return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(existingRoom));
+
     }
 
 

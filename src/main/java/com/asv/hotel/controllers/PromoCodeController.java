@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/promo-codes")
 @RequiredArgsConstructor
-@Tag(name = "Promo Code Management", description = "API для управления промокодами")
+@Tag(name = "Promo Code Management", description = "REST API для управления промокодами")
 public class PromoCodeController {
     private final PromoCodeService promoCodeService;
 

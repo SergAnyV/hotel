@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
-@Tag(name = "Booking Management", description = "API для управления бронирования номерами отеля")
+@Tag(name = "Booking Management", description = "REST API для управления бронирования номерами отеля")
 public class BookingController {
     private final BookingService bookingService;
 

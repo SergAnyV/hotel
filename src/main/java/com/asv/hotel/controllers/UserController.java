@@ -5,6 +5,7 @@ import com.asv.hotel.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@Tag(name = "User Management", description = "API для управления юзерами")
+@Tag(name = "User Management", description = "REST API для управления юзерами")
 public class UserController {
     private final UserService userService;
 
@@ -22,7 +23,7 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "юзера создан")
     @ApiResponse(responseCode = "409", description = "юзера не создан")
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO){
         UserDTO newuserDTO=userService.save(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newuserDTO);
     }
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @Operation(summary = "Удалить Юзер",
-            description = "удвляет данные существующего Юзер по фамилии и имени ")
+            description = "удаляет данные существующего Юзер по фамилии и имени ")
     @ApiResponse(responseCode = "204", description = "Юзер удален")
     @DeleteMapping("/by-name")
     public ResponseEntity<Void> deleteUserByLastAndFirstName(
@@ -64,7 +65,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
     @PutMapping
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO){
+    public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO){
         return ResponseEntity.ok(userService.updateUser(userDTO));
     }
 

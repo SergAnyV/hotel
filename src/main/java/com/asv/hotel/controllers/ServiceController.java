@@ -5,6 +5,7 @@ import com.asv.hotel.services.ServiceHotelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/services")
 @RequiredArgsConstructor
-@Tag(name = "Service Management", description = "API для управления дополнительными сервисами")
+@Tag(name = "Service Management", description = "REST API для управления дополнительными сервисами")
 public class ServiceController {
     private final ServiceHotelService serviceHotelService;
 
@@ -41,7 +42,7 @@ public class ServiceController {
     @ApiResponse(responseCode = "201", description = "тип service создан")
     @ApiResponse(responseCode = "409", description = "тип service не создан")
     @PostMapping
-    public ResponseEntity<ServiceHotelDTO> createServiceHotel(@RequestBody ServiceHotelDTO serviceHotelDTO){
+    public ResponseEntity<ServiceHotelDTO> createServiceHotel(@RequestBody @Valid ServiceHotelDTO serviceHotelDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceHotelService.save(serviceHotelDTO));
     }
 

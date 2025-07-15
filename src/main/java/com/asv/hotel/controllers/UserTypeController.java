@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/user-types")
 @RequiredArgsConstructor
-@Tag(name = "User Type Managment", description = "API для управления типом пользователей")
+@Tag(name = "User Type Managment", description = "REST API для управления типом пользователей")
 public class UserTypeController {
 private final UserTypeService userTypeService;
 
@@ -55,15 +55,6 @@ private final UserTypeService userTypeService;
     @DeleteMapping("/{role}")
     public ResponseEntity<UserTypeDTO> deleteUserType(@PathVariable String role){
         userTypeService.delete(role);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "Удалить данные тип юзера",
-            description = "Удалить данные существующего тип юзера")
-    @ApiResponse(responseCode = "204", description = "тип юзера Удален")
-    @DeleteMapping
-    public ResponseEntity<UserTypeDTO> deleteAllUserType(){
-        userTypeService.deleteAll();
         return ResponseEntity.noContent().build();
     }
 
