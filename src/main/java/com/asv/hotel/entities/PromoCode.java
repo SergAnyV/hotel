@@ -27,6 +27,9 @@ public class PromoCode {
     @Enumerated(value = EnumType.STRING)
     private TypeOfPromoCode typeOfPromoCode;
 
+    @Column(name="description",length = 100)
+    private String description;
+
     @Column(name = "discount_value", nullable = false, precision = 8, scale = 2)
     private BigDecimal discountValue;
 
@@ -39,5 +42,12 @@ public class PromoCode {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @PrePersist
+    @PreUpdate
+    private void preUpdate() {
+        if (typeOfPromoCode != null) {
+            this.description = typeOfPromoCode.getDescription();
+        }
+    }
 
 }

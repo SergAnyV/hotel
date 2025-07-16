@@ -29,10 +29,11 @@ public class Room {
     @Column(name = "number", nullable = false, length = 10, unique = true)
     private String number;
 
-    @Column(name = "type", nullable = false, length = 50)
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 20)
     private RoomType type;
 
-    @Column(name = "description")
+    @Column(name = "description",length = 100)
     private String description;
 
     @Column(nullable = false)
@@ -57,4 +58,12 @@ public class Room {
 
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private Set<Report> reports = new HashSet<>();
+
+    @PrePersist
+    @PreUpdate
+    private void preUpdate() {
+        if (type != null) {
+            this.description = type.getDescription();
+        }
+    }
 }

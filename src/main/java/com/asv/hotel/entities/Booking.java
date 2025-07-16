@@ -40,6 +40,9 @@ public class Booking {
     @Column(name = "status", nullable = false, length = 10)
     private BookingStatus statusOfBooking;
 
+    @Column(name = "status_description", length = 100,updatable = false)
+    private String statusDescription;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -62,5 +65,14 @@ public class Booking {
 
     @ManyToMany(mappedBy = "bookingSet",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<ServiceHotel> serviceSet;
+
+
+    @PrePersist
+    @PreUpdate
+    private void preUpdate() {
+        if (statusOfBooking != null) {
+            this.statusDescription = statusOfBooking.getDescription();
+        }
+    }
 
 }
