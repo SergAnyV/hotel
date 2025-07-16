@@ -79,7 +79,7 @@ public class UserService {
 
     @Transactional
     public UserDTO cahngeDataUser(UserDTO userDTO) {
-        var existingUser = userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName())
+        User existingUser = userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName())
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         UserMapper.INSTANCE.updateUserFromDto(userDTO, existingUser, userTypeService);
         try {
