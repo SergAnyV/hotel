@@ -42,7 +42,7 @@ public class PromoCodeController {
             @Size(max = 20, message = "Длина промокода не должна превышать 20 символов")
             @Pattern(regexp ="^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Промокод может содержать только буквы, цифры ")
             String code) {
-        promoCodeService.delete(code);
+        promoCodeService.deletePromoCodeByCode(code);
         return ResponseEntity.noContent().build();
     }
     @Operation(summary = "вернуть все промокоды ",
@@ -50,6 +50,6 @@ public class PromoCodeController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
     public ResponseEntity<List<PromoCodeDTO>> getAll() {
-    return ResponseEntity.ok(promoCodeService.findAll());
+    return ResponseEntity.ok(promoCodeService.findAllPromoCodesDTO());
     }
 }

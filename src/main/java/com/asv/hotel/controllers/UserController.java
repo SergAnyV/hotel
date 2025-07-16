@@ -27,7 +27,7 @@ public class UserController {
     @ApiResponse(responseCode = "409", description = "юзера не создан")
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
-        UserDTO newuserDTO = userService.save(userDTO);
+        UserDTO newuserDTO = userService.createUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newuserDTO);
     }
 
@@ -53,7 +53,7 @@ public class UserController {
             )
             @NotBlank(message = "Имя пользователя, не должен быть пустым")
             String firstName) {
-        return ResponseEntity.ok(userService.findUserByLastNameAndFirstName(lastName, firstName));
+        return ResponseEntity.ok(userService.findUserDTOByLastNameAndFirstName(lastName, firstName));
     }
 
     @Operation(summary = "Получить по номеру телефона",
@@ -70,7 +70,7 @@ public class UserController {
                     message = "Некорректный номер. Пример: 89065554433"
             )
             String phoneNumber) {
-        return ResponseEntity.ok(userService.findUserByLPhoneNumber(phoneNumber));
+        return ResponseEntity.ok(userService.findUserDTOByPhoneNumber(phoneNumber));
     }
 
     @Operation(summary = "Удалить Юзер",
@@ -104,7 +104,7 @@ public class UserController {
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
-        return ResponseEntity.ok(userService.updateUser(userDTO));
+        return ResponseEntity.ok(userService.cahngeDataUser(userDTO));
     }
 
 

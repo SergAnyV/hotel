@@ -22,13 +22,13 @@ public class UserService {
 
 
     @Transactional
-    public UserDTO save(UserDTO userDTO) {
+    public UserDTO createUser(UserDTO userDTO) {
         try {
             if (!userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName()).isEmpty()) {
                 log.warn("Error: такой user уже существует {} {}", userDTO.getFirstName(), userDTO.getLastName());
                 throw new DataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
             }
-            UserType userType = userTypeService.findUserTypeByRoleReturnUserType(userDTO.getRole());
+            UserType userType = userTypeService.findUserTypeByType(userDTO.getRole());
             User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
             user.setRole(userType);
             return UserMapper.INSTANCE.userToUserDTO(userRepository.save(user));
@@ -40,7 +40,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO findUserByLastNameAndFirstName(String lastName, String firstName) {
+    public UserDTO findUserDTOByLastNameAndFirstName(String lastName, String firstName) {
         try {
             return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
         } catch (Exception ex) {
@@ -50,7 +50,7 @@ public class UserService {
     }
 
 
-    protected User findUserByLastNameAndFirstNameReturnUser(String lastName, String firstName) {
+    protected User findUserByLastNameAndFirstName(String lastName, String firstName) {
         try {
             return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
         } catch (Exception ex) {
@@ -68,7 +68,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO findUserByLPhoneNumber(String phoneNumber) {
+    public UserDTO findUserDTOByPhoneNumber(String phoneNumber) {
         try {
             return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByPhoneNumber(phoneNumber).get());
         } catch (Exception ex) {
@@ -78,7 +78,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO updateUser(UserDTO userDTO) {
+    public UserDTO cahngeDataUser(UserDTO userDTO) {
         var existingUser = userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName())
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
         UserMapper.INSTANCE.updateUserFromDto(userDTO, existingUser, userTypeService);

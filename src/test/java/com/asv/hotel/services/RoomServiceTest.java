@@ -66,8 +66,8 @@ class RoomServiceTest {
 
     //сохранение новой комнаты в репозитории CREATE
     @Test
-    void saveRoomShouldBeSavedRoom() {
-        RoomDTO roomDTO = roomService.save(testRoomDTO);
+    void createRoomRoomShouldBeSavedRoom() {
+        RoomDTO roomDTO = roomService.createRoom(testRoomDTO);
         assertEquals(roomDTO.getNumber(), testRoomDTO.getNumber());
         assertEquals(roomDTO.getType(),testRoomDTO.getType());
         assertEquals(roomDTO.getPricePerNight(),testRoomDTO.getPricePerNight());
@@ -75,17 +75,17 @@ class RoomServiceTest {
     }
 
     @Test
-    void saveRoom_ShouldThrowIfRoomExists() {
-        roomService.save(testRoomDTO);
+    void createRoomRoom_ShouldThrowIfRoomExists() {
+        roomService.createRoom(testRoomDTO);
 
-        assertThatThrownBy(() -> roomService.save(testRoomDTO))
+        assertThatThrownBy(() -> roomService.createRoom(testRoomDTO))
                 .isInstanceOf(DataAlreadyExistsException.class)
                 .hasMessageContaining(testRoomDTO.getNumber());
     }
     // READ чтение из базф
     @Test
-    void findAll_ShouldReturnAllRooms() {
-        roomService.save(testRoomDTO);
+    void findAll_ShouldReturnAllRoomsRooms() {
+        roomService.createRoom(testRoomDTO);
         RoomDTO secondRoomDTO= RoomDTO.builder()
                 .number("102")
                 .type(RoomType.DELUXE)
@@ -94,33 +94,33 @@ class RoomServiceTest {
                 .pricePerNight(BigDecimal.valueOf(1000))
                 .isAvailable(true)
                 .build();
-        roomService.save(secondRoomDTO);
-        List<RoomDTO> rooms = roomService.findAll();
+        roomService.createRoom(secondRoomDTO);
+        List<RoomDTO> rooms = roomService.findAllRoomsDTO();
 
         assertEquals(rooms.size(),2);
     }
 
     @Test
-    void findByNumber_ShouldReturnRoom() {
-        roomService.save(testRoomDTO);
-        RoomDTO foundRoom = roomService.findByNumber("101");
+    void findRoomDTOByNumber_ShouldReturnRoom() {
+        roomService.createRoom(testRoomDTO);
+        RoomDTO foundRoom = roomService.findRoomDTOByNumber("101");
 
         assertThat(foundRoom).isNotNull();
         assertThat(foundRoom.getNumber()).isEqualTo("101");
     }
 
     @Test
-    void findByNumber_ShouldThrowIfNotFound() {
-        assertThatThrownBy(() -> roomService.findByNumber("999"));
+    void findRoomDTOByNumber_ShouldThrowIfNotFound() {
+        assertThatThrownBy(() -> roomService.findRoomDTOByNumber("999"));
     }
     // UPDATE обновление
     @Test
-    void updateRoom_ShouldUpdateExistingRoom() {
-        RoomDTO savedRoom = roomService.save(testRoomDTO);
+    void updateRoom_ShouldChangeDataRoomExistingRoom() {
+        RoomDTO savedRoom = roomService.createRoom(testRoomDTO);
         savedRoom.setType(RoomType.DELUXE);
         savedRoom.setPricePerNight(BigDecimal.valueOf(1500));
 
-        RoomDTO updatedRoom = roomService.update(savedRoom);
+        RoomDTO updatedRoom = roomService.changeDataRoom(savedRoom);
 
         assertThat(updatedRoom.getType()).isEqualTo(RoomType.DELUXE);
         assertThat(updatedRoom.getPricePerNight()).isEqualByComparingTo("1500");
@@ -128,9 +128,9 @@ class RoomServiceTest {
 
     // DELETE
     @Test
-    void deleteRoom_ShouldRemoveRoom() {
-        roomService.save(testRoomDTO);
-        roomService.delete("101");
+    void deleteRoomByNumberRoom_ShouldRemoveRoom() {
+        roomService.createRoom(testRoomDTO);
+        roomService.deleteRoomByNumber("101");
 
         assertThat(roomRepository.findRoomByNumberLikeIgnoreCase("101")).isEmpty();
     }

@@ -62,7 +62,7 @@ public class FillUpDataBasse {
     public ResponseEntity<Void> deleteAllDB() {
         bookingRepository.deleteAll();
         userRepository.deleteAll();
-        userTypeService.deleteAll();
+        userTypeService.deleteAllUserTypes();
         promoCodeRepository.deleteAll();
         roomRepository.deleteAll();
         serviceHotelRepository.deleteAll();
@@ -88,9 +88,9 @@ public class FillUpDataBasse {
                 .isActive(true)
                 .build();
 
-        userTypeService.save(testUserTypeDTO);
-        userTypeService.save(testUserTypeDTO2);
-        userTypeService.save(testUserTypeDTO3);
+        userTypeService.createUserType(testUserTypeDTO);
+        userTypeService.createUserType(testUserTypeDTO2);
+        userTypeService.createUserType(testUserTypeDTO3);
     }
 
     private void creatUsers() {
@@ -106,11 +106,11 @@ public class FillUpDataBasse {
         UserDTO testUserDTO5 = UserDTO.builder().role("Работник").email("nehg@j.hj").firstName("Денис")
                 .fathersName("Николаевичч").lastName("Бузиника").nickName("Oseter").phoneNumber("8996432268").password("12342fs34").build();
 
-        userService.save(testUserDTO);
-        userService.save(testUserDTO2);
-        userService.save(testUserDTO3);
-        userService.save(testUserDTO4);
-        userService.save(testUserDTO5);
+        userService.createUser(testUserDTO);
+        userService.createUser(testUserDTO2);
+        userService.createUser(testUserDTO3);
+        userService.createUser(testUserDTO4);
+        userService.createUser(testUserDTO5);
     }
 
     private void createPromoCodes() {
@@ -180,11 +180,11 @@ public class FillUpDataBasse {
                 .pricePerNight(BigDecimal.valueOf(100))
                 .isAvailable(false)
                 .build();
-        roomService.save(testRoomDTO);
-        roomService.save(testRoomDTO2);
-        roomService.save(testRoomDTO3);
-        roomService.save(testRoomDTO4);
-        roomService.save(testRoomDTO5);
+        roomService.createRoom(testRoomDTO);
+        roomService.createRoom(testRoomDTO2);
+        roomService.createRoom(testRoomDTO3);
+        roomService.createRoom(testRoomDTO4);
+        roomService.createRoom(testRoomDTO5);
 
     }
 
@@ -209,10 +209,10 @@ public class FillUpDataBasse {
                 .description("для тех кто любит отдыхать по полной")
                 .price(BigDecimal.valueOf(100))
                 .build();
-          serviceHotelService.save(serviceHotelDTO);
-          serviceHotelService.save(serviceHotelDTO2);
-          serviceHotelService.save(serviceHotelDTO3);
-          serviceHotelService.save(serviceHotelDTO4);
+          serviceHotelService.createServiceHotel(serviceHotelDTO);
+          serviceHotelService.createServiceHotel(serviceHotelDTO2);
+          serviceHotelService.createServiceHotel(serviceHotelDTO3);
+          serviceHotelService.createServiceHotel(serviceHotelDTO4);
 
     }
 

@@ -27,7 +27,7 @@ public class UserTypeController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
     public ResponseEntity<List<UserTypeDTO>> getAllTypes() {
-        return ResponseEntity.ok(userTypeService.findAll());
+        return ResponseEntity.ok(userTypeService.findAllUserTypeDTOs());
     }
 
     @Operation(summary = "Найти тип юзера по названию роли не зависимо от регистра",
@@ -40,7 +40,7 @@ public class UserTypeController {
             @Size(min = 3, max = 100, message = "количество символов 3-100")
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
             String role) {
-        UserTypeDTO userTypeDTO = userTypeService.findUserTypeByRole(role);
+        UserTypeDTO userTypeDTO = userTypeService.findUserTypeDTOByType(role);
         return ResponseEntity.ok(userTypeDTO);
     }
 
@@ -50,7 +50,7 @@ public class UserTypeController {
     @ApiResponse(responseCode = "409", description = "тип юзера не создан")
     @PostMapping
     public ResponseEntity<UserTypeDTO> createUserType(@RequestBody @Valid UserTypeDTO userTypeDTO) {
-        UserTypeDTO newUserTypeDTO = userTypeService.save(userTypeDTO);
+        UserTypeDTO newUserTypeDTO = userTypeService.createUserType(userTypeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUserTypeDTO);
     }
 
@@ -64,7 +64,7 @@ public class UserTypeController {
             @Size(min = 3, max = 100, message = "количество символов 3-100")
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
             String role) {
-        userTypeService.delete(role);
+        userTypeService.deleteUserTypeByType(role);
         return ResponseEntity.noContent().build();
     }
 
@@ -75,7 +75,7 @@ public class UserTypeController {
     @ApiResponse(responseCode = "409", description = "Конфликт данных")
     @PutMapping
     public ResponseEntity<UserTypeDTO> update(@RequestBody @Valid UserTypeDTO userTypeDTO) {
-        UserTypeDTO updatedUserTypeDto = userTypeService.updateUserType(userTypeDTO);
+        UserTypeDTO updatedUserTypeDto = userTypeService.cahngeDataUserType(userTypeDTO);
         return ResponseEntity.ok(updatedUserTypeDto);
     }
 }

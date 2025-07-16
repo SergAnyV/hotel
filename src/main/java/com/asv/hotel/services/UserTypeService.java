@@ -24,7 +24,7 @@ public class UserTypeService {
     private final UserTypeRepository userTypeRepository;
 
     @Transactional
-    public UserTypeDTO save(UserTypeDTO userTypeDTO) {
+    public UserTypeDTO createUserType(UserTypeDTO userTypeDTO) {
         try {
             if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole()).isPresent()) {
                 log.warn("Error: такая роль уже существует {} ", userTypeDTO.getRole());
@@ -39,14 +39,14 @@ public class UserTypeService {
     }
 
     @Transactional
-    public List<UserTypeDTO> findAll() {
+    public List<UserTypeDTO> findAllUserTypeDTOs() {
         return userTypeRepository.findAll().stream()
                 .map(userType -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void delete(String role) {
+    public void deleteUserTypeByType(String role) {
         if (userTypeRepository.deleteByRole(role) == 0) {
             log.warn("Error: такая роль не существует {} ", role);
             throw new DataNotFoundException(role);
@@ -54,7 +54,7 @@ public class UserTypeService {
     }
 
     @Transactional
-    public void deleteAll() {
+    public void deleteAllUserTypes() {
         try {
             userTypeRepository.deleteAll();
         } catch (RuntimeException ex) {
@@ -64,7 +64,7 @@ public class UserTypeService {
     }
 
     @Transactional
-    public UserTypeDTO findUserTypeByRole(String role) {
+    public UserTypeDTO findUserTypeDTOByType(String role) {
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()) {
@@ -80,7 +80,7 @@ public class UserTypeService {
     }
 
 
-    public UserType findUserTypeByRoleReturnUserType(String role) {
+    public UserType findUserTypeByType(String role) {
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()) {
@@ -96,7 +96,7 @@ public class UserTypeService {
     }
 
     @Transactional
-    public UserTypeDTO updateUserType(UserTypeDTO userTypeDTO) {
+    public UserTypeDTO cahngeDataUserType(UserTypeDTO userTypeDTO) {
         Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole());
         if (userTypeOptional.isEmpty()) {
             log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getRole());
@@ -116,7 +116,7 @@ public class UserTypeService {
     }
 
 
-    public UserType findActiveUserTypeByRole(String role){
+    public UserType findActiveUserTypeByType(String role){
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {

@@ -50,7 +50,7 @@ public class PromoCodeService {
     }
 
     @Transactional
-    public void delete(String code) {
+    public void deletePromoCodeByCode(String code) {
         try {
             if (promoCodeRepository.deleteByCode(code) == 0) {
                 log.warn("Warning такого промокода не  существет", code);
@@ -63,7 +63,7 @@ public class PromoCodeService {
     }
 
     @Transactional
-    public List<PromoCodeDTO> findAll(){
+    public List<PromoCodeDTO> findAllPromoCodesDTO(){
         List<PromoCode> listPromo= promoCodeRepository.findAll();
        if( listPromo.isEmpty()){
            log.warn("Warning промокодов нет");

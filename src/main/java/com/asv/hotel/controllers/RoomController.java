@@ -29,7 +29,7 @@ public class RoomController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
     public ResponseEntity<List<RoomDTO>> getAllRooms() {
-        return ResponseEntity.ok(roomService.findAll());
+        return ResponseEntity.ok(roomService.findAllRoomsDTO());
     }
 
 
@@ -44,7 +44,7 @@ public class RoomController {
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
 
-        RoomDTO roomDTO = roomService.findByNumber(number);
+        RoomDTO roomDTO = roomService.findRoomDTOByNumber(number);
         return ResponseEntity.ok(roomDTO);
 
     }
@@ -56,7 +56,7 @@ public class RoomController {
     @ApiResponse(responseCode = "409", description = "Номер не создан")
     @PostMapping
     public ResponseEntity<RoomDTO> createRoom( @RequestBody @Valid RoomDTO roomDTO) {
-        RoomDTO newRoomDTO = roomService.save(roomDTO);
+        RoomDTO newRoomDTO = roomService.createRoom(roomDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRoomDTO);
     }
 
@@ -68,7 +68,7 @@ public class RoomController {
     @PutMapping
     public ResponseEntity<RoomDTO> updateRoom(
             @RequestBody @Valid RoomDTO roomDTO) {
-        RoomDTO updatedRoom = roomService.update(roomDTO);
+        RoomDTO updatedRoom = roomService.changeDataRoom(roomDTO);
         return ResponseEntity.ok(updatedRoom);
     }
 
@@ -82,7 +82,7 @@ public class RoomController {
             @NotBlank(message = "номер комнаты не должен быть пустым")
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
-        roomService.delete(number);
+        roomService.deleteRoomByNumber(number);
         return ResponseEntity.noContent().build();
     }
 

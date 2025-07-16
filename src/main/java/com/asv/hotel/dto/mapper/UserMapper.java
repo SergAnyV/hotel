@@ -48,7 +48,7 @@ public interface UserMapper {
 
         // роль отдельно обрабатывается
         if (dto.getRole() != null) {
-            user.setRole(userTypeService.findActiveUserTypeByRole(dto.getRole()));
+            user.setRole(userTypeService.findActiveUserTypeByType(dto.getRole()));
         }
     }
 

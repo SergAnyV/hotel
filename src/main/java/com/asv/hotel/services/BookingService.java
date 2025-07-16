@@ -8,7 +8,6 @@ import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
 import com.asv.hotel.exceptions.DataNotFoundException;
 import com.asv.hotel.repositories.BookingRepository;
-import com.asv.hotel.repositories.PromoCodeRepository;
 import com.asv.hotel.util.BookingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +27,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BookingService {
 
-    private final PromoCodeRepository promoCodeRepository;
-
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final RoomService roomService;
@@ -37,11 +34,11 @@ public class BookingService {
     private final PromoCodeService promoCodeService;
 
     @Transactional
-    public BookingDTO save(BookingSimplDTO bookingSimplDTO) {
+    public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
         PromoCode promoCode = null;
         BigDecimal totalPrice = BigDecimal.ZERO;
         try {
-            Room room = roomService.findByNumberReturnRoom(bookingSimplDTO.getRoomNumber());
+            Room room = roomService.findRoomByNumber(bookingSimplDTO.getRoomNumber());
             if (room.getIsAvailable() && !bookingRepository.isRoomAvailableForDates(room.getId()
                     , bookingSimplDTO.getCheckInDate()
                     , bookingSimplDTO.getCheckOutDate())) {
@@ -51,7 +48,7 @@ public class BookingService {
             Booking booking = BookingMapper.INSTANCE.bookingSimpleDTOToBooking(bookingSimplDTO);
 //            поиск юзера и возвращение сущности
 
-            User user = userService.findUserByLastNameAndFirstNameReturnUser(
+            User user = userService.findUserByLastNameAndFirstName(
                     bookingSimplDTO.getUserSimpleDTO().getLastName(), bookingSimplDTO.getUserSimpleDTO().getFirstName());
 
 //            внесенеие в бронирование
@@ -92,7 +89,7 @@ public class BookingService {
     }
 
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteBookingById(Long id) {
         try {
             if (bookingRepository.deleteBookingById(id) == 0) {
                 log.error("Error данной брони не существует для удаления {}", id);
@@ -106,7 +103,7 @@ public class BookingService {
     }
 
     @Transactional
-    public List<BookingSimplDTO> findAllByRoomNumber(String roomNumber) {
+    public List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber(String roomNumber) {
         try {
             List<Booking> bookingsList = bookingRepository.findAllByRoomNumber(roomNumber);
             if (bookingsList.isEmpty()) {
@@ -129,7 +126,7 @@ public class BookingService {
             return new HashSet<>();
         }
         return serviceHotelDTOS.stream().map(serviceHotelDTO -> {
-            return serviceHotelService.findByTitleReturnEntity(serviceHotelDTO.getTitle());
+            return serviceHotelService.findServiceHotelByTitle(serviceHotelDTO.getTitle());
         }).collect(Collectors.toSet());
     }
 

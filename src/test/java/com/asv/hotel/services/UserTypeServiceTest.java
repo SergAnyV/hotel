@@ -62,8 +62,8 @@ class UserTypeServiceTest {
 
     //сохранение новой роли в репозитории CREATE
     @Test
-    void saveUserTypeShouldBeSaveUserType() {
-        UserTypeDTO savedUserType = userTypeService.save(testUserTypeDTO);
+    void saveUserTypeShouldBeCreateUserTypeUserType() {
+        UserTypeDTO savedUserType = userTypeService.createUserType(testUserTypeDTO);
         assertEquals(savedUserType.getRole(), testUserTypeDTO.getRole());
         assertEquals(savedUserType.getDescription(), testUserTypeDTO.getDescription());
         assertEquals(savedUserType.getIsActive(), testUserTypeDTO.getIsActive());
@@ -71,37 +71,37 @@ class UserTypeServiceTest {
     }
 
     @Test
-    void saveUserTypeShouldThrowIfUserTypeExist() {
-        userTypeService.save(testUserTypeDTO);
+    void createUserTypeUserTypeShouldThrowIfUserTypeExist() {
+        userTypeService.createUserType(testUserTypeDTO);
 
-        assertThatThrownBy(() -> userTypeService.save(testUserTypeDTO))
+        assertThatThrownBy(() -> userTypeService.createUserType(testUserTypeDTO))
                 .isInstanceOf(DataAlreadyExistsException.class)
                 .hasMessageContaining(testUserTypeDTO.getRole());
     }
 
     //поиск всех возможных ролей
     @Test
-    void findAllShouldBeFindAllUserTypes() {
-        userTypeService.save(testUserTypeDTO);
-        userTypeService.save(testUserTypeDTO2);
-        List<UserTypeDTO> userTypeDTOList = userTypeService.findAll();
+    void findAllShouldBeFindAllUserTypeDTOsUserTypes() {
+        userTypeService.createUserType(testUserTypeDTO);
+        userTypeService.createUserType(testUserTypeDTO2);
+        List<UserTypeDTO> userTypeDTOList = userTypeService.findAllUserTypeDTOs();
         assertEquals(userTypeDTOList.size(), 2);
 
     }
 
     @Test
-    void deleteShouldDeleteUserType(){
-        userTypeService.save(testUserTypeDTO);
-        userTypeService.save(testUserTypeDTO2);
-        userTypeService.delete(testUserTypeDTO.getRole());
+    void deleteShouldDeleteUserTypeByTypeUserType(){
+        userTypeService.createUserType(testUserTypeDTO);
+        userTypeService.createUserType(testUserTypeDTO2);
+        userTypeService.deleteUserTypeByType(testUserTypeDTO.getRole());
         assertThat(userTypeRepository.findUserTypeByRoleLikeIgnoreCase(testUserTypeDTO.getRole())).isEmpty();
     }
 
     @Test
-    void deleteAllShouldDeleteAll(){
-        userTypeService.save(testUserTypeDTO);
-        userTypeService.save(testUserTypeDTO2);
-        userTypeService.deleteAll();
+    void deleteAllShouldDeleteUserTypeByTypeAllUserTypes(){
+        userTypeService.createUserType(testUserTypeDTO);
+        userTypeService.createUserType(testUserTypeDTO2);
+        userTypeService.deleteAllUserTypes();
         assertTrue(userTypeRepository.findAll().isEmpty(),"не удалились все данные из списка user_types");
     }
 

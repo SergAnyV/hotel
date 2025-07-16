@@ -27,7 +27,7 @@ public class ServiceController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
     public ResponseEntity<List<ServiceHotelDTO>> getAll() {
-        return ResponseEntity.ok(serviceHotelService.findAll());
+        return ResponseEntity.ok(serviceHotelService.findAllHotelServices());
     }
 
     @Operation(summary = "Найти service по названию  не зависимо от регистра",
@@ -40,7 +40,7 @@ public class ServiceController {
             @NotBlank(message = " не должен быть пустым")
             @Size(min = 3, max = 20, message = "количество символов 3-20")
             String title) {
-        return ResponseEntity.ok(serviceHotelService.findByTitle(title));
+        return ResponseEntity.ok(serviceHotelService.findServiceHotelDTOByTitle(title));
     }
 
     @Operation(summary = "Создать новый тип service",
@@ -49,7 +49,7 @@ public class ServiceController {
     @ApiResponse(responseCode = "409", description = "тип service не создан")
     @PostMapping
     public ResponseEntity<ServiceHotelDTO> createServiceHotel(@RequestBody @Valid ServiceHotelDTO serviceHotelDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(serviceHotelService.save(serviceHotelDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(serviceHotelService.createServiceHotel(serviceHotelDTO));
     }
 
     @Operation(summary = "Удалить данные тип service",
@@ -62,7 +62,7 @@ public class ServiceController {
             @NotBlank(message = " не должен быть пустым")
             @Size(min = 3, max = 20, message = "количество символов 3-20")
             String title) {
-        serviceHotelService.deletByTtitle(title);
+        serviceHotelService.deletServiceHotelByTtitle(title);
         return ResponseEntity.noContent().build();
     }
 

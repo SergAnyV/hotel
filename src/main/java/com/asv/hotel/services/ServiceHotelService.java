@@ -23,7 +23,7 @@ public class ServiceHotelService {
     private final ServiceHotelRepository serviceHotelRepository;
 
     @Transactional
-    public List<ServiceHotelDTO> findAll() {
+    public List<ServiceHotelDTO> findAllHotelServices() {
         try {
             return serviceHotelRepository.findAll().stream().map(service ->
                     ServiceHoteMapper.INSTANCE.serviceToServiceDTO(service)
@@ -35,7 +35,7 @@ public class ServiceHotelService {
     }
 
     @Transactional
-    public ServiceHotelDTO findByTitle(String title) {
+    public ServiceHotelDTO findServiceHotelDTOByTitle(String title) {
         try {
             Optional<ServiceHotel> serviceOptional =
                     serviceHotelRepository.findByTitle(title);
@@ -50,7 +50,7 @@ public class ServiceHotelService {
     }
 
     @Transactional
-    public ServiceHotelDTO save(ServiceHotelDTO serviceHotelDTO) {
+    public ServiceHotelDTO createServiceHotel(ServiceHotelDTO serviceHotelDTO) {
         try {
             if (serviceHotelRepository.findByTitle(serviceHotelDTO.getTitle()).isPresent()) {
                 log.warn("War такой сервис уже существует поиск по названи=ю {}", serviceHotelDTO);
@@ -66,7 +66,7 @@ public class ServiceHotelService {
     }
 
     @Transactional
-    public void deletByTtitle(String title) {
+    public void deletServiceHotelByTtitle(String title) {
         Optional<ServiceHotel> serviceHotelOptional=serviceHotelRepository.findByTitle(title);
         if (serviceHotelOptional.isPresent()) {
             serviceHotelRepository.delete(serviceHotelOptional.get());
@@ -77,7 +77,7 @@ public class ServiceHotelService {
     }
 
     @Transactional
-    public ServiceHotelDTO update(ServiceHotelDTO serviceHotelDTO) {
+    public ServiceHotelDTO changeDataServiceHotel(ServiceHotelDTO serviceHotelDTO) {
 
         Optional<ServiceHotel> serviceHotelOptional = serviceHotelRepository.findByTitle(serviceHotelDTO.getTitle());
         if(serviceHotelOptional.isEmpty()){
@@ -94,7 +94,7 @@ public class ServiceHotelService {
         }
     }
 
-    protected ServiceHotel findByTitleReturnEntity(String title) {
+    protected ServiceHotel findServiceHotelByTitle(String title) {
         try {
             Optional<ServiceHotel> serviceOptional =
                     serviceHotelRepository.findByTitle(title);

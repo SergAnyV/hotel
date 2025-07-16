@@ -32,7 +32,7 @@ public class BookingController {
     @ApiResponse(responseCode = "409", description = "бронирование не создано")
     @PostMapping
     public ResponseEntity<BookingDTO> createBooking(@RequestBody @Valid BookingSimplDTO bookingSimplDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.save(bookingSimplDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.createBooking(bookingSimplDTO));
     }
 
     @Operation(summary = "Удалить бронирование",
@@ -44,7 +44,7 @@ public class BookingController {
             @PathVariable
             @NotNull
             Long id) {
-        bookingService.deleteById(id);
+        bookingService.deleteBookingById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -58,6 +58,6 @@ public class BookingController {
             @NotBlank(message = "номер комнаты не должен быть пустым")
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
-        return ResponseEntity.ok(bookingService.findAllByRoomNumber(number));
+        return ResponseEntity.ok(bookingService.findAllBookingsSimplDTOByRoomNumber(number));
     }
 }

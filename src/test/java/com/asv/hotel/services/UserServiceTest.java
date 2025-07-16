@@ -55,40 +55,40 @@ class UserServiceTest {
     }
 
     @Test
-    void saveShoulBeSavedNewUser() {
-        userTypeService.save(testUserTypeDTO);
-        UserDTO nudto = userService.save(testUserDTO);
+    void createUserShoulBeSavedNewUser() {
+        userTypeService.createUserType(testUserTypeDTO);
+        UserDTO nudto = userService.createUser(testUserDTO);
         assertEquals(nudto.getFirstName(), testUserDTO.getFirstName());
     }
 
     @Test
-    void findUserByLastNameAndFirstNameShoudBeFindUserDTO() {
-        userTypeService.save(testUserTypeDTO);
-        userService.save(testUserDTO);
-        UserDTO nudto =  userService.findUserByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
+    void findUserByLastNameAndFirstNameShoudBeFindUserDTODTO() {
+        userTypeService.createUserType(testUserTypeDTO);
+        userService.createUser(testUserDTO);
+        UserDTO nudto =  userService.findUserDTOByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
         assertEquals(testUserDTO.getLastName(),nudto.getLastName());
         assertEquals(testUserDTO.getFirstName(),nudto.getFirstName());
 
     }
 
     @Test
-    void findUserByLastNameAndFirstNameReturnUser() {
-        userTypeService.save(testUserTypeDTO);
-        userService.save(testUserDTO);
-        User user=userService.findUserByLastNameAndFirstNameReturnUser(testUserSimpleDTO.getLastName()
+    void findUserByLastNameAndFirstNameDTO() {
+        userTypeService.createUserType(testUserTypeDTO);
+        userService.createUser(testUserDTO);
+        User user=userService.findUserByLastNameAndFirstName(testUserSimpleDTO.getLastName()
                 , testUserSimpleDTO.getFirstName());
         assertEquals(user.getFirstName(),testUserSimpleDTO.getFirstName());
 
     }
 
     @Test
-    void updateUserByUserDTOShoildBeUpdated(){
-        userTypeService.save(testUserTypeDTO);
-        userTypeService.save(testUserTypeDTO2);
-        userService.save(testUserDTO);
+    void cahngeDataUserByUserDTOShoildBeUpdated(){
+        userTypeService.createUserType(testUserTypeDTO);
+        userTypeService.createUserType(testUserTypeDTO2);
+        userService.createUser(testUserDTO);
         testUserDTO.setRole("Admin");
-        userService.updateUser(testUserDTO);
-        var updatedUser=userService.findUserByLastNameAndFirstNameReturnUser(testUserDTO.getLastName(), testUserDTO.getFirstName());
+        userService.cahngeDataUser(testUserDTO);
+        var updatedUser=userService.findUserByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
         assertFalse(testUserDTO.getRole().equals("Client"));
         assertTrue(testUserDTO.getFirstName().equals(updatedUser.getFirstName()));
 

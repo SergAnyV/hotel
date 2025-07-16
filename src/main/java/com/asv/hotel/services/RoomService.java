@@ -25,13 +25,13 @@ public class RoomService {
 
 
     @Transactional(readOnly = true)
-    public List<RoomDTO> findAll() {
+    public List<RoomDTO> findAllRoomsDTO() {
         return roomRepository.findAll().stream().map(room -> RoomMapper.INSTANCE.roomToRoomDTO(room))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public RoomDTO findByNumber(String number) {
+    public RoomDTO findRoomDTOByNumber(String number) {
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.findRoomByNumberLikeIgnoreCase(number)
                 .orElseThrow(() -> {
                     log.warn("Error:Не существует комнаты с номером {} оошибка в методе {}", number
@@ -42,7 +42,7 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<RoomDTO> findByType(RoomType type) {
+    public List<RoomDTO> findRoomsDTOByType(RoomType type) {
         return roomRepository.findRoomByTypeLikeIgnoreCase(type).stream()
                 .map(roomOptional -> {
                     return RoomMapper.INSTANCE.roomToRoomDTO(roomOptional);
@@ -52,7 +52,7 @@ public class RoomService {
 
 
     @Transactional
-    public RoomDTO save(RoomDTO roomDTO) {
+    public RoomDTO createRoom(RoomDTO roomDTO) {
         try {
             if (roomRepository.findRoomByNumberLikeIgnoreCase(roomDTO.getNumber()).isPresent()) {
                 log.warn("Error: такая комната уже существует {} ", roomDTO.getNumber());
@@ -71,7 +71,7 @@ public class RoomService {
 
 
     @Transactional
-    public RoomDTO update(RoomDTO newRoomDTO) {
+    public RoomDTO changeDataRoom(RoomDTO newRoomDTO) {
         var existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(newRoomDTO.getNumber())
                 .orElseThrow(() -> {
                     log.warn("Error:Не существует комнаты с номером {} метод update в RoomService", newRoomDTO.getNumber());
@@ -92,14 +92,14 @@ public class RoomService {
 
 
     @Transactional
-    public void delete(String number) {
+    public void deleteRoomByNumber(String number) {
         if (roomRepository.deleteRoomByNumberLikeIgnoreCase(number) == 0) {
             throw new DataNotFoundException(number);
         }
     }
 
 
-    protected Room findByNumberReturnRoom(String number) {
+    protected Room findRoomByNumber(String number) {
         return roomRepository.findRoomByNumberLikeIgnoreCase(number).get();
     }
 
