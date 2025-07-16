@@ -1,7 +1,7 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
-import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

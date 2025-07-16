@@ -1,4 +1,4 @@
-package com.asv.hotel.exceptions.mistakes;
+package com.asv.hotel.exceptions;
 
 public class DataNotFoundException extends RuntimeException {
     public DataNotFoundException(String message) {

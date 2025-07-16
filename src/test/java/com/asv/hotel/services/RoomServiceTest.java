@@ -2,7 +2,7 @@ package com.asv.hotel.services;
 
 import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.entities.enums.RoomType;
-import com.asv.hotel.exceptions.mistakes.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.repositories.RoomRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

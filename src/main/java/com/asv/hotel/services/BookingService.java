@@ -6,7 +6,7 @@ import com.asv.hotel.dto.mapper.BookingMapper;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
-import com.asv.hotel.exceptions.mistakes.DataNotFoundException;
+import com.asv.hotel.exceptions.DataNotFoundException;
 import com.asv.hotel.repositories.BookingRepository;
 import com.asv.hotel.repositories.PromoCodeRepository;
 import com.asv.hotel.util.BookingUtils;
