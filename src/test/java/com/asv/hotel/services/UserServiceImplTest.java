@@ -6,6 +6,8 @@ import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.repositories.UserRepository;
 import com.asv.hotel.repositories.UserTypeRepository;
+import com.asv.hotel.services.implementations.UserServiceImpl;
+import com.asv.hotel.services.implementations.UserTypeServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,20 +20,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class UserServiceTest {
-    private UserService userService;
+class UserServiceImplTest {
+    private UserServiceImpl userServiceImpl;
     private UserRepository userRepository;
     private UserTypeDTO testUserTypeDTO,testUserTypeDTO2;
-    private UserTypeService userTypeService;
+    private UserTypeServiceImpl userTypeServiceImpl;
     private UserTypeRepository userTypeRepository;
     private UserDTO testUserDTO,testUserDTO2;
     private UserSimpleDTO testUserSimpleDTO;
 
-    public UserServiceTest(UserService userService, UserRepository userRepository,
-                           UserTypeService userTypeService, UserTypeRepository userTypeRepository) {
-        this.userService = userService;
+    public UserServiceImplTest(UserServiceImpl userServiceImpl, UserRepository userRepository,
+                               UserTypeServiceImpl userTypeServiceImpl, UserTypeRepository userTypeRepository) {
+        this.userServiceImpl = userServiceImpl;
         this.userRepository = userRepository;
-        this.userTypeService = userTypeService;
+        this.userTypeServiceImpl = userTypeServiceImpl;
         this.userTypeRepository = userTypeRepository;
     }
 
@@ -56,16 +58,16 @@ class UserServiceTest {
 
     @Test
     void createUserShoulBeSavedNewUser() {
-        userTypeService.createUserType(testUserTypeDTO);
-        UserDTO nudto = userService.createUser(testUserDTO);
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        UserDTO nudto = userServiceImpl.createUser(testUserDTO);
         assertEquals(nudto.getFirstName(), testUserDTO.getFirstName());
     }
 
     @Test
     void findUserByLastNameAndFirstNameShoudBeFindUserDTODTO() {
-        userTypeService.createUserType(testUserTypeDTO);
-        userService.createUser(testUserDTO);
-        UserDTO nudto =  userService.findUserDTOByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        userServiceImpl.createUser(testUserDTO);
+        UserDTO nudto =  userServiceImpl.findUserDTOByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
         assertEquals(testUserDTO.getLastName(),nudto.getLastName());
         assertEquals(testUserDTO.getFirstName(),nudto.getFirstName());
 
@@ -73,22 +75,22 @@ class UserServiceTest {
 
     @Test
     void findUserByLastNameAndFirstNameDTO() {
-        userTypeService.createUserType(testUserTypeDTO);
-        userService.createUser(testUserDTO);
-        User user=userService.findUserByLastNameAndFirstName(testUserSimpleDTO.getLastName()
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        userServiceImpl.createUser(testUserDTO);
+        User user= userServiceImpl.findUserByLastNameAndFirstName(testUserSimpleDTO.getLastName()
                 , testUserSimpleDTO.getFirstName());
         assertEquals(user.getFirstName(),testUserSimpleDTO.getFirstName());
 
     }
 
     @Test
-    void cahngeDataUserByUserDTOShoildBeUpdated(){
-        userTypeService.createUserType(testUserTypeDTO);
-        userTypeService.createUserType(testUserTypeDTO2);
-        userService.createUser(testUserDTO);
+    void changeDataUserByUserDTOShoildBeUpdated(){
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        userTypeServiceImpl.createUserType(testUserTypeDTO2);
+        userServiceImpl.createUser(testUserDTO);
         testUserDTO.setRole("Admin");
-        userService.cahngeDataUser(testUserDTO);
-        var updatedUser=userService.findUserByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
+        userServiceImpl.changeDataUser(testUserDTO);
+        var updatedUser= userServiceImpl.findUserByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
         assertFalse(testUserDTO.getRole().equals("Client"));
         assertTrue(testUserDTO.getFirstName().equals(updatedUser.getFirstName()));
 

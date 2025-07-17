@@ -1,135 +1,26 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
-import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.DataNotFoundException;
-import com.asv.hotel.repositories.UserTypeRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class UserTypeService {
+public interface UserTypeService {
 
-    private final UserTypeRepository userTypeRepository;
+    UserTypeDTO createUserType(UserTypeDTO userTypeDTO);
 
-    @Transactional
-    public UserTypeDTO createUserType(UserTypeDTO userTypeDTO) {
-        try {
-            if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole()).isPresent()) {
-                log.warn("Error: такая роль уже существует {} ", userTypeDTO.getRole());
-                throw new DataAlreadyExistsException(userTypeDTO.getRole());
-            }
-            UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
-            return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ", ex);
-            throw new DataAlreadyExistsException(userTypeDTO.getRole());
-        }
-    }
+    List<UserTypeDTO> findAllUserTypeDTOs();
 
-    @Transactional
-    public List<UserTypeDTO> findAllUserTypeDTOs() {
-        return userTypeRepository.findAll().stream()
-                .map(userType -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType))
-                .collect(Collectors.toList());
-    }
+    void deleteUserTypeByType(String role);
 
-    @Transactional
-    public void deleteUserTypeByType(String role) {
-        if (userTypeRepository.deleteByRole(role) == 0) {
-            log.warn("Error: такая роль не существует {} ", role);
-            throw new DataNotFoundException(role);
-        }
-    }
+    void deleteAllUserTypes();
 
-    @Transactional
-    public void deleteAllUserTypes() {
-        try {
-            userTypeRepository.deleteAll();
-        } catch (RuntimeException ex) {
-            log.warn("Error: не удалось очистить список user_types ", ex);
-            throw new RuntimeException("не удалось очистить список user_types");
-        }
-    }
+    UserTypeDTO findUserTypeDTOByType(String role);
 
-    @Transactional
-    public UserTypeDTO findUserTypeDTOByType(String role) {
-        try {
-            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()) {
-                log.warn("Error: роль не распознана среди доступных ,указана {}", role);
-                throw new DataNotFoundException("данная роль не распознана в базе");
-            }
-            return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ",
-                    ex);
-            throw new DataAlreadyExistsException(role);
-        }
-    }
+    UserType findUserTypeByType(String role);
 
+    UserTypeDTO cahngeDataUserType(UserTypeDTO userTypeDTO);
 
-    public UserType findUserTypeByType(String role) {
-        try {
-            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()) {
-                log.warn("Error: роль не распознана среди доступных ,указана {}", role);
-                throw new DataNotFoundException("данная роль не распознана в базе");
-            }
-            return userTypeOptional.get();
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ",
-                    ex);
-            throw new DataAlreadyExistsException(role);
-        }
-    }
-
-    @Transactional
-    public UserTypeDTO cahngeDataUserType(UserTypeDTO userTypeDTO) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole());
-        if (userTypeOptional.isEmpty()) {
-            log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getRole());
-            throw new DataNotFoundException("данная роль не распознана в базе");
-        }
-        var userType = userTypeOptional.get();
-
-        UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO,userType);
-        try{
-        userTypeRepository.save(userType);
-        }catch (DataAccessException ex){
-            log.error("Error: проблема доступа к базе ",ex);
-            throw ex;
-        }
-
-        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType);
-    }
-
-
-    public UserType findActiveUserTypeByType(String role){
-        try {
-            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {
-                log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
-                throw new DataNotFoundException("данная роль не распознана в базе");
-            }
-
-            return userTypeOptional.get();
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ",
-                    ex);
-            throw new DataAlreadyExistsException(role);
-        }
-    }
+    UserType findActiveUserTypeByType(String role);
 
 }

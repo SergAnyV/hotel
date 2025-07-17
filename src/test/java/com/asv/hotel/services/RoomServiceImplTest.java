@@ -4,6 +4,7 @@ import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.entities.enums.RoomType;
 import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.repositories.RoomRepository;
+import com.asv.hotel.services.implementations.RoomServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,15 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class RoomServiceTest {
+class RoomServiceImplTest {
 
     private DataSource dataSource;
-    private RoomService roomService;
+    private RoomServiceImpl roomServiceImpl;
     private RoomRepository roomRepository;
     private RoomDTO testRoomDTO;
 
-    public RoomServiceTest(RoomService roomService, RoomRepository roomRepository, DataSource dataSource) {
-        this.roomService = roomService;
+    public RoomServiceImplTest(RoomServiceImpl roomServiceImpl, RoomRepository roomRepository, DataSource dataSource) {
+        this.roomServiceImpl = roomServiceImpl;
         this.roomRepository = roomRepository;
         this.dataSource = dataSource;
     }
@@ -67,7 +68,7 @@ class RoomServiceTest {
     //сохранение новой комнаты в репозитории CREATE
     @Test
     void createRoomRoomShouldBeSavedRoom() {
-        RoomDTO roomDTO = roomService.createRoom(testRoomDTO);
+        RoomDTO roomDTO = roomServiceImpl.createRoom(testRoomDTO);
         assertEquals(roomDTO.getNumber(), testRoomDTO.getNumber());
         assertEquals(roomDTO.getType(),testRoomDTO.getType());
         assertEquals(roomDTO.getPricePerNight(),testRoomDTO.getPricePerNight());
@@ -76,16 +77,16 @@ class RoomServiceTest {
 
     @Test
     void createRoomRoom_ShouldThrowIfRoomExists() {
-        roomService.createRoom(testRoomDTO);
+        roomServiceImpl.createRoom(testRoomDTO);
 
-        assertThatThrownBy(() -> roomService.createRoom(testRoomDTO))
+        assertThatThrownBy(() -> roomServiceImpl.createRoom(testRoomDTO))
                 .isInstanceOf(DataAlreadyExistsException.class)
                 .hasMessageContaining(testRoomDTO.getNumber());
     }
     // READ чтение из базф
     @Test
     void findAll_ShouldReturnAllRoomsRooms() {
-        roomService.createRoom(testRoomDTO);
+        roomServiceImpl.createRoom(testRoomDTO);
         RoomDTO secondRoomDTO= RoomDTO.builder()
                 .number("102")
                 .type(RoomType.DELUXE)
@@ -94,16 +95,16 @@ class RoomServiceTest {
                 .pricePerNight(BigDecimal.valueOf(1000))
                 .isAvailable(true)
                 .build();
-        roomService.createRoom(secondRoomDTO);
-        List<RoomDTO> rooms = roomService.findAllRoomsDTO();
+        roomServiceImpl.createRoom(secondRoomDTO);
+        List<RoomDTO> rooms = roomServiceImpl.findAllRoomsDTO();
 
         assertEquals(rooms.size(),2);
     }
 
     @Test
     void findRoomDTOByNumber_ShouldReturnRoom() {
-        roomService.createRoom(testRoomDTO);
-        RoomDTO foundRoom = roomService.findRoomDTOByNumber("101");
+        roomServiceImpl.createRoom(testRoomDTO);
+        RoomDTO foundRoom = roomServiceImpl.findRoomDTOByNumber("101");
 
         assertThat(foundRoom).isNotNull();
         assertThat(foundRoom.getNumber()).isEqualTo("101");
@@ -111,16 +112,16 @@ class RoomServiceTest {
 
     @Test
     void findRoomDTOByNumber_ShouldThrowIfNotFound() {
-        assertThatThrownBy(() -> roomService.findRoomDTOByNumber("999"));
+        assertThatThrownBy(() -> roomServiceImpl.findRoomDTOByNumber("999"));
     }
     // UPDATE обновление
     @Test
     void updateRoom_ShouldChangeDataRoomExistingRoom() {
-        RoomDTO savedRoom = roomService.createRoom(testRoomDTO);
+        RoomDTO savedRoom = roomServiceImpl.createRoom(testRoomDTO);
         savedRoom.setType(RoomType.DELUXE);
         savedRoom.setPricePerNight(BigDecimal.valueOf(1500));
 
-        RoomDTO updatedRoom = roomService.changeDataRoom(savedRoom);
+        RoomDTO updatedRoom = roomServiceImpl.changeDataRoom(savedRoom);
 
         assertThat(updatedRoom.getType()).isEqualTo(RoomType.DELUXE);
         assertThat(updatedRoom.getPricePerNight()).isEqualByComparingTo("1500");
@@ -129,8 +130,8 @@ class RoomServiceTest {
     // DELETE
     @Test
     void deleteRoomByNumberRoom_ShouldRemoveRoom() {
-        roomService.createRoom(testRoomDTO);
-        roomService.deleteRoomByNumber("101");
+        roomServiceImpl.createRoom(testRoomDTO);
+        roomServiceImpl.deleteRoomByNumber("101");
 
         assertThat(roomRepository.findRoomByNumberLikeIgnoreCase("101")).isEmpty();
     }

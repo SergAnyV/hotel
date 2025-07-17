@@ -104,7 +104,7 @@ public class UserController {
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
-        return ResponseEntity.ok(userService.cahngeDataUser(userDTO));
+        return ResponseEntity.ok(userService.changeDataUser(userDTO));
     }
 
 

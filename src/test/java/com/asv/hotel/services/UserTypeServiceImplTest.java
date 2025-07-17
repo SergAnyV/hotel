@@ -3,6 +3,7 @@ package com.asv.hotel.services;
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.repositories.UserTypeRepository;
+import com.asv.hotel.services.implementations.UserTypeServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,16 +20,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class UserTypeServiceTest {
+class UserTypeServiceImplTest {
     private DataSource dataSource;
     private UserTypeDTO testUserTypeDTO, testUserTypeDTO2;
-    private UserTypeService userTypeService;
+    private UserTypeServiceImpl userTypeServiceImpl;
     private UserTypeRepository userTypeRepository;
 
-    public UserTypeServiceTest(DataSource dataSource, UserTypeService userTypeService,
-                               UserTypeRepository userTypeRepository) {
+    public UserTypeServiceImplTest(DataSource dataSource, UserTypeServiceImpl userTypeServiceImpl,
+                                   UserTypeRepository userTypeRepository) {
         this.dataSource = dataSource;
-        this.userTypeService = userTypeService;
+        this.userTypeServiceImpl = userTypeServiceImpl;
         this.userTypeRepository = userTypeRepository;
     }
 
@@ -63,7 +64,7 @@ class UserTypeServiceTest {
     //сохранение новой роли в репозитории CREATE
     @Test
     void saveUserTypeShouldBeCreateUserTypeUserType() {
-        UserTypeDTO savedUserType = userTypeService.createUserType(testUserTypeDTO);
+        UserTypeDTO savedUserType = userTypeServiceImpl.createUserType(testUserTypeDTO);
         assertEquals(savedUserType.getRole(), testUserTypeDTO.getRole());
         assertEquals(savedUserType.getDescription(), testUserTypeDTO.getDescription());
         assertEquals(savedUserType.getIsActive(), testUserTypeDTO.getIsActive());
@@ -72,9 +73,9 @@ class UserTypeServiceTest {
 
     @Test
     void createUserTypeUserTypeShouldThrowIfUserTypeExist() {
-        userTypeService.createUserType(testUserTypeDTO);
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
 
-        assertThatThrownBy(() -> userTypeService.createUserType(testUserTypeDTO))
+        assertThatThrownBy(() -> userTypeServiceImpl.createUserType(testUserTypeDTO))
                 .isInstanceOf(DataAlreadyExistsException.class)
                 .hasMessageContaining(testUserTypeDTO.getRole());
     }
@@ -82,26 +83,26 @@ class UserTypeServiceTest {
     //поиск всех возможных ролей
     @Test
     void findAllShouldBeFindAllUserTypeDTOsUserTypes() {
-        userTypeService.createUserType(testUserTypeDTO);
-        userTypeService.createUserType(testUserTypeDTO2);
-        List<UserTypeDTO> userTypeDTOList = userTypeService.findAllUserTypeDTOs();
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        userTypeServiceImpl.createUserType(testUserTypeDTO2);
+        List<UserTypeDTO> userTypeDTOList = userTypeServiceImpl.findAllUserTypeDTOs();
         assertEquals(userTypeDTOList.size(), 2);
 
     }
 
     @Test
     void deleteShouldDeleteUserTypeByTypeUserType(){
-        userTypeService.createUserType(testUserTypeDTO);
-        userTypeService.createUserType(testUserTypeDTO2);
-        userTypeService.deleteUserTypeByType(testUserTypeDTO.getRole());
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        userTypeServiceImpl.createUserType(testUserTypeDTO2);
+        userTypeServiceImpl.deleteUserTypeByType(testUserTypeDTO.getRole());
         assertThat(userTypeRepository.findUserTypeByRoleLikeIgnoreCase(testUserTypeDTO.getRole())).isEmpty();
     }
 
     @Test
     void deleteAllShouldDeleteUserTypeByTypeAllUserTypes(){
-        userTypeService.createUserType(testUserTypeDTO);
-        userTypeService.createUserType(testUserTypeDTO2);
-        userTypeService.deleteAllUserTypes();
+        userTypeServiceImpl.createUserType(testUserTypeDTO);
+        userTypeServiceImpl.createUserType(testUserTypeDTO2);
+        userTypeServiceImpl.deleteAllUserTypes();
         assertTrue(userTypeRepository.findAll().isEmpty(),"не удалились все данные из списка user_types");
     }
 

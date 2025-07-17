@@ -3,6 +3,7 @@ package com.asv.hotel.services;
 import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
 import com.asv.hotel.entities.enums.TypeOfPromoCode;
 import com.asv.hotel.repositories.PromoCodeRepository;
+import com.asv.hotel.services.implementations.PromoCodeServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,17 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class PromoCodeServiceTest {
+class PromoCodeServiceImplTest {
     private DataSource dataSource;
     private PromoCodeDTO testPromoCodeDTO;
-    private PromoCodeService promoCodeService;
+    private PromoCodeServiceImpl promoCodeServiceImpl;
     private PromoCodeRepository promoCodeRepository;
 
-    public PromoCodeServiceTest(DataSource dataSource
-            , PromoCodeService promoCodeService
+    public PromoCodeServiceImplTest(DataSource dataSource
+            , PromoCodeServiceImpl promoCodeServiceImpl
             , PromoCodeRepository promoCodeRepository) {
         this.dataSource = dataSource;
-        this.promoCodeService = promoCodeService;
+        this.promoCodeServiceImpl = promoCodeServiceImpl;
         this.promoCodeRepository = promoCodeRepository;
     }
 
@@ -54,7 +55,7 @@ class PromoCodeServiceTest {
 
     @Test
     void createPromoCodeShouldBeSavedPromoCode() {
-        PromoCodeDTO savedPromoCode=promoCodeService.createPromoCode(testPromoCodeDTO);
+        PromoCodeDTO savedPromoCode= promoCodeServiceImpl.createPromoCode(testPromoCodeDTO);
         assertEquals(savedPromoCode.getCode(),testPromoCodeDTO.getCode());
     }
 }
