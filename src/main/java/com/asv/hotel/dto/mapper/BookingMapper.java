@@ -37,6 +37,6 @@ public interface BookingMapper {
 
     @Named("mapLocalDateTimeToLocalDate")
     default LocalDate mapLocalDateTimeToLocalDate(LocalDateTime createdAt){
-        return createdAt.toLocalDate();
+        return LocalDateTime.now().toLocalDate();
     }
 }
