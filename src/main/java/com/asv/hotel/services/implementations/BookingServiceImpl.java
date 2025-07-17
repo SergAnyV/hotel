@@ -37,17 +37,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
         PromoCode promoCode = null;
-//        BigDecimal totalPrice = BigDecimal.ZERO;
-//        BigDecimal totalPriceForServices = BigDecimal.ZERO;
         try {
-//            Room room = roomInternalService.findRoomByNumber(bookingSimplDTO.getRoomNumber());
-//            if (room.getIsAvailable() && !bookingRepository.isRoomAvailableForDates(room.getId()
-//                    , bookingSimplDTO.getCheckInDate()
-//                    , bookingSimplDTO.getCheckOutDate())) {
-//                throw new DataAccessException("комната не свободна на данные даты или ") {
-//                };
-//            }
-
             Booking booking = BookingMapper.INSTANCE.bookingSimpleDTOToBooking(bookingSimplDTO);
             //    поиск и установление комнаты для бронирования
             Room room = findRoomForBooking(bookingSimplDTO);
@@ -68,39 +58,6 @@ public class BookingServiceImpl implements BookingService {
             booking.setTotalPrice(totalPrice);
             booking.setStatusOfBooking(BookingStatus.CONFIRMED);
 
-//            поиск юзера и возвращение сущности
-
-//            User user = userInternalExtendExternalService.findUserByLastNameAndFirstName(
-//                    bookingSimplDTO.getUserSimpleDTO().getLastName(), bookingSimplDTO.getUserSimpleDTO().getFirstName());
-
-//            внесенеие в бронирование
-//            booking.setUser(user);
-
-
-            //расчет стоимости за номер для сервисов
-//            Set<ServiceHotel> serviceHotel = findAllServices(bookingSimplDTO.getServiceSet());
-//            BigDecimal livingDays = BookingUtils.calculateLivingDays(bookingSimplDTO.getCheckInDate(), bookingSimplDTO.getCheckOutDate());
-
-
-//            if (!serviceHotel.isEmpty()) {
-//                totalPriceForServices = serviceHotel.stream().map(serviceHotelentity -> {
-//                    return serviceHotelentity.getPrice().multiply(livingDays);
-//                }).reduce(BigDecimal.ZERO, (sum, price) -> sum.add(price));
-//            }
-//            booking.setServiceSet(serviceHotel);
-
-
-//            расчет стоимости за номер с промокодом
-//            totalPrice = room.getPricePerNight()
-//                    .multiply(livingDays).add(totalPriceForServices);
-//            try {
-//                promoCode = promoCodeInternalService.findActivePromoCodeByName(bookingSimplDTO.getPromoCodeDTO());
-//                totalPrice = calculateTotalPriceWithPromoCode(totalPrice, promoCode);
-//                booking.setPromoCode(promoCode);
-//            } catch (DataNotFoundException | DataAccessException ex) {
-//                log.error("Error промокод не найден {}", bookingSimplDTO.getPromoCodeDTO(), ex);
-//            }
-//            booking.setTotalPrice(totalPrice);
             return BookingMapper.INSTANCE.bookingToBookingDTO(bookingRepository.save(booking));
         } catch (RuntimeException ex) {
             log.error("Error проблемы с сохранением бронирования");
