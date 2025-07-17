@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 public interface BookingMapper {
     BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    @Mapping(target = "createdAt", source = "createdAt",qualifiedByName = "mapLocalDateTimeToLocalDate")
-    @Mapping(target = "promoCodeDTO",source = "promoCode.code")
+    @Mapping(target = "createdAt", qualifiedByName = "mapLocalDateTimeToLocalDate")
+    @Mapping(target = "promoCodeDTO", source = "promoCode.code")
     @Mapping(target = "roomSimpleDTO", source = "room")
     @Mapping(target = "userSimpleDTO", source = "user")
     @Mapping(target = "serviceHotelDTOS", source = "serviceSet")
@@ -26,17 +26,17 @@ public interface BookingMapper {
 
     @Mapping(target = "roomNumber", source = "room.number")
     @Mapping(target = "userSimpleDTO", source = "user")
-    @Mapping(target = "promoCodeDTO",source = "promoCode.code")
+    @Mapping(target = "promoCodeDTO", source = "promoCode.code")
     BookingSimplDTO bookingToBookingSimpleDTO(Booking booking);
 
 
-    BookingDTO bookingSimpleToBookingDTO( BookingSimplDTO bookingSimplDTO);
+    BookingDTO bookingSimpleToBookingDTO(BookingSimplDTO bookingSimplDTO);
 
-    @Mapping(target = "serviceSet",source = "serviceSet")
+    @Mapping(target = "serviceSet", source = "serviceSet")
     Booking bookingSimpleDTOToBooking(BookingSimplDTO bookingSimplDTO);
 
     @Named("mapLocalDateTimeToLocalDate")
-    default LocalDate mapLocalDateTimeToLocalDate(LocalDateTime createdAt){
-        return LocalDateTime.now().toLocalDate();
+    default LocalDate mapLocalDateTimeToLocalDate(LocalDateTime createdAt) {
+        return LocalDate.now();
     }
 }
