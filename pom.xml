@@ -102,7 +102,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope> <!-- H2 нужен только во время выполнения -->
+            <scope>runtime</scope> <!-- H2 нужен только во время выполнения -->
         </dependency>
 
     </dependencies>
