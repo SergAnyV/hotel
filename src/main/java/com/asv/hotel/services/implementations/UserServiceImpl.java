@@ -61,6 +61,17 @@ public class UserServiceImpl implements UserInternalService {
         }
     }
 
+    @Override
+    public User findUserByNickName(String nickName) {
+        try {
+            return   userRepository.findUserByNickName(nickName).get();
+        }catch (Exception ex) {
+            log.warn("Error : такого юзера не существует {}",nickName, ex);
+            throw new DataNotFoundException(" такого юзера не существует");
+        }
+
+    }
+
     @Transactional
     public void deleteUserByLastNameAndFirstName(String lastName, String firstName) {
         if (userRepository.deleteUserByLastNameAndFirstName(lastName, firstName) == 0) {

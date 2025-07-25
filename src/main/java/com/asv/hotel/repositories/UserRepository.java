@@ -27,11 +27,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Query(value = """
-    UPDATE users SET nick_name = :nickName, first_name = :firstName, fathers_name = :fathersName, last_name = :lastName,
-        email = :email, phone = :phoneNumber, password = :password, 
-            role_id = (SELECT id FROM user_types WHERE role ILIKE :role)
-    WHERE id = :userId
-    """, nativeQuery = true)
+            UPDATE users SET nick_name = :nickName, first_name = :firstName, fathers_name = :fathersName, last_name = :lastName,
+                email = :email, phone = :phoneNumber, password = :password, 
+                    role_id = (SELECT id FROM user_types WHERE role ILIKE :role)
+            WHERE id = :userId
+            """, nativeQuery = true)
     int updateUser(
             @Param("userId") Long userId,
             @Param("nickName") String nickName,
@@ -42,4 +42,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("phoneNumber") String phoneNumber,
             @Param("password") String password,
             @Param("role") String role);
+
+    @Query(value = "SELECT * FROM users WHERE nick_name ILIKE :nickName", nativeQuery = true)
+    Optional<User> findUserByNickName(@Param("phone") String nickName);
+
 }
