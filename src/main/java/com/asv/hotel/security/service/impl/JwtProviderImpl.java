@@ -1,7 +1,8 @@
 package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
-import com.asv.hotel.security.service.JwtProovider;
+
+import com.asv.hotel.security.service.JwtProvider;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -10,6 +11,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ import java.util.Date;
 
 @Slf4j
 @Component
-public class JwtProviderImpl implements JwtProovider {
+public class JwtProviderImpl implements JwtProvider {
 
     private final SecretKey jwtAccessSecret;
 
