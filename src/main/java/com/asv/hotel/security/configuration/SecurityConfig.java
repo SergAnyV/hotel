@@ -1,17 +1,15 @@
 package com.asv.hotel.security.configuration;
 
-import com.asv.hotel.security.service.impl.JwtAuthenticationFilter;
+
+import com.asv.hotel.security.service.impl.JwtFilter;
 import com.asv.hotel.services.UserInternalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,14 +20,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtFilter jwtFilter;
     private final UserInternalService userService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.httpBasic(basic -> basic.disable())
                 .csrf(csrf ->
                         csrf.disable()).
-                cors(cors->cors.disable())
+                cors(cors -> cors.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy((SessionCreationPolicy.STATELESS)))
                 .authorizeHttpRequests(auth ->
@@ -37,6 +36,8 @@ public class SecurityConfig {
                                 //доступ для всех
                                 .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 // доступ для всех зарегистрированных
+//                                .requestMatchers("/api/v1/auth/**").permitAll() // Разрешить всем доступ к аутентификации
+//                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").authenticated()
                                 .requestMatchers("/bookings").authenticated()
                                 //доступ по ролям
                                 .requestMatchers("/bookings/{number}", "/bookings/{id}").hasAnyAuthority("администратор", "менеджер")
@@ -48,7 +49,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/services").hasAuthority("MANAGER")
                                 .requestMatchers(HttpMethod.DELETE, "/services/**").hasAuthority("MANAGER")
                                 .anyRequest().authenticated())
-                .addFilterAfter(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class).build();
+                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
     @Bean

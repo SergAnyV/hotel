@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,16 +26,22 @@ public class UserController {
             description = "создает новый юзера")
     @ApiResponse(responseCode = "201", description = "юзера создан")
     @ApiResponse(responseCode = "409", description = "юзера не создан")
+
+    @PreAuthorize("permitAll()")
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
         UserDTO newuserDTO = userService.createUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newuserDTO);
     }
 
+
+
     @Operation(summary = "Получить по имени и фамилии",
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
+
+    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @GetMapping("/by-name-surname")
     public ResponseEntity<UserDTO> getUserByLastNameAndFirstName(
             @RequestParam("lastName")
@@ -56,10 +63,14 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserDTOByLastNameAndFirstName(lastName, firstName));
     }
 
+
+
     @Operation(summary = "Получить по номеру телефона",
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
+
+    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
             @RequestParam("phoneNumber")
@@ -73,9 +84,13 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserDTOByPhoneNumber(phoneNumber));
     }
 
+
+
     @Operation(summary = "Удалить Юзер",
             description = "удаляет данные существующего Юзер по фамилии и имени ")
     @ApiResponse(responseCode = "204", description = "Юзер удален")
+
+    @PreAuthorize("hasAuthority('администратор')")
     @DeleteMapping("/by-name")
     public ResponseEntity<Void> deleteUserByLastAndFirstName(
             @RequestParam("lastName")
@@ -98,10 +113,14 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+
+
     @Operation(summary = "обновить юзера ",
             description = "Возвращает обновленного юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
+
+    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
         return ResponseEntity.ok(userService.changeDataUser(userDTO));

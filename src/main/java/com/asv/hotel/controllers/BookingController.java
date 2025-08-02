@@ -14,6 +14,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,15 +30,21 @@ public class BookingController {
             description = "создает новое бронирование")
     @ApiResponse(responseCode = "201", description = "бронирование создано")
     @ApiResponse(responseCode = "409", description = "бронирование не создано")
+
+    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер', 'пользователь')")
     @PostMapping
     public ResponseEntity<BookingDTO> createBooking(@RequestBody @Valid BookingSimplDTO bookingSimplDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingService.createBooking(bookingSimplDTO));
     }
 
+
+
     @Operation(summary = "Удалить бронирование",
             description = "удаляет данные существующего бронирования по id")
     @ApiResponse(responseCode = "204", description = "бронирование удалено")
     @ApiResponse(responseCode = "404", description = "бронирование не найдено")
+
+    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable
@@ -47,10 +54,14 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
+
+
     @Operation(summary = "Найти бронирование по номеру комнаты",
             description = "Возвращает данные бронирования по номеру комнаты")
     @ApiResponse(responseCode = "200", description = "бронирования найдены")
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
+
+    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @GetMapping("/{number}")
     public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber(
             @PathVariable
