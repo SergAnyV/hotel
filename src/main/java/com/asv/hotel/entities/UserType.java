@@ -2,6 +2,7 @@ package com.asv.hotel.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-public class UserType {
+public class UserType implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -32,4 +33,8 @@ public class UserType {
     private Set<JobType> jobTypeList = new HashSet<>();
 
 
+    @Override
+    public String getAuthority() {
+        return role;
+    }
 }

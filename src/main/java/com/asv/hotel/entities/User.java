@@ -4,7 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,7 +45,7 @@ public class User {
     @Column(name = "phone", length = 30, unique = true, nullable = false)
     private String phoneNumber;
 
-    @Column(name = "password", nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 120)
     private String password;
 
     @CreationTimestamp
@@ -60,4 +66,6 @@ public class User {
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Report> reports = new HashSet<>();
+
+
 }

@@ -1,4 +1,4 @@
-package com.asv.hotel.security.jwtdomain;
+package com.asv.hotel.security.domain;
 
 import lombok.Getter;
 import lombok.Setter;
