@@ -1,11 +1,14 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.RoomDTO;
+
+import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.services.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +29,7 @@ public class RoomController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @GetMapping
     public ResponseEntity<List<RoomDTO>> getAllRooms() {
-        return ResponseEntity.ok(roomService.findAll());
+        return ResponseEntity.ok(roomService.findAllRoomsDTO());
     }
 
 
@@ -35,9 +38,13 @@ public class RoomController {
     @ApiResponse(responseCode = "200", description = "Номер найден")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
     @GetMapping("/{number}")
-    public ResponseEntity<RoomDTO> getRoomByNumber(@PathVariable String number) {
+    public ResponseEntity<RoomDTO> getRoomByNumber(
+            @PathVariable
+            @NotBlank(message = "номер комнаты не должен быть пустым")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
+            String number) {
 
-        RoomDTO roomDTO = roomService.findByNumber(number);
+        RoomDTO roomDTO = roomService.findRoomDTOByNumber(number);
         return ResponseEntity.ok(roomDTO);
 
     }
@@ -49,7 +56,7 @@ public class RoomController {
     @ApiResponse(responseCode = "409", description = "Номер не создан")
     @PostMapping
     public ResponseEntity<RoomDTO> createRoom( @RequestBody @Valid RoomDTO roomDTO) {
-        RoomDTO newRoomDTO = roomService.save(roomDTO);
+        RoomDTO newRoomDTO = roomService.createRoom(roomDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRoomDTO);
     }
 
@@ -61,17 +68,21 @@ public class RoomController {
     @PutMapping
     public ResponseEntity<RoomDTO> updateRoom(
             @RequestBody @Valid RoomDTO roomDTO) {
-        RoomDTO updatedRoom = roomService.update(roomDTO);
+        RoomDTO updatedRoom = roomService.changeDataRoom(roomDTO);
         return ResponseEntity.ok(updatedRoom);
     }
 
     @Operation(summary = "Удалить номер",
-            description = "обновляет данные существующего номера")
+            description = "удвляет данные существующего номера")
     @ApiResponse(responseCode = "204", description = "Номер удален")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
     @DeleteMapping("/{number}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable String number) {
-        roomService.delete(number);
+    public ResponseEntity<Void> deleteRoom(
+            @PathVariable
+            @NotBlank(message = "номер комнаты не должен быть пустым")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
+            String number) {
+        roomService.deleteRoomByNumber(number);
         return ResponseEntity.noContent().build();
     }
 

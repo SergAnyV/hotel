@@ -1,13 +1,14 @@
 package com.asv.hotel.entities;
 
+import com.asv.hotel.entities.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -24,10 +25,10 @@ public class Booking {
 
 
     @Column(name = "check_in_date", nullable = false)
-    private LocalDateTime checkInDate;
+    private LocalDate checkInDate;
 
     @Column(name = "check_out_date", nullable = false)
-    private LocalDateTime checkOutDate;
+    private LocalDate checkOutDate;
 
     @Column(name = "persons", nullable = false, scale = 0)
     private Integer persons;
@@ -35,8 +36,12 @@ public class Booking {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "status", nullable = false, length = 10)
-    private String statusOfBooking;
+    private BookingStatus statusOfBooking;
+
+    @Column(name = "status_description", length = 100,updatable = false)
+    private String statusDescription;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -46,19 +51,28 @@ public class Booking {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "promo_code_id",nullable =true)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinColumn(name = "promo_code_id")
     private PromoCode promoCode;
 
     @ManyToMany(mappedBy = "bookingSet",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private Set<Service> serviceSet=new HashSet<>();
+    private Set<ServiceHotel> serviceSet;
+
+
+    @PrePersist
+    @PreUpdate
+    private void preUpdate() {
+        if (statusOfBooking != null) {
+            this.statusDescription = statusOfBooking.getDescription();
+        }
+    }
 
 }

@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -53,13 +51,13 @@ public class User {
     private LocalDateTime updatedAt;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private UserType role;
 
-    @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Booking> bookingSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Report> reports = new HashSet<>();
 }
