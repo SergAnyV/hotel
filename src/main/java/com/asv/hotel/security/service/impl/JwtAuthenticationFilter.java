@@ -24,6 +24,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsServiceImpl userDetailsService; // Сервис для загрузки пользователя из БД
 
+    private static final String STRING_BEARER="Bearer ";
+    private static final String STRING_AUTHORIZATION="Authorization";
     /**
      * Главный метод фильтра. Вызывается для каждого HTTP-запроса.
      *
@@ -40,13 +42,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // --- ШАГ 1: Извлекаем токен из заголовка Authorization ---
-        final String authHeader = request.getHeader("Authorization");
+        //  ШАГ 1: Извлекаем токен из заголовка Authorization
+        final String authHeader = request.getHeader(STRING_AUTHORIZATION);
         final String jwt;
         final String nickName;
 
-        // Если заголовка нет или он не начинается с "Bearer ", пропускаем фильтр
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        // заголовка нет или он не начинается с "Bearer ", пропускаем фильтр
+        if (authHeader == null || !authHeader.startsWith(STRING_BEARER)) {
             filterChain.doFilter(request, response); // Передаем запрос дальше по цепочке
             return; // Выходим из метода, так как токена нет
         }
@@ -54,22 +56,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Извлекаем сам токен (убираем "Bearer ")
         jwt = authHeader.substring(7); // "Bearer " — это 7 символов
 
-        // --- ШАГ 2: Извлекаем имя пользователя (nickName) из токена ---
+        // ШАГ 2: Извлекаем имя пользователя (nickName) из токена
         nickName = jwtUtils.extractUsername(jwt); // Используем нашу утилиту
 
-        // --- ШАГ 3: Проверяем, есть ли уже аутентификация в SecurityContext ---
+        // ШАГ 3: Проверяем, есть ли уже аутентификация в SecurityContext
         // Если аутентификация уже установлена (например, другой фильтр уже обработал запрос),
         // и имя пользователя совпадает — ничего не делаем.
         if (nickName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // --- ШАГ 4: Загружаем данные пользователя из БД ---
+            // ШАГ 4: Загружаем данные пользователя из БД
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(nickName);
 
-            // --- ШАГ 5: Проверяем валидность токена ---
+            // ШАГ 5: Проверяем валидность токена
             // Проверяем: подпись верна, срок не истек, токен не отозван (находится в TokenStorageService)
             if (jwtUtils.isTokenValid(jwt, userDetails)) {
 
-                // --- ШАГ 6: Создаем объект аутентификации ---
+                // ШАГ 6: Создаем объект аутентификации
                 // UsernamePasswordAuthenticationToken — это стандартный класс Spring Security.
                 // Хотя он называется "Password", для JWT пароль не нужен, поэтому передаем null.
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -78,16 +80,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetails.getAuthorities() // Список полномочий (ролей)
                 );
 
-                // --- ШАГ 7: Устанавливаем детали запроса (IP-адрес, сессия и т.д.) ---
+                // ШАГ 7: Устанавливаем детали запроса
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // --- ШАГ 8: Устанавливаем аутентификацию в SecurityContext ---
+                // ШАГ 8: Устанавливаем аутентификацию в SecurityContext
                 // Это самая важная строка. После этого Spring Security "знает", кто делает запрос.
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // --- ШАГ 9: Передаем запрос дальше по цепочке фильтров ---
+        // ШАГ 9: Передаем запрос дальше по цепочке фильтров
         // Даже если токен не валиден или отсутствует, мы все равно передаем запрос дальше.
         // Это позволяет контроллерам обрабатывать запросы, которые не требуют аутентификации (permitAll),
         // или возвращать ошибку 401/403, если аутентификация нужна, но токен неверен.

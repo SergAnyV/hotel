@@ -71,7 +71,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // НОВЫЙ БИН: Настраивает обработчик выражений для @PreAuthorize с учетом иерархии ролей
+    // настраивает обработчик выражений для @преавторайз с учетом иерархии ролей
     @Bean
     public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();

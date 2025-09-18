@@ -1,6 +1,9 @@
 package com.asv.hotel.security.controller;
 
 import com.asv.hotel.security.domain.JWTAuthenticationResponse;
+import com.asv.hotel.security.domain.LogoutRequest;
+import com.asv.hotel.security.domain.RefreshTokenRequest;
+import com.asv.hotel.security.domain.SignInRequest;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.service.impl.AuthenticationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,62 +45,4 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    // Класс для принятия данных при входе
-    static class SignInRequest {
-        private String nickName;
-        private String password;
-
-        // Геттеры и сеттеры
-        public String getNickName() {
-            return nickName;
-        }
-
-        public void setNickName(String nickName) {
-            this.nickName = nickName;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-    }
-
-    // НОВЫЙ класс для принятия refresh токена
-    static class RefreshTokenRequest {
-        private String refreshToken;
-
-        public String getRefreshToken() {
-            return refreshToken;
-        }
-
-        public void setRefreshToken(String refreshToken) {
-            this.refreshToken = refreshToken;
-        }
-    }
-
-    // Класс для принятия токенов при выходе
-    static class LogoutRequest {
-        private String accessToken;
-        private String refreshToken;
-
-        // Геттеры и сеттеры
-        public String getAccessToken() {
-            return accessToken;
-        }
-
-        public void setAccessToken(String accessToken) {
-            this.accessToken = accessToken;
-        }
-
-        public String getRefreshToken() {
-            return refreshToken;
-        }
-
-        public void setRefreshToken(String refreshToken) {
-            this.refreshToken = refreshToken;
-        }
-    }
 }

@@ -1,14 +1,12 @@
 package com.asv.hotel.security.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
+@ToString
 public class JWTAuthenticationResponse {
     private String accessToken;
     private String refreshToken;

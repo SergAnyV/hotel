@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenStorageService.addToken(accessToken);
         tokenStorageService.addToken(refreshToken);
 
-        //  ответ клиенту
+        // ответ клиенту
         return new JWTAuthenticationResponse(accessToken, refreshToken);
     }
 
