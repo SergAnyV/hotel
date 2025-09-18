@@ -1,60 +1,84 @@
 package com.asv.hotel.security.configuration;
 
 
-import com.asv.hotel.security.service.impl.JwtFilter;
-import com.asv.hotel.services.UserInternalService;
-import lombok.RequiredArgsConstructor;
+import com.asv.hotel.security.service.impl.CustomUserDetailsServiceImpl;
+import com.asv.hotel.security.service.impl.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    private final JwtFilter jwtFilter;
-    private final UserInternalService userService;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthFilter;
+
+    @Autowired
+    private CustomUserDetailsServiceImpl userDetailsService;
+
+      @Autowired
+    private RoleHierarchy roleHierarchy;
+
+    @Autowired
+    PasswordEncoderConfig passwordEncoder;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.httpBasic(basic -> basic.disable())
-                .csrf(csrf ->
-                        csrf.disable()).
-                cors(cors -> cors.disable())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/db/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy((SessionCreationPolicy.STATELESS)))
-                .authorizeHttpRequests(auth ->
-                        auth
-                                //доступ для всех
-                                .requestMatchers("/api/v1/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                                // доступ для всех зарегистрированных
-//                                .requestMatchers("/api/v1/auth/**").permitAll() // Разрешить всем доступ к аутентификации
-//                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").authenticated()
-                                .requestMatchers("/bookings").authenticated()
-                                //доступ по ролям
-                                .requestMatchers("/bookings/{number}", "/bookings/{id}").hasAnyAuthority("администратор", "менеджер")
-                                .requestMatchers("/users").permitAll()
-                                .requestMatchers("/users/by-**").hasAnyAuthority("администратор", "менеджер")
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-                                .requestMatchers(HttpMethod.GET, "/services").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/services/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/services").hasAuthority("MANAGER")
-                                .requestMatchers(HttpMethod.DELETE, "/services/**").hasAuthority("MANAGER")
-                                .anyRequest().authenticated())
-                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
+        return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder.passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // НОВЫЙ БИН: Настраивает обработчик выражений для @PreAuthorize с учетом иерархии ролей
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setRoleHierarchy(roleHierarchy); // Устанавливаем иерархию ролей
+        return expressionHandler;
     }
 
 }
+
+

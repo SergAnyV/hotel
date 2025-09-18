@@ -15,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-public class UserType implements GrantedAuthority {
+public class UserType {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -32,9 +32,4 @@ public class UserType implements GrantedAuthority {
     @ManyToMany(mappedBy = "userTypes", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<JobType> jobTypeList = new HashSet<>();
 
-
-    @Override
-    public String getAuthority() {
-        return role;
-    }
 }
