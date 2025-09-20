@@ -33,7 +33,7 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsServiceImpl userDetailsService;
 
-      @Autowired
+    @Autowired
     private RoleHierarchy roleHierarchy;
 
     @Autowired
@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

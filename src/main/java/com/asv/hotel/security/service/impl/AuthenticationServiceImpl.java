@@ -86,6 +86,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // возвращаем новый токен
             return new JWTAuthenticationResponse(newAccessToken, refreshToken);
 
+        } catch (MyAuthException e) {
+
+            throw e;
         } catch (Exception e) {
             throw new MyAuthException("Failed to refresh access token: " + e.getMessage());
         }

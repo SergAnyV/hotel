@@ -26,15 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String STRING_BEARER="Bearer ";
     private static final String STRING_AUTHORIZATION="Authorization";
-    /**
-     * Главный метод фильтра. Вызывается для каждого HTTP-запроса.
-     *
-     * @param request  Входящий HTTP-запрос.
-     * @param response Исходящий HTTP-ответ.
-     * @param filterChain Цепочка фильтров. Мы должны передать запрос дальше, даже если не обработали его.
-     * @throws ServletException
-     * @throws IOException
-     */
+    private static final int NUMBER_FOR_CUTTING_TOKEN=7;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -47,14 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String nickName;
 
-        // заголовка нет или он не начинается с "Bearer ", пропускаем фильтр
+        // заголовка нет или он начинается  не с "Bearer ", пропускаем фильтр
         if (authHeader == null || !authHeader.startsWith(STRING_BEARER)) {
             filterChain.doFilter(request, response); // Передаем запрос дальше по цепочке
             return; // Выходим из метода, так как токена нет
         }
 
         // Извлекаем сам токен (убираем "Bearer ")
-        jwt = authHeader.substring(7); // "Bearer " — это 7 символов
+        jwt = authHeader.substring(NUMBER_FOR_CUTTING_TOKEN); // "Bearer " — это 7 символов
 
         // ШАГ 2: Извлекаем имя пользователя (nickName) из токена
         nickName = jwtUtils.extractUsername(jwt); // Используем нашу утилиту

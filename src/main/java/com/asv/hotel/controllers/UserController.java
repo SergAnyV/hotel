@@ -27,7 +27,7 @@ public class UserController {
     @ApiResponse(responseCode = "201", description = "юзера создан")
     @ApiResponse(responseCode = "409", description = "юзера не создан")
 
-    @PreAuthorize("permitAll()")
+
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
         UserDTO newuserDTO = userService.createUser(userDTO);
@@ -41,7 +41,6 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
 
-    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @GetMapping("/by-name-surname")
     public ResponseEntity<UserDTO> getUserByLastNameAndFirstName(
             @RequestParam("lastName")
@@ -70,7 +69,6 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
 
-    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
             @RequestParam("phoneNumber")
@@ -89,8 +87,6 @@ public class UserController {
     @Operation(summary = "Удалить Юзер",
             description = "удаляет данные существующего Юзер по фамилии и имени ")
     @ApiResponse(responseCode = "204", description = "Юзер удален")
-
-    @PreAuthorize("hasAuthority('администратор')")
     @DeleteMapping("/by-name")
     public ResponseEntity<Void> deleteUserByLastAndFirstName(
             @RequestParam("lastName")
@@ -120,7 +116,6 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
 
-    @PreAuthorize("hasAnyAuthority('администратор', 'менеджер')")
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
         return ResponseEntity.ok(userService.changeDataUser(userDTO));
