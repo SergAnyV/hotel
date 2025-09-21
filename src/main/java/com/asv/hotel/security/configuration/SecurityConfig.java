@@ -3,6 +3,7 @@ package com.asv.hotel.security.configuration;
 
 import com.asv.hotel.security.service.impl.CustomUserDetailsServiceImpl;
 import com.asv.hotel.security.service.impl.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,21 +24,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
-    @Autowired
-    private CustomUserDetailsServiceImpl userDetailsService;
+    private final CustomUserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private RoleHierarchy roleHierarchy;
+    private final RoleHierarchy roleHierarchy;
 
-    @Autowired
-    PasswordEncoderConfig passwordEncoder;
+    private final PasswordEncoderConfig passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
