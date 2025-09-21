@@ -13,11 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "User Management", description = "REST API для управления юзерами")
 public class UserController {
     private final UserService userService;
@@ -68,13 +70,13 @@ public class UserController {
     @PreAuthorize("hasRole('АДМИНИСТРАТОР')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
-//            @RequestParam("phoneNumber")
-//            @NotBlank(message = "Телефон пользователя, не должен быть пустым")
-//            @Size(min = 3, max = 20, message = "количество символов 3-20")
-//            @Pattern(
-//                    regexp = "^[0-9]",
-//                    message = "Некорректный номер. Пример: 89065554433"
-//            )
+            @RequestParam("phoneNumber")
+            @NotBlank(message = "Телефон пользователя, не должен быть пустым")
+            @Size(min = 3, max = 20, message = "количество символов 3-20")
+            @Pattern(
+                    regexp = "^\\d+$",
+                    message = "Некорректный номер. Пример: 89065554433"
+            )
             String phoneNumber) {
         return ResponseEntity.ok(userService.findUserDTOByPhoneNumber(phoneNumber));
     }
