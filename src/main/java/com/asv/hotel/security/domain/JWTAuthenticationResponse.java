@@ -10,5 +10,5 @@ import lombok.*;
 public class JWTAuthenticationResponse {
     private String accessToken;
     private String refreshToken;
-    private static String TOKEN_TYPE = "Bearer";
+    private static String TOKEN_TYPE = "Bearer ";
 }

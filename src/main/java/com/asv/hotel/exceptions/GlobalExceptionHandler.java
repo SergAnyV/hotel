@@ -28,10 +28,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorMessage> handleAllExceptions(Exception ex,String message) {
+    public ResponseEntity<ErrorMessage> handleAllExceptions(Exception ex) {
         ErrorMessage response = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                message);
+                "Internal server error");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

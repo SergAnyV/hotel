@@ -156,6 +156,9 @@ public class JWTUtils {
 
     //действителен ли токен проверка на  подпись + срок действия + наличие в хранилище
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        if (userDetails == null) {
+            return false;
+        }
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) &&
                 !isTokenExpired(token) &&

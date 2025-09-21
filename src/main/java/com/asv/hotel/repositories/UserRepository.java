@@ -43,7 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("password") String password,
             @Param("role") String role);
 
-    @Query(value = "SELECT * FROM users WHERE nick_name ILIKE :nickName", nativeQuery = true)
-    Optional<User> findUserByNickName(@Param("nick_name") String nickName);
+    @Query(value = "SELECT * FROM users WHERE nick_name = :nickName", nativeQuery = true)
+    Optional<User> findUserByNickName(@Param("nickName") String nickName);
 
 }

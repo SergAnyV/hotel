@@ -16,7 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Tag(name = "User Management", description = "REST API для управления юзерами")
 public class UserController {
@@ -26,8 +26,6 @@ public class UserController {
             description = "создает новый юзера")
     @ApiResponse(responseCode = "201", description = "юзера создан")
     @ApiResponse(responseCode = "409", description = "юзера не создан")
-
-
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO userDTO) {
         UserDTO newuserDTO = userService.createUser(userDTO);
@@ -40,7 +38,6 @@ public class UserController {
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
-
     @GetMapping("/by-name-surname")
     public ResponseEntity<UserDTO> getUserByLastNameAndFirstName(
             @RequestParam("lastName")
@@ -68,16 +65,16 @@ public class UserController {
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
-
+    @PreAuthorize("hasRole('АДМИНИСТРАТОР')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
-            @RequestParam("phoneNumber")
-            @NotBlank(message = "Телефон пользователя, не должен быть пустым")
-            @Size(min = 3, max = 20, message = "количество символов 3-20")
-            @Pattern(
-                    regexp = "^[0-9]",
-                    message = "Некорректный номер. Пример: 89065554433"
-            )
+//            @RequestParam("phoneNumber")
+//            @NotBlank(message = "Телефон пользователя, не должен быть пустым")
+//            @Size(min = 3, max = 20, message = "количество символов 3-20")
+//            @Pattern(
+//                    regexp = "^[0-9]",
+//                    message = "Некорректный номер. Пример: 89065554433"
+//            )
             String phoneNumber) {
         return ResponseEntity.ok(userService.findUserDTOByPhoneNumber(phoneNumber));
     }
@@ -115,7 +112,6 @@ public class UserController {
             description = "Возвращает обновленного юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
-
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody @Valid UserDTO userDTO) {
         return ResponseEntity.ok(userService.changeDataUser(userDTO));

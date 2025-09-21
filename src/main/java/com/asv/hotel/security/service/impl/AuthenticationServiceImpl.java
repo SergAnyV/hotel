@@ -17,15 +17,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-
     private final AuthenticationManager authenticationManager;
-
 
     private final CustomUserDetailsServiceImpl userDetailsService;
 
-
     private final JWTUtils jwtUtils;
-
 
     private final TokenStorageService tokenStorageService;
 

@@ -9,15 +9,15 @@ public class RoleHierarchyConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withDefaultRolePrefix()
-                .role("ROLE_МЕНЕДЖЕР").implies("ROLE_АДМИНИСТРАТОР")
+                .role("МЕНЕДЖЕР").implies("АДМИНИСТРАТОР")
 
-                .role("ROLE_АДМИНИСТРАТОР").implies("ROLE_ПОВАР")
-                .role("ROLE_АДМИНИСТРАТОР").implies("ROLE_УБОРЩИК")
-                .role("ROLE_АДМИНИСТРАТОР").implies("ROLE_РАБОТНИК КУХНИ")
+                .role("АДМИНИСТРАТОР").implies("ПОВАР")
+                .role("АДМИНИСТРАТОР").implies("УБОРЩИК")
+                .role("АДМИНИСТРАТОР").implies("РАБОТНИК КУХНИ")
 
-                .role("ROLE_ПОВАР").implies("ROLE_КЛИЕНТ")
-                .role("ROLE_УБОРЩИК").implies("ROLE_КЛИЕНТ")
-                .role("ROLE_РАБОТНИК КУХНИ").implies("ROLE_КЛИЕНТ")
+                .role("ПОВАР").implies("КЛИЕНТ")
+                .role("УБОРЩИК").implies("КЛИЕНТ")
+                .role("РАБОТНИК КУХНИ").implies("КЛИЕНТ")
                 .build();
     }
 }
