@@ -81,7 +81,7 @@ public class UserController {
 
 
 
-    @Operation(summary = "Удалить Юзер",
+    @Operation(summary = "Удалите Юзер",
             description = "удаляет данные существующего Юзер по фамилии и имени ")
     @ApiResponse(responseCode = "204", description = "Юзер удален")
     @DeleteMapping("/by-name")
