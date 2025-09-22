@@ -35,7 +35,6 @@ public class UserController {
     }
 
 
-
     @Operation(summary = "Получить по имени и фамилии",
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
@@ -62,7 +61,6 @@ public class UserController {
     }
 
 
-
     @Operation(summary = "Получить по номеру телефона",
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
@@ -70,17 +68,17 @@ public class UserController {
     @PreAuthorize("hasRole('АДМИНИСТРАТОР')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
-            @RequestParam("phoneNumber")
+
             @NotBlank(message = "Телефон пользователя, не должен быть пустым")
             @Size(min = 3, max = 20, message = "количество символов 3-20")
             @Pattern(
                     regexp = "^\\d+$",
                     message = "Некорректный номер. Пример: 89065554433"
             )
+            @RequestParam("phoneNumber")
             String phoneNumber) {
         return ResponseEntity.ok(userService.findUserDTOByPhoneNumber(phoneNumber));
     }
-
 
 
     @Operation(summary = "Удалите Юзер",
@@ -107,7 +105,6 @@ public class UserController {
         userService.deleteUserByLastNameAndFirstName(lastName, firstName);
         return ResponseEntity.noContent().build();
     }
-
 
 
     @Operation(summary = "обновить юзера ",

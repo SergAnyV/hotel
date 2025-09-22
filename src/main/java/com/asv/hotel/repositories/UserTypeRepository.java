@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface UserTypeRepository extends JpaRepository<UserType, Long> {
@@ -29,4 +30,12 @@ public interface UserTypeRepository extends JpaRepository<UserType, Long> {
             @Param("role") String role,
             @Param("description") String description,
             @Param("isActive") boolean isActive);
+
+    @Query(value = """
+    SELECT ut.* 
+    FROM user_types ut
+    INNER JOIN user_type_job_type utjt ON ut.id = utjt.user_type_id
+    WHERE utjt.job_type_id = :jobTypeId
+    """, nativeQuery = true)
+    List<UserType> findUserTypesByJobTypeId(@Param("jobTypeId") Long jobTypeId);
 }

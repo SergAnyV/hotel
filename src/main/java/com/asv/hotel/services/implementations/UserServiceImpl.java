@@ -33,7 +33,9 @@ public class UserServiceImpl implements UserInternalService {
             UserType userType = userTypeService.findUserTypeByType(userDTO.getRole());
             User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
             user.setRole(userType);
-            return UserMapper.INSTANCE.userToUserDTO(userRepository.save(user));
+            return UserMapper.INSTANCE.userToUserDTO(
+                    userRepository.save(user))
+                    ;
         } catch (DataAccessException e) {
             log.error("Error: проблема с доступом к базе данных"
                     , e);
