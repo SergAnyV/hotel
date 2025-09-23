@@ -36,5 +36,9 @@ public interface JobTypeRepository extends JpaRepository<JobType,Long> {
 
     @Modifying
     @Query(value = "UPDATE job_types SET description = :description, is_active = :isactive WHERE title = :title",nativeQuery = true)
-    int updateJobTypesByTitle(@Param("title")String title);
+    int updateJobTypesDescriptionAndActiveStatusByTitle(@Param("title")String title,
+                                                        @Param("description") String description,
+                                                        @Param("isactive") Boolean isactive);
+
+
 }
