@@ -34,4 +34,8 @@ public interface JobTypeMapper {
     @Mapping(target = "title", source = "title")
     @Mapping(target = "description", source = "description")
     JobTypeSimpleDTO jobTypeToJobTypeSimpleDTO(JobType jobType);
+
+    @Mapping(target = "title", source = "title")
+    @Mapping(target = "description", source = "description")
+    JobType jobTypeSimpleDTOToJobType(JobTypeSimpleDTO jobTypeSimpleDTO);
 }

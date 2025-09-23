@@ -13,7 +13,11 @@ import java.util.Optional;
 
 @Repository
 public interface JobTypeRepository extends JpaRepository<JobType,Long> {
-    @Query(value = "SELECT * FROM job_types WHERE id ILIKE :id LIMIT 1",nativeQuery = true)
+
+
+    List<JobType> findAll();
+
+    @Query(value = "SELECT * FROM job_types WHERE id = :id",nativeQuery = true)
     Optional<JobType> findJobTypeById(@Param("id") Long id);
 
     @Query(value = "SELECT * FROM job_types WHERE title ILIKE :title" , nativeQuery = true)
@@ -27,7 +31,7 @@ public interface JobTypeRepository extends JpaRepository<JobType,Long> {
                                                                     @Param("isactive")Boolean isactive);
 
     @Modifying
-    @Query(value = "DELETE FROM job_types WHERE id ILIKE :id",nativeQuery = true)
+    @Query(value = "DELETE FROM job_types WHERE id = :id",nativeQuery = true)
     int deleteJobTypeById(@Param("id") Long id);
 
     @Modifying

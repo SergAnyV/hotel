@@ -4,7 +4,7 @@ import com.asv.hotel.entities.UserType;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.HashSet;
+
 import java.util.Set;
 
 @Builder
@@ -17,6 +17,6 @@ public class JobTypeDTO {
 
     private Boolean isActive;
 
-    private Set<UserType> userTypes=new HashSet<>();
+    private Set<UserType> userTypes;
 
 }

@@ -42,6 +42,6 @@ public class JobType {
     joinColumns = @JoinColumn(name = "job_type_id"),
             inverseJoinColumns = @JoinColumn(name ="user_type_id")
     )
-    private Set<UserType> userTypes=new HashSet<>();
+    private Set<UserType> userTypes;
 
 }
