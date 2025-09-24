@@ -29,7 +29,7 @@ public class UserType {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @ManyToMany(mappedBy = "userTypes", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "userTypes", fetch = FetchType.LAZY)
     private Set<JobType> jobTypeList = new HashSet<>();
 
 }

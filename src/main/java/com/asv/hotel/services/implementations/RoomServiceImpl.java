@@ -27,8 +27,7 @@ public class RoomServiceImpl implements RoomInternalService {
 
     @Transactional(readOnly = true)
     public List<RoomDTO> findAllRoomsDTO() {
-        return roomRepository.fin
-        dAll().stream().map(room -> RoomMapper.INSTANCE.roomToRoomDTO(room))
+        return roomRepository.findAll().stream().map(room -> RoomMapper.INSTANCE.roomToRoomDTO(room))
                 .collect(Collectors.toList());
     }
 

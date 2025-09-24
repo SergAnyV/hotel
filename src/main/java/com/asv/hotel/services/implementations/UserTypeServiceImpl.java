@@ -6,6 +6,7 @@ import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.exceptions.DataNotFoundException;
 import com.asv.hotel.repositories.UserTypeRepository;
+import com.asv.hotel.services.UserTypeInternalService;
 import com.asv.hotel.services.UserTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserTypeServiceImpl implements UserTypeService {
+public class UserTypeServiceImpl implements UserTypeInternalService {
 
     private final UserTypeRepository userTypeRepository;
 
@@ -105,11 +106,11 @@ public class UserTypeServiceImpl implements UserTypeService {
         }
         var userType = userTypeOptional.get();
 
-        UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO,userType);
-        try{
-        userTypeRepository.save(userType);
-        }catch (DataAccessException ex){
-            log.error("Error: проблема доступа к базе ",ex);
+        UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO, userType);
+        try {
+            userTypeRepository.save(userType);
+        } catch (DataAccessException ex) {
+            log.error("Error: проблема доступа к базе ", ex);
             throw ex;
         }
 
@@ -117,10 +118,10 @@ public class UserTypeServiceImpl implements UserTypeService {
     }
 
 
-    public UserType findActiveUserTypeByType(String role){
+    public UserType findActiveUserTypeByType(String role) {
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {
+            if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
                 log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
                 throw new DataNotFoundException("данная роль не распознана в базе");
             }
@@ -133,4 +134,13 @@ public class UserTypeServiceImpl implements UserTypeService {
         }
     }
 
+    @Override
+    public List<UserType> findUserTypesByJobTypeId(Long jobTypeId) {
+        try {
+            return userTypeRepository.findUserTypesByJobTypeId(jobTypeId);
+        }catch (RuntimeException ex){
+            log.warn("Error: роль не распознана среди доступных(активных) id ,указана {}", jobTypeId);
+            throw new DataNotFoundException("findUserTypesByJobTypeId");
+        }
+    }
 }

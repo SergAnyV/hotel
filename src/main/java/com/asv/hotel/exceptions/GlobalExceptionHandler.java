@@ -34,4 +34,9 @@ public class GlobalExceptionHandler {
                 "Internal server error");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+    @ExceptionHandler(IncorrectData.class)
+    public ResponseEntity<ErrorMessage> handleIncorrectData(IncorrectData ex){
+        ErrorMessage response=new ErrorMessage(HttpStatus.BAD_REQUEST,ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }

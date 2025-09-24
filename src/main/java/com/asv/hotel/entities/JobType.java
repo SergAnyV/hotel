@@ -37,7 +37,7 @@ public class JobType {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_type_job_type",
     joinColumns = @JoinColumn(name = "job_type_id"),
             inverseJoinColumns = @JoinColumn(name ="user_type_id")
