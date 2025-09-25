@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class JWTUtilsTest {
     // Моки зависимостей
     private JWTSecrets jwtSecrets;
-    private TokenStorageService<String> tokenStorageService;
+    private TokenStorageService tokenStorageService;
 
     // Тестируемый объект
     private JWTUtils jwtUtils;
@@ -45,8 +45,8 @@ class JWTUtilsTest {
 
 
         // Настраиваем моки
-        when(jwtSecrets.getAccessSecret()).thenReturn(TEST_ACCESS_SECRET);
-        when(jwtSecrets.getRefreshSecret()).thenReturn(TEST_REFRESH_SECRET);
+        when(jwtSecrets.getAccess()).thenReturn(TEST_ACCESS_SECRET);
+        when(jwtSecrets.getRefresh()).thenReturn(TEST_REFRESH_SECRET);
         jwtUtils = new JWTUtils(jwtSecrets, tokenStorageService);
 
 

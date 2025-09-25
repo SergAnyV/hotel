@@ -1,18 +1,21 @@
 package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
+import com.asv.hotel.exceptions.DataNotFoundException;
 import com.asv.hotel.exceptions.MyAuthException;
 import com.asv.hotel.security.domain.JWTAuthenticationResponse;
+import com.asv.hotel.security.domain.LogoutRequest;
 import com.asv.hotel.security.service.AuthenticationService;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.util.JWTUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -26,15 +29,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenStorageService tokenStorageService;
 
     @Override
-    public JWTAuthenticationResponse signIn(String nickName, String password) {
+    public JWTAuthenticationResponse signIn(String logIn, String password) {
         //создаю токен аутентификации
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(nickName, password);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(logIn, password);
 
         //  аутентифицирую пользователя
         Authentication authentication = authenticationManager.authenticate(authToken);
 
         // устанавливаю аутентификацию в контекст (для текущего потока)
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         //  объект User из результата аутентификации
         User userDetails = (User) authentication.getPrincipal();
@@ -89,4 +92,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new MyAuthException("Failed to refresh access token: " + e.getMessage());
         }
     }
+
+    @Override
+    public void removeTokensFromStorage(LogoutRequest request) {
+    try {
+        tokenStorageService.removeToken(request.getAccessToken());
+        tokenStorageService.removeToken(request.getRefreshToken());
+    }catch (RuntimeException ex){
+        log.error("Problem with removing token from storage access {} refresh{}",request.getAccessToken(),
+                request.getRefreshToken());
+        throw new DataNotFoundException("Error token removing");
+    }
+    }
+
+
 }

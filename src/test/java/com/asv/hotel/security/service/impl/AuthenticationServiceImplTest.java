@@ -35,7 +35,7 @@ class AuthenticationServiceImplTest {
     private JWTUtils jwtUtils;
 
     @Mock
-    private TokenStorageService<String> tokenStorageService;
+    private TokenStorageService tokenStorageService;
 
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;

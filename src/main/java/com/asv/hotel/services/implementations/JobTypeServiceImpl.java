@@ -16,6 +16,7 @@ import com.asv.hotel.services.UserTypeInternalService;
 import com.asv.hotel.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,10 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Override
     public List<JobTypeDTO> findAll() {
         try {
-            return jobTypeRepository.findAll().stream()
+            List<JobType> jobTypeList=jobTypeRepository.findAll();
+            jobTypeList.forEach(jobType -> Hibernate.initialize(jobType.getUserTypes()));
+
+            return jobTypeList.stream()
                     .map(jp -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jp))
                     .collect(Collectors.toList());
         } catch (RuntimeException ex) {

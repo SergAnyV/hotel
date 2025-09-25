@@ -1,5 +1,6 @@
 package com.asv.hotel.entities;
 
+import com.asv.hotel.security.domain.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

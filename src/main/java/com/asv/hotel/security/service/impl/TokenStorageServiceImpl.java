@@ -8,7 +8,7 @@ import java.util.Map;
 
 
 @Service
-public class TokenStorageServiceImpl implements TokenStorageService<String> {
+public class TokenStorageServiceImpl implements TokenStorageService{
     //для потокобезопасности потом можно канкарент хэшмап а лучше в редиску писать
     private final Map<String, Boolean> activeTokens = new HashMap<>();
 

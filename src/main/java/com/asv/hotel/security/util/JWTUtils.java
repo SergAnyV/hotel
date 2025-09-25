@@ -29,7 +29,7 @@ import java.util.function.Function;
 public class JWTUtils {
 
     private final JWTSecrets jwtSecrets;
-    private final TokenStorageService<String> tokenStorageService;
+    private final TokenStorageService  tokenStorageService;
     //кэшируем ключи чтобы не создавать их каждый раз
     private SecretKey cachedAccessKey;
     private SecretKey cachedRefreshKey;
@@ -47,7 +47,7 @@ public class JWTUtils {
     // получаем ключ для подписи аксес токена
     SecretKey getAccessSigningKey() {
         if (cachedAccessKey == null) {
-            byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getAccessSecret());
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getAccess());
             cachedAccessKey = Keys.hmacShaKeyFor(keyBytes);
         }
         return cachedAccessKey;
@@ -61,7 +61,7 @@ public class JWTUtils {
     // получаем ключ для подписи обнов токена
     SecretKey getRefreshSigningKey() {
         if (cachedRefreshKey == null) {
-            byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getRefreshSecret());
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getRefresh());
             cachedRefreshKey = Keys.hmacShaKeyFor(keyBytes);
         }
         return cachedRefreshKey;

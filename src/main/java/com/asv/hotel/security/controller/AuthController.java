@@ -4,6 +4,7 @@ import com.asv.hotel.security.domain.JWTAuthenticationResponse;
 import com.asv.hotel.security.domain.LogoutRequest;
 import com.asv.hotel.security.domain.RefreshTokenRequest;
 import com.asv.hotel.security.domain.SignInRequest;
+import com.asv.hotel.security.service.AuthenticationService;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.service.impl.AuthenticationServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationServiceImpl authenticationService;
+    private final AuthenticationService authenticationService;
 
-    private final TokenStorageService tokenStorageService;
-
-    // Эндпоинт для входа (выдает access + refresh токены)
+       // Эндпоинт для входа (выдает access + refresh токены)
     @PostMapping("/signin")
     public ResponseEntity<JWTAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
         JWTAuthenticationResponse response = authenticationService.signIn(request.getNickName(), request.getPassword());
@@ -39,10 +38,9 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@RequestBody LogoutRequest request) {
-        // Удаляем access токен из хранилища
-        tokenStorageService.removeToken(request.getAccessToken());
-        // Удаляем refresh токен из хранилища
-        tokenStorageService.removeToken(request.getRefreshToken());
+        // Удаляем токены из хранилища
+        authenticationService.removeTokensFromStorage(request);
+
         return ResponseEntity.ok().build();
     }
 

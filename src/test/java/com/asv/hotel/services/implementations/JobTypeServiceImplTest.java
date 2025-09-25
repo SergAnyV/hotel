@@ -48,16 +48,18 @@ class JobTypeServiceImplTest {
     }
 
 
-//    @Test
-//    void findAll() {
-//
-//        System.out.println(jobTypeInternalService.findAll());
-//    }
+    @Test
+    void findAll() {
+
+        System.out.println(jobTypeInternalService.findAll());
+    }
 
 
     @Test
     void createJobType() {
-        jobTypeInternalService.createJobType(jobTypeSimpleDTO);
+        JobTypeDTO jobTypeDTOcreated= jobTypeInternalService.createJobType(jobTypeSimpleDTO);
+        assertNotNull(jobTypeDTOcreated);
+        assertEquals(jobTypeDTOcreated.getTitle(),jobTypeSimpleDTO.getTitle());
     }
 
     @Test

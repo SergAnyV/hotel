@@ -1,12 +1,12 @@
 package com.asv.hotel.security.service;
 
 //добавляем проверяем наличие удаляем и очищаем , дайствия для хранилища токенов
-public interface TokenStorageService<S> {
-    void addToken(S token);
+public interface TokenStorageService {
+    void addToken(String token);
 
-    boolean isTokenActive(S token);
+    boolean isTokenActive(String token);
 
-    void removeToken(S token);
+    void removeToken(String token);
 
     void clearAllTokens();
 }
