@@ -3,6 +3,7 @@ package com.asv.hotel.security.service.impl;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.exceptions.MyAuthException;
 import com.asv.hotel.security.domain.JWTAuthentication;
+import com.asv.hotel.security.domain.RefreshRequest;
 import com.asv.hotel.security.service.AuthenticationService;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.util.JWTUtils;
