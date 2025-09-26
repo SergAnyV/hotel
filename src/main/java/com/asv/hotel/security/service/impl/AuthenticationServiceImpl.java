@@ -2,7 +2,7 @@ package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
 import com.asv.hotel.exceptions.MyAuthException;
-import com.asv.hotel.security.domain.JWTAuthenticationResponse;
+import com.asv.hotel.security.domain.JWTAuthentication;
 import com.asv.hotel.security.service.AuthenticationService;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.util.JWTUtils;
@@ -28,34 +28,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final TokenStorageService tokenStorageService;
 
     @Override
-    public JWTAuthenticationResponse signIn(String logIn, String password) {
+    public JWTAuthentication signIn(String logIn, String password) {
         //создаю токен аутентификации
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(logIn, password);
+        final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(logIn, password);
 
         //  аутентифицирую пользователя
-        Authentication authentication = authenticationManager.authenticate(authToken);
+        final Authentication authentication = authenticationManager.authenticate(authToken);
 
         // устанавливаю аутентификацию в контекст (для текущего потока)
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         //  объект User из результата аутентификации
-        User userDetails = (User) authentication.getPrincipal();
+        final User userDetails = (User) authentication.getPrincipal();
+
 
         // аксес и рефреш токены
-        String accessToken = jwtUtils.generateAccessToken(userDetails);
-        String refreshToken = jwtUtils.generateRefreshToken(userDetails);
-
+        final String accessToken = jwtUtils.generateAccessToken(userDetails);
+        final String refreshToken = jwtUtils.generateRefreshToken(userDetails);
+        final Long id = userDetails.getId();
         // ОБА токена в хранилище кладем (чтобы можно было их потом убрать)
-        tokenStorageService.addToken(accessToken);
-        tokenStorageService.addToken(refreshToken);
-
+        tokenStorageService.removeAllUserTokens(id);
+        tokenStorageService.addTokens(id, accessToken);
         // ответ клиенту
-        return new JWTAuthenticationResponse(accessToken, refreshToken);
+        return new JWTAuthentication(accessToken, refreshToken);
     }
 
     // обновление аксесс с помощью рефреш
     @Override
-    public JWTAuthenticationResponse refreshAccessToken(String refreshToken) {
+    public JWTAuthentication refreshAccessToken(String refreshToken) {
         try {
             //  действителен ли ревреш токен (подпись, срок, активность)
             // null, потому что мы еще не знаем пользователя
@@ -68,7 +68,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             // загрузка  данных пользователя из БД
             User userDetails = (User) userDetailsService.loadUserByUsername(nickName);
-
+            Long id=userDetails.getId();
             // проверка что рефреш токен действительно принадлежит этому пользователю
             // (метод isTokenValid с userDetails сделает эту проверку)
             if (!jwtUtils.isTokenValid(refreshToken, userDetails)) {
@@ -79,10 +79,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             String newAccessToken = jwtUtils.generateAccessToken(userDetails);
 
             // сохранение  в хранилище
-            tokenStorageService.addToken(newAccessToken);
+            tokenStorageService.addTokens(id,newAccessToken);
 
             // возвращаем новый токен
-            return new JWTAuthenticationResponse(newAccessToken, refreshToken);
+            return new JWTAuthentication(newAccessToken, refreshToken);
 
         } catch (MyAuthException e) {
 
@@ -102,7 +102,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             accessToken = authHeader.substring(7);
         }
         tokenStorageService.removeToken(accessToken);
-      }
+    }
 
 
 }

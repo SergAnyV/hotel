@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class JWTAuthenticationResponse {
+public class JWTAuthentication {
     private String accessToken;
     private String refreshToken;
-    private static String TOKEN_TYPE = "Bearer ";
+    private static final String TOKEN_TYPE = "Bearer ";
 }

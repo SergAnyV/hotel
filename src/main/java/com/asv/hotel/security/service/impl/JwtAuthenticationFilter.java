@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(NUMBER_FOR_CUTTING_TOKEN); // "Bearer " — это 7 символов
 
         // ШАГ 2: Извлекаем имя пользователя (nickName) из токена
-        nickName = jwtUtils.extractUsername(jwt); // Используем нашу утилиту
+        nickName = jwtUtils.extractUsername(jwt); // пользую утилиту
 
         // ШАГ 3: Проверяем, есть ли уже аутентификация в SecurityContext
         // Если аутентификация уже установлена (например, другой фильтр уже обработал запрос),

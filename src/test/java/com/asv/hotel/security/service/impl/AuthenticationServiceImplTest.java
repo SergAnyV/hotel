@@ -2,7 +2,7 @@ package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
 import com.asv.hotel.exceptions.MyAuthException;
-import com.asv.hotel.security.domain.JWTAuthenticationResponse;
+import com.asv.hotel.security.domain.JWTAuthentication;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.util.JWTUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +69,7 @@ class AuthenticationServiceImplTest {
         when(jwtUtils.generateRefreshToken(testUser)).thenReturn(TEST_REFRESH_TOKEN);
 
 
-        JWTAuthenticationResponse response = authenticationService.signIn(TEST_NICKNAME, TEST_PASSWORD);
+        JWTAuthentication response = authenticationService.signIn(TEST_NICKNAME, TEST_PASSWORD);
 
 
         assertNotNull(response);
@@ -79,8 +79,6 @@ class AuthenticationServiceImplTest {
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtUtils).generateAccessToken(testUser);
         verify(jwtUtils).generateRefreshToken(testUser);
-        verify(tokenStorageService).addToken(TEST_ACCESS_TOKEN);
-        verify(tokenStorageService).addToken(TEST_REFRESH_TOKEN);
 
         // Проверяем, что аутентификация установлена в контекст
         Authentication contextAuth = SecurityContextHolder.getContext().getAuthentication();
@@ -114,7 +112,7 @@ class AuthenticationServiceImplTest {
         when(jwtUtils.isTokenValid(TEST_REFRESH_TOKEN, testUser)).thenReturn(true);
         when(jwtUtils.generateAccessToken(testUser)).thenReturn(newAccessToken);
 
-        JWTAuthenticationResponse response = authenticationService.refreshAccessToken(TEST_REFRESH_TOKEN);
+        JWTAuthentication response = authenticationService.refreshAccessToken(TEST_REFRESH_TOKEN);
 
         assertNotNull(response);
         assertEquals(newAccessToken, response.getAccessToken());
@@ -125,7 +123,7 @@ class AuthenticationServiceImplTest {
         verify(userDetailsService).loadUserByUsername(TEST_NICKNAME);
         verify(jwtUtils).isTokenValid(TEST_REFRESH_TOKEN, testUser);
         verify(jwtUtils).generateAccessToken(testUser);
-        verify(tokenStorageService).addToken(newAccessToken);
+
     }
 
     @Test

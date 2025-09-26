@@ -1,5 +1,6 @@
 package com.asv.hotel.security.util;
 
+import com.asv.hotel.entities.User;
 import com.asv.hotel.security.domain.JWTSecrets;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.google.gson.JsonObject;
@@ -160,6 +161,7 @@ public class JWTUtils {
             return false;
         }
         final String username = extractUsername(token);
+
         return (username.equals(userDetails.getUsername())) &&
                 !isTokenExpired(token) &&
                 tokenStorageService.isTokenActive(token);
@@ -168,7 +170,12 @@ public class JWTUtils {
     // истек ли срок действия токена
     boolean isTokenExpired(String token) {
         try {
-            return extractExpiration(token).before(new Date());
+            if(extractExpiration(token).before(new Date())){
+                tokenStorageService.removeToken(token);
+                return true;
+            }
+
+            return false;
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             return true; // Токен точно просрочен
         }

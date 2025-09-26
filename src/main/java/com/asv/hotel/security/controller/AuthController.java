@@ -1,7 +1,6 @@
 package com.asv.hotel.security.controller;
 
-import com.asv.hotel.security.domain.JWTAuthenticationResponse;
-import com.asv.hotel.security.domain.RefreshTokenRequest;
+import com.asv.hotel.security.domain.JWTAuthentication;
 import com.asv.hotel.security.domain.SignInRequest;
 import com.asv.hotel.security.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,15 +20,15 @@ public class AuthController {
 
        // Эндпоинт для входа (выдает access + refresh токены)
     @PostMapping("/signin")
-    public ResponseEntity<JWTAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
-        JWTAuthenticationResponse response = authenticationService.signIn(request.getNickName(), request.getPassword());
+    public ResponseEntity<JWTAuthentication> signIn(@RequestBody SignInRequest request) {
+        JWTAuthentication response = authenticationService.signIn(request.getNickName(), request.getPassword());
         return ResponseEntity.ok(response);
     }
 
     // НОВЫЙ Эндпоинт для обновления access токена
     @PostMapping("/refresh")
-    public ResponseEntity<JWTAuthenticationResponse> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
-        JWTAuthenticationResponse response = authenticationService.refreshAccessToken(request.getRefreshToken());
+    public ResponseEntity<JWTAuthentication> refreshAccessToken(@RequestBody String refreshTokenRequest) {
+        JWTAuthentication response = authenticationService.refreshAccessToken(refreshTokenRequest);
         return ResponseEntity.ok(response);
     }
 
