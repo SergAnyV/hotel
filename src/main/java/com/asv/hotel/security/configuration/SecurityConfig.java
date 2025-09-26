@@ -1,6 +1,7 @@
 package com.asv.hotel.security.configuration;
 
 
+import com.asv.hotel.entities.enums.UserRole;
 import com.asv.hotel.security.service.impl.CustomUserDetailsServiceImpl;
 import com.asv.hotel.security.service.impl.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
@@ -82,15 +83,9 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withDefaultRolePrefix()
-                .role("МЕНЕДЖЕР").implies("АДМИНИСТРАТОР")
-
-                .role("АДМИНИСТРАТОР").implies("ПОВАР")
-                .role("АДМИНИСТРАТОР").implies("УБОРЩИК")
-                .role("АДМИНИСТРАТОР").implies("РАБОТНИК КУХНИ")
-
-                .role("ПОВАР").implies("КЛИЕНТ")
-                .role("УБОРЩИК").implies("КЛИЕНТ")
-                .role("РАБОТНИК КУХНИ").implies("КЛИЕНТ")
+                .role(UserRole.MANAGER.name()).implies(UserRole.ADMIN.name())
+                .role(UserRole.ADMIN.name()).implies(UserRole.STAFF.name())
+                .role(UserRole.STAFF.name()).implies(UserRole.VISITOR.name())
                 .build();
     }
 

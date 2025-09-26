@@ -36,12 +36,12 @@ class UserTypeServiceImplTest {
     @BeforeEach
     public void setUp() {
         testUserTypeDTO = UserTypeDTO.builder()
-                .role("Администратора")
+                .name("Администратора")
                 .description("просто админ")
                 .isActive(true)
                 .build();
         testUserTypeDTO2 = UserTypeDTO.builder()
-                .role("Работник")
+                .name("Работник")
                 .description("просто работник")
                 .isActive(true)
                 .build();
@@ -65,7 +65,7 @@ class UserTypeServiceImplTest {
     @Test
     void saveUserTypeShouldBeCreateUserTypeUserType() {
         UserTypeDTO savedUserType = userTypeServiceImpl.createUserType(testUserTypeDTO);
-        assertEquals(savedUserType.getRole(), testUserTypeDTO.getRole());
+        assertEquals(savedUserType.getName(), testUserTypeDTO.getName());
         assertEquals(savedUserType.getDescription(), testUserTypeDTO.getDescription());
         assertEquals(savedUserType.getIsActive(), testUserTypeDTO.getIsActive());
 
@@ -77,7 +77,7 @@ class UserTypeServiceImplTest {
 
         assertThatThrownBy(() -> userTypeServiceImpl.createUserType(testUserTypeDTO))
                 .isInstanceOf(DataAlreadyExistsException.class)
-                .hasMessageContaining(testUserTypeDTO.getRole());
+                .hasMessageContaining(testUserTypeDTO.getName());
     }
 
     //поиск всех возможных ролей
@@ -94,8 +94,8 @@ class UserTypeServiceImplTest {
     void deleteShouldDeleteUserTypeByTypeUserType(){
         userTypeServiceImpl.createUserType(testUserTypeDTO);
         userTypeServiceImpl.createUserType(testUserTypeDTO2);
-        userTypeServiceImpl.deleteUserTypeByType(testUserTypeDTO.getRole());
-        assertThat(userTypeRepository.findUserTypeByRoleLikeIgnoreCase(testUserTypeDTO.getRole())).isEmpty();
+        userTypeServiceImpl.deleteUserTypeByType(testUserTypeDTO.getName());
+        assertThat(userTypeRepository.findUserTypeByRoleLikeIgnoreCase(testUserTypeDTO.getName())).isEmpty();
     }
 
     @Test

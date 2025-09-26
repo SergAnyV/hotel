@@ -27,7 +27,7 @@ class JobTypeMapperTest {
 
         UserType userType1 = UserType.builder()
                 .id(1L)
-                .role("ADMIN")
+                .name("ADMIN")
                 .description("Administrator role")
                 .isActive(true)
                 .jobTypeList(new HashSet<>())
@@ -35,7 +35,7 @@ class JobTypeMapperTest {
 
         UserType userType2 = UserType.builder()
                 .id(2L)
-                .role("MANAGER")
+                .name("MANAGER")
                 .description("Manager role")
                 .isActive(true)
                 .jobTypeList(new HashSet<>())

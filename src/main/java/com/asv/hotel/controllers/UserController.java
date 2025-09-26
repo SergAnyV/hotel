@@ -65,7 +65,7 @@ public class UserController {
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
-    @PreAuthorize("hasRole('АДМИНИСТРАТОР')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
 

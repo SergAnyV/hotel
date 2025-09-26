@@ -30,9 +30,9 @@ public class UserServiceImpl implements UserInternalService {
                 log.warn("Error: такой user уже существует {} {}", userDTO.getFirstName(), userDTO.getLastName());
                 throw new DataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
             }
-            UserType userType = userTypeService.findUserTypeByType(userDTO.getRole());
+            UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
             User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
-            user.setRole(userType);
+            user.setType(userType);
             return UserMapper.INSTANCE.userToUserDTO(
                     userRepository.save(user))
                     ;

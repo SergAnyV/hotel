@@ -28,7 +28,7 @@ public class ServiceHotel {
     @Column(name = "description", nullable = false, unique = true, length = 250)
     private String description;
 
-    @Column(name = "price", nullable = false, precision = 5, scale = 2)
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @CreationTimestamp

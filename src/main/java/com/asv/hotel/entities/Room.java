@@ -39,7 +39,7 @@ public class Room {
     @Column(nullable = false)
     private Integer capacity;
 
-    @Column(name = "price_per_night", nullable = false, precision = 7, scale = 2)
+    @Column(name = "price_per_night", nullable = false, precision = 10, scale = 2)
     private BigDecimal pricePerNight;
 
     @Column(name = "is_available", columnDefinition = "boolean default true")

@@ -33,7 +33,7 @@ public class Booking {
     @Column(name = "persons", nullable = false, scale = 0)
     private Integer persons;
 
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "total_price", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalPrice;
 
     @Enumerated(value = EnumType.STRING)

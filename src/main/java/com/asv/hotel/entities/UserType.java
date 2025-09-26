@@ -1,9 +1,8 @@
 package com.asv.hotel.entities;
 
-import com.asv.hotel.security.domain.UserRole;
+import com.asv.hotel.entities.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,16 +20,29 @@ public class UserType {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "role", unique = true, nullable = false, length = 30)
-    private String role;
+    @Column(name = "name", unique = true, nullable = false, length = 30)
+    private String name;
 
     @Column(name = "description", nullable = false, length = 250)
     private String description;
+
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role",nullable = false)
+    private UserRole role;
+
+    @Column(name = "role_description",nullable = false)
+    private String roleDescription;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
     @ManyToMany(mappedBy = "userTypes", fetch = FetchType.LAZY)
     private Set<JobType> jobTypeList = new HashSet<>();
+
+    @PrePersist
+    @PreUpdate
+    public void preUpdate(){
+        this.roleDescription=role.getDescription();
+    }
 
 }

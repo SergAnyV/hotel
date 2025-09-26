@@ -1,4 +1,4 @@
-package com.asv.hotel.security.domain;
+package com.asv.hotel.entities.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

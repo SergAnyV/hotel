@@ -7,7 +7,6 @@ import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.exceptions.DataNotFoundException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.UserTypeInternalService;
-import com.asv.hotel.services.UserTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -28,15 +27,15 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     @Transactional
     public UserTypeDTO createUserType(UserTypeDTO userTypeDTO) {
         try {
-            if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole()).isPresent()) {
-                log.warn("Error: такая роль уже существует {} ", userTypeDTO.getRole());
-                throw new DataAlreadyExistsException(userTypeDTO.getRole());
+            if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName()).isPresent()) {
+                log.warn("Error: такая роль уже существует {} ", userTypeDTO.getName());
+                throw new DataAlreadyExistsException(userTypeDTO.getName());
             }
             UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
             return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ", ex);
-            throw new DataAlreadyExistsException(userTypeDTO.getRole());
+            throw new DataAlreadyExistsException(userTypeDTO.getName());
         }
     }
 
@@ -99,9 +98,9 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
 
     @Transactional
     public UserTypeDTO cahngeDataUserType(UserTypeDTO userTypeDTO) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole());
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName());
         if (userTypeOptional.isEmpty()) {
-            log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getRole());
+            log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getName());
             throw new DataNotFoundException("данная роль не распознана в базе");
         }
         var userType = userTypeOptional.get();

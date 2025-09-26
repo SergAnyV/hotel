@@ -61,7 +61,7 @@ public class User implements UserDetails{
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private UserType role;
+    private UserType type;
 
     @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Booking> bookingSet = new HashSet<>();
@@ -73,7 +73,7 @@ public class User implements UserDetails{
     // реализация методов UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-       return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.getRole().toUpperCase()));
+       return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.type.getRole().name()));
     }
 
     @Override

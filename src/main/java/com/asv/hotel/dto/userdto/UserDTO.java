@@ -78,7 +78,7 @@ public class UserDTO {
     @Schema(description = "Тип  пользователя", example = "Клиент")
     @NotBlank(message = "Тип пользователя, не должен быть пустым")
     @Size(min = 3,max = 20,message = "количество символов 3-20")
-    private String role;
+    private String type;
 
     @Schema(description = "Бронирования пользователя", accessMode = Schema.AccessMode.READ_ONLY)
     @EqualsAndHashCode.Exclude

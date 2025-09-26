@@ -1,14 +1,11 @@
 package com.asv.hotel.security.controller;
 
 import com.asv.hotel.security.domain.JWTAuthenticationResponse;
-import com.asv.hotel.security.domain.LogoutRequest;
 import com.asv.hotel.security.domain.RefreshTokenRequest;
 import com.asv.hotel.security.domain.SignInRequest;
 import com.asv.hotel.security.service.AuthenticationService;
-import com.asv.hotel.security.service.TokenStorageService;
-import com.asv.hotel.security.service.impl.AuthenticationServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,11 +34,10 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@RequestBody LogoutRequest request) {
-        // Удаляем токены из хранилища
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+
         authenticationService.removeTokensFromStorage(request);
 
         return ResponseEntity.ok().build();
     }
-
 }
