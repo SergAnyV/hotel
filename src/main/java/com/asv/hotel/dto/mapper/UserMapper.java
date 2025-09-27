@@ -6,6 +6,8 @@ import com.asv.hotel.entities.User;
 import com.asv.hotel.services.UserTypeService;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @Mapper(uses = UserTypeMapper.class)
@@ -23,6 +25,7 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "password", source = "password", qualifiedByName = "encodePassword")
     User userDTOToUser(UserDTO userDTO);
 
     @Mapping(target = "nickName", source = "nickName")
@@ -41,15 +44,28 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "type", ignore = true) // Обрабатывается отдельно в updateUserFromDto
+    @Mapping(target = "password", source = "password", qualifiedByName = "encodePassword")
     void updateUserFieldsFromDto(UserDTO dto, @MappingTarget User user);
 
     default void updateUserFromDto(UserDTO dto, @MappingTarget User user, UserTypeService userTypeService) {
         updateUserFieldsFromDto(dto, user);
-
         // роль отдельно обрабатывается
         if (dto.getType() != null) {
             user.setType(userTypeService.findActiveUserTypeByType(dto.getType()));
         }
     }
+    @Named("encodePassword")
+    default String encodePassword(String rawPassword) {
+        if (rawPassword == null || rawPassword.trim().isEmpty()) {
+            return null;
+        }
+        return getPasswordEncoder().encode(rawPassword);
+    }
+
+   // создание нового PasswordEncoder
+    default PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
+
 
 }
