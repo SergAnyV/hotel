@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class ReportAttachment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "url_file", nullable = false, unique = true, length = 100)

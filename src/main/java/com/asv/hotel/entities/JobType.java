@@ -17,7 +17,7 @@ import java.util.Set;
 @Builder
 public class JobType {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title", nullable = false, unique = true, length = 50)

@@ -1,30 +1,31 @@
 
 
 -- Insert для ReportAttachment (вложения отчетов)
-INSERT INTO report_attachments (id, url_file, created_at, updated_at, report_id) VALUES
-(1, '/reports/2024/06/15/report_1_photo1.jpg', NOW(), NOW(), 1),
-(2, '/reports/2024/06/15/report_1_photo2.jpg', NOW(), NOW(), 1),
-(3, '/reports/2024/07/01/report_2_video.mp4', NOW(), NOW(), 2),
-(4, '/reports/2024/08/05/report_3_document.pdf', NOW(), NOW(), 3),
-(5, '/reports/2024/09/10/report_4_scan.png', NOW(), NOW(), 4),
-(6, '/reports/2024/10/20/report_5_audio.mp3', NOW(), NOW(), 5),
-(7, '/reports/2024/11/01/report_6_image.jpg', NOW(), NOW(), 6),
-(8, '/reports/2024/12/01/report_7_diagram.png', NOW(), NOW(), 7),
-(9, '/reports/2025/01/10/report_8_log.txt', NOW(), NOW(), 8),
-(10, '/reports/2025/02/14/report_9_video.mp4', NOW(), NOW(), 9);
+INSERT INTO report_attachments (url_file, created_at, updated_at, report_id) VALUES
+('/reports/2024/06/15/report_1_photo1.jpg', NOW(), NOW(), 1),
+('/reports/2024/06/15/report_1_photo2.jpg', NOW(), NOW(), 1),
+('/reports/2024/07/01/report_2_video.mp4', NOW(), NOW(), 2),
+('/reports/2024/08/05/report_3_document.pdf', NOW(), NOW(), 3),
+('/reports/2024/09/10/report_4_scan.png', NOW(), NOW(), 4),
+('/reports/2024/10/20/report_5_audio.mp3', NOW(), NOW(), 5),
+('/reports/2024/11/01/report_6_image.jpg', NOW(), NOW(), 6),
+('/reports/2024/12/01/report_7_diagram.png', NOW(), NOW(), 7),
+('/reports/2025/01/10/report_8_log.txt', NOW(), NOW(), 8),
+('/reports/2025/02/14/report_9_video.mp4', NOW(), NOW(), 9);
+
 
 -- Insert для Notification (уведомления)
-INSERT INTO notifocations (id, message, created_at, user_id, booking_id) VALUES
-(1, 'Ваше бронирование подтверждено. Номер 101 с 15.06.2024 по 20.06.2024', NOW(), 1, 1),
-(2, 'Поступил новый запрос на бронирование. Номер 201 с 01.07.2024 по 10.07.2024', NOW(), 2, 2),
-(3, 'Ваше бронирование отменено. Номер 301 с 05.08.2024 по 15.08.2024', NOW(), 3, 3),
-(4, 'Ваше бронирование подтверждено. Номер 401 с 10.09.2024 по 12.09.2024', NOW(), 4, 4),
-(5, 'Поступил новый запрос на бронирование. Номер 102 с 20.10.2024 по 25.10.2024', NOW(), 5, 5),
-(6, 'Бронирование номера 202 подтверждено. Дата заезда: 01.11.2024', NOW(), 6, 6),
-(7, 'Подтверждено бронирование пентхауса на Новый год!', NOW(), 7, 7),
-(8, 'Ожидается подтверждение бронирования эконом-номера', NOW(), 8, 8),
-(9, 'Ваш люкс с джакузи забронирован на 14 февраля', NOW(), 9, 9),
-(10, 'Новое бронирование: семейный номер с 05.03.2025', NOW(), 10, 10);
+INSERT INTO notifocations (message, created_at, user_id, booking_id) VALUES
+('Ваше бронирование подтверждено. Номер 101 с 15.06.2024 по 20.06.2024', NOW(), 1, 1),
+('Поступил новый запрос на бронирование. Номер 201 с 01.07.2024 по 10.07.2024', NOW(), 2, 2),
+('Ваше бронирование отменено. Номер 301 с 05.08.2024 по 15.08.2024', NOW(), 3, 3),
+('Ваше бронирование подтверждено. Номер 401 с 10.09.2024 по 12.09.2024', NOW(), 4, 4),
+('Поступил новый запрос на бронирование. Номер 102 с 20.10.2024 по 25.10.2024', NOW(), 5, 5),
+('Бронирование номера 202 подтверждено. Дата заезда: 01.11.2024', NOW(), 6, 6),
+('Подтверждено бронирование пентхауса на Новый год!', NOW(), 7, 7),
+('Ожидается подтверждение бронирования эконом-номера', NOW(), 8, 8),
+('Ваш люкс с джакузи забронирован на 14 февраля', NOW(), 9, 9),
+('Новое бронирование: семейный номер с 05.03.2025', NOW(), 10, 10);
 
 -- Связи ManyToMany (промежуточные таблицы)
 INSERT INTO user_type_job_type (job_type_id, user_type_id) VALUES
@@ -60,5 +61,3 @@ INSERT INTO booking_service (booking_id, service_id) VALUES
 (8, 1),
 (9, 1), (9, 2), (9, 6),
 (10, 1), (10, 5), (10, 8);
-
-

@@ -23,7 +23,7 @@ import java.util.Set;
 @Builder
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "number", nullable = false, length = 10, unique = true)

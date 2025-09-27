@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 public class Report {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "status",nullable = false)

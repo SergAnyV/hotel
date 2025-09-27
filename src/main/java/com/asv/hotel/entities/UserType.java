@@ -17,7 +17,7 @@ import java.util.Set;
 @ToString
 public class UserType {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false, length = 30)
@@ -41,8 +41,13 @@ public class UserType {
 
     @PrePersist
     @PreUpdate
-    public void preUpdate(){
+    public void preUpdateRoleDescriptionAndNameToLowerCase(){
         this.roleDescription=role.getDescription();
+        if (this.name!=null) {
+            this.name = name.toLowerCase();
+        }else this.name=null;
     }
+
+
 
 }

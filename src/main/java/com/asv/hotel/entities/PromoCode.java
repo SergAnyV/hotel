@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Builder
 public class PromoCode {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "code", nullable = false, unique = true, length = 20)
