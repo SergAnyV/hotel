@@ -68,11 +68,10 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // настраивает обработчик выражений для @преавторайз с учетом иерархии ролей
     @Bean
     public MethodSecurityExpressionHandler methodSecurityExpressionHandler(RoleHierarchy roleHierarchy) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setRoleHierarchy(roleHierarchy); // Устанавливаем иерархию ролей
+        expressionHandler.setRoleHierarchy(roleHierarchy);
         return expressionHandler;
     }
 
@@ -86,7 +85,7 @@ public class SecurityConfig {
         return RoleHierarchyImpl.withDefaultRolePrefix()
                 .role(UserRole.MANAGER.name()).implies(UserRole.ADMIN.name())
                 .role(UserRole.ADMIN.name()).implies(UserRole.STAFF.name())
-                .role(UserRole.STAFF.name()).implies(UserRole.VISITOR.name())
+                .role(UserRole.STAFF.name()).implies(UserRole.CLIENT.name())
                 .build();
     }
 

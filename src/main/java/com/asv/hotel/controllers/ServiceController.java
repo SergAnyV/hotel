@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/services")
 @RequiredArgsConstructor
 @Tag(name = "Service Management", description = "REST API для управления дополнительными сервисами")
+@Validated
 public class ServiceController {
     private final ServiceHotelService serviceHotelService;
 

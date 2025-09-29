@@ -71,7 +71,7 @@ public class UserDTO {
 
     @Schema(description = "Пароль  пользователя", example = "123456789")
     @NotBlank(message = "Пароль пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3,max = 120,message = "количество символов 3-120")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

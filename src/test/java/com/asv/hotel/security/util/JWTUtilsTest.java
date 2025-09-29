@@ -1,7 +1,7 @@
 package com.asv.hotel.security.util;
 
 
-import com.asv.hotel.security.domain.JWTSecrets;
+import com.asv.hotel.security.jwt.JWTSecrets;
 import com.asv.hotel.security.service.TokenStorageService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -144,7 +144,7 @@ class JWTUtilsTest {
         String token = jwtUtils.generateAccessToken(userDetails);
 
         //  токен НЕ активен
-        when(tokenStorageService.isTokenActive(token)).thenReturn(false);
+        when(tokenStorageService.isTokenExpired(token)).thenReturn(false);
 
         boolean isValid = jwtUtils.isTokenValid(token, userDetails);
 
@@ -162,7 +162,7 @@ class JWTUtilsTest {
         UserDetails wrongUser = createUserDetails("WrongUser", TEST_ROLE);
 
         //  токен активен
-        when(tokenStorageService.isTokenActive(token)).thenReturn(true);
+        when(tokenStorageService.isTokenExpired(token)).thenReturn(true);
 
         boolean isValid = jwtUtils.isTokenValid(token, wrongUser);
 
@@ -184,7 +184,7 @@ class JWTUtilsTest {
             Thread.currentThread().sleep(2);
         } catch (InterruptedException e) {
         }
-        when(tokenStorageService.isTokenActive(expiredToken)).thenReturn(true);
+        when(tokenStorageService.isTokenExpired(expiredToken)).thenReturn(true);
 
         boolean isExpired = jwtUtils.isTokenExpired(expiredToken);
 

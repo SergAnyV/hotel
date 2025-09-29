@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum UserRole {
-    MANAGER("Менеджер отеля"),
-    ADMIN("Администратор отеля"),
-    VISITOR("Посетитель отеля"),
-    STAFF("Персонал отеля");
+    MANAGER("Менеджер"),
+    ADMIN("Администратор"),
+    CLIENT("Посетитель"),
+    STAFF("Персонал");
     private final String description;
 }

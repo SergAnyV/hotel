@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TokenStorageServiceImpl implements TokenStorageService {
-    //для потокобезопасности потом можно канкарент хэшмап а лучше в редиску писать
+
     private Map<Long, Map<String, Boolean>> userTokens = new ConcurrentHashMap<>();
 
     @Override
@@ -29,7 +29,7 @@ public class TokenStorageServiceImpl implements TokenStorageService {
 
 
     @Override
-    public boolean isTokenActive(String token) {
+    public boolean isTokenExpired(String token) {
         return userTokens.values()
                 .stream()
                 .anyMatch(tokensMap ->
@@ -47,7 +47,6 @@ public class TokenStorageServiceImpl implements TokenStorageService {
 
     @Override
     public void removeToken(String token) {
-        // даляем токен
         userTokens.values()
                 .forEach(tokensMap -> tokensMap.remove(token));
     }
@@ -57,7 +56,7 @@ public class TokenStorageServiceImpl implements TokenStorageService {
         Map<String, Boolean> userTokenMap = userTokens.get(userId);
         if (userTokenMap != null) {
             userTokenMap.remove(token);
-            // if пустую мапу пользователя
+
             if (userTokenMap.isEmpty()) {
                 userTokens.remove(userId);
             }
@@ -85,7 +84,6 @@ public class TokenStorageServiceImpl implements TokenStorageService {
     @Override
     public void clearAllTokens() {
         userTokens.clear();
-//        activeTokens.clear();
     }
 
 }

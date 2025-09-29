@@ -1,7 +1,6 @@
 package com.asv.hotel.security.util;
 
-import com.asv.hotel.entities.User;
-import com.asv.hotel.security.domain.JWTSecrets;
+import com.asv.hotel.security.jwt.JWTSecrets;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -24,14 +23,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class JWTUtils {
 
     private final JWTSecrets jwtSecrets;
-    private final TokenStorageService  tokenStorageService;
-    //кэшируем ключи чтобы не создавать их каждый раз
+    private final TokenStorageService tokenStorageService;
+
     private SecretKey cachedAccessKey;
     private SecretKey cachedRefreshKey;
 
@@ -39,13 +39,17 @@ public class JWTUtils {
     private static final long EXPIRATION_TIME_FOR_ACCESS_TOKEN = 1_800_000;
     private static final long TIME_FOR_CHECKING_TOKEN = 86_400_000;
     private static final MacAlgorithm SIGNATURE_ALGORITHM = Jwts.SIG.HS256;
+    private static final String SHIELDED_POINT = "\\.";
+    public static final String BEARER = "Bearer";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final int NUMBER_FOR_CUTTING_TOKEN = 7;
 
-    // генерирует аксес токен 30 минут живет потом заменить на ссылку в проект в пропертя сейчас 30 минут
+
     public String generateAccessToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, EXPIRATION_TIME_FOR_ACCESS_TOKEN);
     }
 
-    // получаем ключ для подписи аксес токена
+
     SecretKey getAccessSigningKey() {
         if (cachedAccessKey == null) {
             byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getAccess());
@@ -54,12 +58,10 @@ public class JWTUtils {
         return cachedAccessKey;
     }
 
-    // получаем обновленный токен  врем так же исправитть сейчас 7 дней
     public String generateRefreshToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, EXPIRATION_TIME_FOR_REFRESH_TOKEN);
     }
 
-    // получаем ключ для подписи обнов токена
     SecretKey getRefreshSigningKey() {
         if (cachedRefreshKey == null) {
             byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getRefresh());
@@ -69,33 +71,23 @@ public class JWTUtils {
     }
 
 
-    // ГЕНЕРИРУЮ ЗДЕСЬ ТОКЕН ВРОДЕ НОРМ
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expirationTimeMs
     ) {
-        // settSubject(userDetails.getUsername()) здесь userDetails.getUsername() опираюсь на
-        // никнейм смотри класс ЮЗЕР никнейм уникален
         return Jwts
                 .builder()
                 .claims(extraClaims)
                 .subject(
-                        userDetails.getUsername()
-                )
+                        userDetails.getUsername())
                 .issuedAt(
-                        new Date(System.currentTimeMillis())
-                )
-                // срок жизни токена
+                        new Date(System.currentTimeMillis()))
                 .expiration(
-                        new Date(System.currentTimeMillis() + expirationTimeMs)
-                )
-                //  ключ в зависимости от срока жизни токена
+                        new Date(System.currentTimeMillis() + expirationTimeMs))
                 .signWith(
                         getSigningKeyForType(expirationTimeMs)
-                        , SIGNATURE_ALGORITHM
-                )
+                        , SIGNATURE_ALGORITHM)
                 .compact();
     }
 
-    // выбирает ключ аксес или рефреш  на основе срока жизни если больше значит рефреш,  меньше- аксес
     SecretKey getSigningKeyForType(long expirationTimeMs) {
         if (expirationTimeMs > TIME_FOR_CHECKING_TOKEN) {
             return getRefreshSigningKey();
@@ -104,20 +96,17 @@ public class JWTUtils {
         }
     }
 
-    //  имя пользователя (никнейм так как он уникальный) из токена
     public String extractUsername(String token) {
         return extractClaim(token,
                 claims -> claims.getSubject()
         );
     }
 
-    //  любое утверждение  из токена
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // все утверждения из токена
     private Claims extractAllClaims(String token) {
         try {
             return Jwts
@@ -127,15 +116,12 @@ public class JWTUtils {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // Возвращаем утверждение из исключения для просроченных токенов
-            return e.getClaims();
+                return e.getClaims();
         }
     }
 
-    // какой ключ  использовать для проверки токена сначала аксес потом рефреш пробую
-    private SecretKey getSigningKeyForToken(String token)  {
-        // Разбираем токен без проверки подписи, чтобы получить claims
-        String[] parts = token.split("\\.");
+    private SecretKey getSigningKeyForToken(String token) {
+             String[] parts = token.split(SHIELDED_POINT);
         if (parts.length < 2) {
             throw new IllegalArgumentException("Invalid JWT token");
         }
@@ -147,7 +133,6 @@ public class JWTUtils {
         long iat = jsonPayload.get("iat").getAsLong() * 1000;
         long tokenLifetime = exp - iat;
 
-        // Определяем тип ключа на основе времени жизни токена
         if (tokenLifetime > TIME_FOR_CHECKING_TOKEN) {
             return getRefreshSigningKey();
         } else {
@@ -155,7 +140,6 @@ public class JWTUtils {
         }
     }
 
-    //действителен ли токен проверка на  подпись + срок действия + наличие в хранилище
     public boolean isTokenValid(String token, UserDetails userDetails) {
         if (userDetails == null) {
             return false;
@@ -164,29 +148,28 @@ public class JWTUtils {
 
         return (username.equals(userDetails.getUsername())) &&
                 !isTokenExpired(token) &&
-                tokenStorageService.isTokenActive(token);
+                tokenStorageService.isTokenExpired(token);
     }
 
-    // истек ли срок действия токена
+
     boolean isTokenExpired(String token) {
         try {
-            if(extractExpiration(token).before(new Date())){
+            if (extractExpiration(token).before(new Date())) {
                 tokenStorageService.removeToken(token);
                 return true;
             }
 
             return false;
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            return true; // Токен точно просрочен
+            return true;
         }
     }
 
-    // Извлекает дату истечения токена
+
     private Date extractExpiration(String token) {
         try {
             return extractClaim(token, Claims::getExpiration);
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            // Если токен просрочен, возвращаем дату истечения из исключения
             return e.getClaims().getExpiration();
         }
     }
