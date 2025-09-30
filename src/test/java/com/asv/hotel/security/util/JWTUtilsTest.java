@@ -1,7 +1,7 @@
 package com.asv.hotel.security.util;
 
 
-import com.asv.hotel.security.jwt.JWTSecrets;
+import com.asv.hotel.configurations.JWTSecretsProperties;
 import com.asv.hotel.security.service.TokenStorageService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 class JWTUtilsTest {
     // Моки зависимостей
-    private JWTSecrets jwtSecrets;
+    private JWTSecretsProperties jwtSecretsProperties;
     private TokenStorageService tokenStorageService;
 
     // Тестируемый объект
@@ -40,14 +40,14 @@ class JWTUtilsTest {
     @BeforeEach
     void setUp() {
         // Создаем моки
-        jwtSecrets = mock(JWTSecrets.class);
+        jwtSecretsProperties = mock(JWTSecretsProperties.class);
         tokenStorageService = mock(TokenStorageService.class);
 
 
         // Настраиваем моки
-        when(jwtSecrets.getAccess()).thenReturn(TEST_ACCESS_SECRET);
-        when(jwtSecrets.getRefresh()).thenReturn(TEST_REFRESH_SECRET);
-        jwtUtils = new JWTUtils(jwtSecrets, tokenStorageService);
+        when(jwtSecretsProperties.getAccess()).thenReturn(TEST_ACCESS_SECRET);
+        when(jwtSecretsProperties.getRefresh()).thenReturn(TEST_REFRESH_SECRET);
+        jwtUtils = new JWTUtils(jwtSecretsProperties, tokenStorageService);
 
 
     }

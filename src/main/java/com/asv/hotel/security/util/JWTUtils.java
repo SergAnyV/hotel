@@ -1,6 +1,6 @@
 package com.asv.hotel.security.util;
 
-import com.asv.hotel.security.jwt.JWTSecrets;
+import com.asv.hotel.configurations.JWTSecretsProperties;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -29,7 +29,7 @@ import java.util.function.Function;
 @Component
 public class JWTUtils {
 
-    private final JWTSecrets jwtSecrets;
+    private final JWTSecretsProperties jwtSecretsProperties;
     private final TokenStorageService tokenStorageService;
 
     private SecretKey cachedAccessKey;
@@ -52,7 +52,7 @@ public class JWTUtils {
 
     SecretKey getAccessSigningKey() {
         if (cachedAccessKey == null) {
-            byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getAccess());
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecretsProperties.getAccess());
             cachedAccessKey = Keys.hmacShaKeyFor(keyBytes);
         }
         return cachedAccessKey;
@@ -64,7 +64,7 @@ public class JWTUtils {
 
     SecretKey getRefreshSigningKey() {
         if (cachedRefreshKey == null) {
-            byte[] keyBytes = Decoders.BASE64.decode(jwtSecrets.getRefresh());
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecretsProperties.getRefresh());
             cachedRefreshKey = Keys.hmacShaKeyFor(keyBytes);
         }
         return cachedRefreshKey;
