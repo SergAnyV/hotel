@@ -1,4 +1,4 @@
-package com.asv.hotel.security.jwt;
+package com.asv.hotel.configurations;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @ConfigurationProperties(prefix = "jwt.secret")
 @Setter
-public class JWTSecrets {
+public class JWTSecretsProperties {
     /**
      * Секретный ключ для подписи access токенов.
      *
