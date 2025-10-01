@@ -4,8 +4,8 @@ import com.asv.hotel.dto.mapper.RoomMapper;
 import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.entities.Room;
 import com.asv.hotel.entities.enums.RoomType;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.DataNotFoundException;
+import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
+import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.repositories.RoomRepository;
 import com.asv.hotel.services.RoomInternalService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class RoomServiceImpl implements RoomInternalService {
                     log.warn("Error:Не существует комнаты с номером {} оошибка в методе {}", number
                             , new Object() {
                             }.getClass().getEnclosingMethod().getName());
-                    return new DataNotFoundException("Не существует комнаты с номером " + number);
+                    return new HotelDataNotFoundException("Не существует комнаты с номером " + number);
                 }));
     }
 
@@ -57,7 +57,7 @@ public class RoomServiceImpl implements RoomInternalService {
         try {
             if (roomRepository.findRoomByNumberLikeIgnoreCase(roomDTO.getNumber()).isPresent()) {
                 log.warn("Error: такая комната уже существует {} ", roomDTO.getNumber());
-                throw new DataAlreadyExistsException(roomDTO.getNumber());
+                throw new HotelDataAlreadyExistsException(roomDTO.getNumber());
             }
             Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
             room.setCreatedAt(LocalDateTime.now());
@@ -66,7 +66,7 @@ public class RoomServiceImpl implements RoomInternalService {
         } catch (DataAccessException e) {
             log.warn("Error: проблема с доступом к базе данных , метода {}", new Object() {
             }.getClass().getEnclosingMethod().getName());
-            throw new DataAlreadyExistsException(roomDTO.getNumber());
+            throw new HotelDataAlreadyExistsException(roomDTO.getNumber());
         }
     }
 
@@ -76,7 +76,7 @@ public class RoomServiceImpl implements RoomInternalService {
         var existingRoom = roomRepository.findRoomByNumberLikeIgnoreCase(newRoomDTO.getNumber())
                 .orElseThrow(() -> {
                     log.warn("Error:Не существует комнаты с номером {} метод update в RoomService", newRoomDTO.getNumber());
-                    return new DataNotFoundException("Не существует комнаты с номером " + newRoomDTO.getNumber());
+                    return new HotelDataNotFoundException("Не существует комнаты с номером " + newRoomDTO.getNumber());
                 });
 
         RoomMapper.INSTANCE.updateRoomFromDTO(newRoomDTO, existingRoom);
@@ -95,7 +95,7 @@ public class RoomServiceImpl implements RoomInternalService {
     @Transactional
     public void deleteRoomByNumber(String number) {
         if (roomRepository.deleteRoomByNumberLikeIgnoreCase(number) == 0) {
-            throw new DataNotFoundException(number);
+            throw new HotelDataNotFoundException(number);
         }
     }
 

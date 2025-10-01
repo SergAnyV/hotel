@@ -3,8 +3,8 @@ package com.asv.hotel.services.implementations;
 import com.asv.hotel.dto.promocodedto.PromoCodeDTO;
 import com.asv.hotel.dto.mapper.PromoCodeMapper;
 import com.asv.hotel.entities.PromoCode;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.DataNotFoundException;
+import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
+import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.repositories.PromoCodeRepository;
 import com.asv.hotel.services.PromoCodeInternalService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
     public PromoCodeDTO createPromoCode(PromoCodeDTO promoCodeDTO) {
         if (promoCodeRepository.findPromoCodesByCode(promoCodeDTO.getCode()).isPresent()) {
             log.warn("Warning такой промокод уже существет", promoCodeDTO.getCode());
-            throw new DataAlreadyExistsException("данный промок уже существует" + promoCodeDTO.getCode());
+            throw new HotelDataAlreadyExistsException("данный промок уже существует" + promoCodeDTO.getCode());
         }
         try {
             PromoCode promoCode = PromoCodeMapper.INSTANCE.promoCodeDTOToPromoCode(promoCodeDTO);
@@ -43,9 +43,9 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
     public PromoCode findActivePromoCodeByName(String code) {
         try {
             return promoCodeRepository.findActivePromoCodeByCode(code).get();
-        } catch (DataNotFoundException ex) {
+        } catch (HotelDataNotFoundException ex) {
             log.error("Error: прокод не найден", ex);
-            throw new DataNotFoundException("Промокода не существует " + code);
+            throw new HotelDataNotFoundException("Промокода не существует " + code);
         }
 
     }
@@ -55,7 +55,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
         try {
             if (promoCodeRepository.deleteByCode(code) == 0) {
                 log.warn("Warning такого промокода не  существет", code);
-                throw new DataNotFoundException("данный промок не существует" + code);
+                throw new HotelDataNotFoundException("данный промок не существует" + code);
             }
         } catch (DataAccessException ex) {
             log.error("Error проблема судалением промокода {}", ex);
@@ -68,7 +68,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
         List<PromoCode> listPromo= promoCodeRepository.findAll();
        if( listPromo.isEmpty()){
            log.warn("Warning промокодов нет");
-           throw new DataNotFoundException("промокодов нет" );
+           throw new HotelDataNotFoundException("промокодов нет" );
        }
        return listPromo.stream().map(promo-> {
            return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promo);

@@ -1,7 +1,7 @@
 package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
-import com.asv.hotel.exceptions.AuthException;
+import com.asv.hotel.exceptions.HotelAuthenticationException;
 import com.asv.hotel.security.jwt.JWTAuthentication;
 import com.asv.hotel.security.service.AuthenticationService;
 import com.asv.hotel.security.service.TokenStorageService;
@@ -55,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
 
             if (!jwtUtils.isTokenValid(refreshToken, null)) {
-                throw new AuthException("Invalid refresh token");
+                throw new HotelAuthenticationException("Invalid refresh token");
             }
 
             String nickName = jwtUtils.extractUsername(refreshToken);
@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             Long id=userDetails.getId();
 
             if (!jwtUtils.isTokenValid(refreshToken, userDetails)) {
-                throw new AuthException("Refresh token does not belong to the user");
+                throw new HotelAuthenticationException("Refresh token does not belong to the user");
             }
 
             String newAccessToken = jwtUtils.generateAccessToken(userDetails);
@@ -73,12 +73,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             return new JWTAuthentication(newAccessToken, refreshToken);
 
-        } catch (AuthException e) {
+        } catch (HotelAuthenticationException e) {
         log.error("Error: проблемы с обновлением токена через refreshToken {}",refreshToken);
             throw e;
         } catch (Exception e) {
             log.error("Error: проблемы с обновлением токена яерез refreshToken {} , не связвнные с аутонтефикацией ",refreshToken ,e);
-            throw new AuthException("Failed to refresh access token: " + e.getMessage());
+            throw new HotelAuthenticationException("Failed to refresh access token: " + e.getMessage());
         }
     }
 

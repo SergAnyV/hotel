@@ -1,7 +1,7 @@
 package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
-import com.asv.hotel.exceptions.AuthException;
+import com.asv.hotel.exceptions.HotelAuthenticationException;
 import com.asv.hotel.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByNickName(username)
-                .orElseThrow(() -> new AuthException("Пользователь с ником '" + username + "' не найден"));
+                .orElseThrow(() -> new HotelAuthenticationException("Пользователь с ником '" + username + "' не найден"));
         return user;
     }
 }

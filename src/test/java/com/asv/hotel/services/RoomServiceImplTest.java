@@ -2,7 +2,7 @@ package com.asv.hotel.services;
 
 import com.asv.hotel.dto.roomdto.RoomDTO;
 import com.asv.hotel.entities.enums.RoomType;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
 import com.asv.hotel.repositories.RoomRepository;
 import com.asv.hotel.services.implementations.RoomServiceImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -80,7 +80,7 @@ class RoomServiceImplTest {
         roomServiceImpl.createRoom(testRoomDTO);
 
         assertThatThrownBy(() -> roomServiceImpl.createRoom(testRoomDTO))
-                .isInstanceOf(DataAlreadyExistsException.class)
+                .isInstanceOf(HotelDataAlreadyExistsException.class)
                 .hasMessageContaining(testRoomDTO.getNumber());
     }
     // READ чтение из базф

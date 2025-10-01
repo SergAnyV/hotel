@@ -3,8 +3,8 @@ package com.asv.hotel.services.implementations;
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.DataNotFoundException;
+import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
+import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.UserTypeInternalService;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +29,13 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         try {
             if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName()).isPresent()) {
                 log.warn("Error: такая роль уже существует {} ", userTypeDTO.getName());
-                throw new DataAlreadyExistsException(userTypeDTO.getName());
+                throw new HotelDataAlreadyExistsException(userTypeDTO.getName());
             }
             UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
             return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ", ex);
-            throw new DataAlreadyExistsException(userTypeDTO.getName());
+            throw new HotelDataAlreadyExistsException(userTypeDTO.getName());
         }
     }
 
@@ -50,7 +50,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     public void deleteUserTypeByType(String role) {
         if (userTypeRepository.deleteByRole(role) == 0) {
             log.warn("Error: такая роль не существует {} ", role);
-            throw new DataNotFoundException(role);
+            throw new HotelDataNotFoundException(role);
         }
     }
 
@@ -70,13 +70,13 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()) {
                 log.warn("Error: роль не распознана среди доступных ,указана {}", role);
-                throw new DataNotFoundException("данная роль не распознана в базе");
+                throw new HotelDataNotFoundException("данная роль не распознана в базе");
             }
             return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
                     ex);
-            throw new DataAlreadyExistsException(role);
+            throw new HotelDataAlreadyExistsException(role);
         }
     }
 
@@ -86,13 +86,13 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty()) {
                 log.warn("Error: роль не распознана среди доступных ,указана {}", role);
-                throw new DataNotFoundException("данная роль не распознана в базе");
+                throw new HotelDataNotFoundException("данная роль не распознана в базе");
             }
             return userTypeOptional.get();
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
                     ex);
-            throw new DataAlreadyExistsException(role);
+            throw new HotelDataAlreadyExistsException(role);
         }
     }
 
@@ -101,7 +101,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName());
         if (userTypeOptional.isEmpty()) {
             log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getName());
-            throw new DataNotFoundException("данная роль не распознана в базе");
+            throw new HotelDataNotFoundException("данная роль не распознана в базе");
         }
         var userType = userTypeOptional.get();
 
@@ -122,14 +122,14 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
             if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
                 log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
-                throw new DataNotFoundException("данная роль не распознана в базе");
+                throw new HotelDataNotFoundException("данная роль не распознана в базе");
             }
 
             return userTypeOptional.get();
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
                     ex);
-            throw new DataAlreadyExistsException(role);
+            throw new HotelDataAlreadyExistsException(role);
         }
     }
 
@@ -139,7 +139,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
             return userTypeRepository.findUserTypesByJobTypeId(jobTypeId);
         }catch (RuntimeException ex){
             log.warn("Error: роль не распознана среди доступных(активных) id ,указана {}", jobTypeId);
-            throw new DataNotFoundException("findUserTypesByJobTypeId");
+            throw new HotelDataNotFoundException("findUserTypesByJobTypeId");
         }
     }
 }

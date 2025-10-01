@@ -6,7 +6,7 @@ import com.asv.hotel.dto.mapper.BookingMapper;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
-import com.asv.hotel.exceptions.DataNotFoundException;
+import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.repositories.BookingRepository;
 import com.asv.hotel.services.*;
 import com.asv.hotel.util.BookingUtils;
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
         try {
             if (bookingRepository.deleteBookingById(id) == 0) {
                 log.error("Error данной брони не существует для удаления {}", id);
-                throw new DataNotFoundException("данной брони не существует для удаления");
+                throw new HotelDataNotFoundException("данной брони не существует для удаления");
             }
         } catch (DataAccessException ex) {
             log.error("Error проблема с удаление по Id бронирования {}", id, ex);
@@ -85,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
             List<Booking> bookingsList = bookingRepository.findAllByRoomNumber(roomNumber);
             if (bookingsList.isEmpty()) {
                 log.error("лист с бронированиями пуст для данной комнаты {}", roomNumber);
-                throw new DataNotFoundException("лист с бронированиями пуст для данной комнаты");
+                throw new HotelDataNotFoundException("лист с бронированиями пуст для данной комнаты");
             }
             return bookingsList.stream().map(b -> {
                         return BookingMapper.INSTANCE.bookingToBookingSimpleDTO(b);
@@ -158,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
             PromoCode promoCode = promoCodeInternalService.findActivePromoCodeByName(bookingSimplDTO.getPromoCodeDTO());
             return calculateTotalPriceWithPromoCode(totalPrice, promoCode);
 
-        } catch (DataNotFoundException | DataAccessException ex) {
+        } catch (HotelDataNotFoundException | DataAccessException ex) {
             log.error("Error промокод не найден {}", bookingSimplDTO.getPromoCodeDTO(), ex);
             return totalPrice;
         }

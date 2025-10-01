@@ -3,8 +3,8 @@ package com.asv.hotel.services.implementations;
 import com.asv.hotel.dto.mapper.ServiceHoteMapper;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelDTO;
 import com.asv.hotel.entities.ServiceHotel;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
-import com.asv.hotel.exceptions.DataNotFoundException;
+import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
+import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.repositories.ServiceHotelRepository;
 import com.asv.hotel.services.ServiceHotelInternalService;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +41,10 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
             Optional<ServiceHotel> serviceOptional =
                     serviceHotelRepository.findByTitle(title);
             if (serviceOptional.isEmpty()) {
-                throw new DataNotFoundException("не существует такого сервиса");
+                throw new HotelDataNotFoundException("не существует такого сервиса");
             }
             return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(serviceOptional.get());
-        } catch (DataAccessException | DataNotFoundException ex) {
+        } catch (DataAccessException | HotelDataNotFoundException ex) {
             log.error(" Error не существует такого сервиса {}",title, ex);
             throw ex;
         }
@@ -55,7 +55,7 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
         try {
             if (serviceHotelRepository.findByTitle(serviceHotelDTO.getTitle()).isPresent()) {
                 log.warn("War такой сервис уже существует поиск по названи=ю {}", serviceHotelDTO);
-                throw new DataAlreadyExistsException("такой сервис уже существует в базе");
+                throw new HotelDataAlreadyExistsException("такой сервис уже существует в базе");
             }
             return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(
                     serviceHotelRepository.save(
@@ -73,7 +73,7 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
             serviceHotelRepository.delete(serviceHotelOptional.get());
         }else {
             log.error("Error данного типа сервиса не найдено {} при попытки удаления сервиса", title );
-            throw new DataNotFoundException("ошибка при удаление сервиса из базы");
+            throw new HotelDataNotFoundException("ошибка при удаление сервиса из базы");
         }
     }
 
@@ -83,7 +83,7 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
         Optional<ServiceHotel> serviceHotelOptional = serviceHotelRepository.findByTitle(serviceHotelDTO.getTitle());
         if(serviceHotelOptional.isEmpty()){
             log.error("Error не найден такой сервис для обновления {}" , serviceHotelDTO);
-            throw new DataNotFoundException("there is no this service");
+            throw new HotelDataNotFoundException("there is no this service");
         }
         ServiceHotel serviceHotel=serviceHotelOptional.get();
         ServiceHoteMapper.INSTANCE.updateService(serviceHotelDTO,serviceHotel);
@@ -100,10 +100,10 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
             Optional<ServiceHotel> serviceOptional =
                     serviceHotelRepository.findByTitle(title);
             if (serviceOptional.isEmpty()) {
-                throw new DataNotFoundException("не существует такого сервиса");
+                throw new HotelDataNotFoundException("не существует такого сервиса");
             }
             return serviceOptional.get();
-        } catch (DataAccessException | DataNotFoundException ex) {
+        } catch (DataAccessException | HotelDataNotFoundException ex) {
             log.error(" Error ", ex);
             throw ex;
         }
