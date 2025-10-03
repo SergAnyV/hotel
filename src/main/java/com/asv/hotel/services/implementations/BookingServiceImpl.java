@@ -2,11 +2,15 @@ package com.asv.hotel.services.implementations;
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
+import com.asv.hotel.dto.bookingdto.RequestByDate;
 import com.asv.hotel.dto.mapper.BookingMapper;
+import com.asv.hotel.dto.roomdto.RoomSimpleDTO;
+import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
+import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import com.asv.hotel.repositories.BookingRepository;
 import com.asv.hotel.services.*;
 import com.asv.hotel.util.BookingUtils;
@@ -18,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -97,6 +103,19 @@ public class BookingServiceImpl implements BookingService {
             };
         }
     }
+
+    @Transactional
+    @Override
+    public List<RoomSimpleDTODataBase> findRoomSimpleDTOByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
+        if(!checkInDate.isBefore(checkOutDate)){
+            log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
+                    checkInDate, checkOutDate);
+            throw new HotelIncorrectInputData("Booking ", " Checking and Checkout dates");
+        }
+
+        return bookingRepository.findAllFreeRoomsBetweenDates(checkInDate, checkOutDate);
+    }
+
 
     private Set<ServiceHotel> findAllServicesForBooking(BookingSimplDTO bookingSimplDTO) {
         Set<ServiceHotelSimpleDTO> serviceHotelDTOS = bookingSimplDTO.getServiceSet();

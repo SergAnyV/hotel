@@ -3,6 +3,7 @@ package com.asv.hotel.dto.roomdto;
 import com.asv.hotel.entities.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ public class RoomSimpleDTO {
     @Schema(description = "Описание комнаты и удобств", example = "Номер с видом на море")
     @NotBlank(message = "Описание комнаты не должен быть пустым")
     @NotBlank(message = " не должен быть пустым")
-    @Size(min = 3,max = 100,message = "количество символов 3-100")
+    @Size(min = 3, max = 100, message = "количество символов 3-100")
     private String description;
 
     @Schema(description = "Вместимость (количество человек)", example = "2", type = "integer")
