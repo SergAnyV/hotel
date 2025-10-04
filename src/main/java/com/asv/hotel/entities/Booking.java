@@ -74,7 +74,6 @@ public class Booking {
     private Set<ServiceHotel> serviceSet;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Column(name = "notifications")
     private List<Notification> notifications = new ArrayList<>();
 
     @PrePersist

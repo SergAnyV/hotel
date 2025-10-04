@@ -31,6 +31,5 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
-    @Column(name = "booking")
     private Booking booking;
 }
