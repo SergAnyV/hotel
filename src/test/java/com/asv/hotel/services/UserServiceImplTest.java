@@ -4,6 +4,7 @@ import com.asv.hotel.dto.userdto.UserDTO;
 import com.asv.hotel.dto.userdto.UserSimpleDTO;
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.entities.User;
+import com.asv.hotel.entities.enums.UserRole;
 import com.asv.hotel.repositories.UserRepository;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.implementations.UserServiceImpl;
@@ -39,13 +40,13 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        testUserTypeDTO = UserTypeDTO.builder().name("Client").description("just a client").isActive(true).build();
-        testUserTypeDTO2 = UserTypeDTO.builder().name("Admin").description("just a admin").isActive(true).build();
-        testUserDTO = UserDTO.builder().role("Client").email("ghi@j.hj").firstName("Sergey")
+        testUserTypeDTO = UserTypeDTO.builder().name("Client").description("just a client").isActive(true).role(UserRole.CLIENT).build();
+        testUserTypeDTO2 = UserTypeDTO.builder().name("Admin").description("just a admin").isActive(true).role(UserRole.ADMIN).build();
+        testUserDTO = UserDTO.builder().type("Client").email("ghi@j.hj").firstName("Sergey")
                 .fathersName("Vladimirivich").lastName("Numm").nickName("Best").phoneNumber("86866").password("1234").build();
         testUserSimpleDTO=UserSimpleDTO.builder().firstName("Sergey").fathersName("Vladimirivich").lastName("Numm")
                 .phoneNumber("96").build();
-        testUserDTO2 = UserDTO.builder().role("Client").email("sdgs@j.hj").firstName("Nikola")
+        testUserDTO2 = UserDTO.builder().type("Client").email("sdgs@j.hj").firstName("Nikola")
                 .fathersName("Vladimirivich").lastName("Ginn").nickName("YoloPuki").phoneNumber("86866").password("1234").build();
 
     }
@@ -88,10 +89,10 @@ class UserServiceImplTest {
         userTypeServiceImpl.createUserType(testUserTypeDTO);
         userTypeServiceImpl.createUserType(testUserTypeDTO2);
         userServiceImpl.createUser(testUserDTO);
-        testUserDTO.setRole("Admin");
+        testUserDTO.setType("Admin");
         userServiceImpl.changeDataUser(testUserDTO);
         var updatedUser= userServiceImpl.findUserByLastNameAndFirstName(testUserDTO.getLastName(), testUserDTO.getFirstName());
-        assertFalse(testUserDTO.getRole().equals("Client"));
+        assertFalse(testUserDTO.getType().equals("Client"));
         assertTrue(testUserDTO.getFirstName().equals(updatedUser.getFirstName()));
 
 

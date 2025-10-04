@@ -1,6 +1,7 @@
 package com.asv.hotel.services;
 
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
+import com.asv.hotel.entities.enums.UserRole;
 import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.implementations.UserTypeServiceImpl;
@@ -36,14 +37,16 @@ class UserTypeServiceImplTest {
     @BeforeEach
     public void setUp() {
         testUserTypeDTO = UserTypeDTO.builder()
-                .name("Администратора")
+                .name("администратора")
                 .description("просто админ")
                 .isActive(true)
+                .role(UserRole.ADMIN)
                 .build();
         testUserTypeDTO2 = UserTypeDTO.builder()
                 .name("Работник")
                 .description("просто работник")
                 .isActive(true)
+                .role(UserRole.STAFF)
                 .build();
     }
 
