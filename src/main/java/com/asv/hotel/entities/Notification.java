@@ -29,8 +29,8 @@ public class Notification {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
+    @Column(name = "booking")
     private Booking booking;
-
 }

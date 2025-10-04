@@ -5,6 +5,7 @@ import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
+import com.asv.hotel.exceptions.HotelMainException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.UserTypeInternalService;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,8 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
                     ex);
-            throw new HotelDataAlreadyExistsException(role);
+            throw new HotelDataNotFoundException(
+                    String.format("Проблемы с доступом к базе данных при сохранение роли '%s' ",role));
         }
     }
 
@@ -129,7 +131,8 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
                     ex);
-            throw new HotelDataAlreadyExistsException(role);
+            throw new HotelDataNotFoundException(
+                    String.format("Проблемы с доступом к базе данных при сохранение роли '%s' ",role));
         }
     }
 

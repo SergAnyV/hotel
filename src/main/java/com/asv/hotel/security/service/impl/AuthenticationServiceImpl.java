@@ -78,7 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw e;
         } catch (Exception e) {
             log.error("Error: проблемы с обновлением токена яерез refreshToken {} , не связвнные с аутонтефикацией ",refreshToken ,e);
-            throw new HotelAuthenticationException("Failed to refresh access token: " + e.getMessage());
+            throw new HotelAuthenticationException(String.format("Failed to refresh access token: '%s' ",e.getMessage()));
         }
     }
 

@@ -13,6 +13,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,6 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
         try {
             PromoCode promoCode = PromoCodeMapper.INSTANCE.promoCodeDTOToPromoCode(promoCodeDTO);
             return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promoCodeRepository.save(promoCode));
-
         } catch (DataAccessException ex) {
             log.error("Error проблема с сохранением промокода {}", ex);
             throw ex;
@@ -41,13 +41,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
 
     @Transactional
     public PromoCode findActivePromoCodeByName(String code) {
-        try {
-            return promoCodeRepository.findActivePromoCodeByCode(code).get();
-        } catch (HotelDataNotFoundException ex) {
-            log.error("Error: прокод не найден", ex);
-            throw new HotelDataNotFoundException("Промокода не существует " + code);
-        }
-
+        return promoCodeRepository.findActivePromoCodeByCode(code).get();
     }
 
     @Transactional
@@ -64,16 +58,16 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
     }
 
     @Transactional
-    public List<PromoCodeDTO> findAllPromoCodesDTO(){
-        List<PromoCode> listPromo= promoCodeRepository.findAll();
-       if( listPromo.isEmpty()){
-           log.warn("Warning промокодов нет");
-           throw new HotelDataNotFoundException("промокодов нет" );
-       }
-       return listPromo.stream().map(promo-> {
-           return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promo);
+    public List<PromoCodeDTO> findAllPromoCodesDTO() {
+        List<PromoCode> listPromo = promoCodeRepository.findAll();
+        if (listPromo.isEmpty()) {
+            log.warn("Warning промокодов нет");
+           return Collections.emptyList();
+        }
+        return listPromo.stream().map(promo -> {
+            return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promo);
 
-       }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
     }
 
 

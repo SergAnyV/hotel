@@ -9,6 +9,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -71,6 +73,9 @@ public class Booking {
     )
     private Set<ServiceHotel> serviceSet;
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "notifications")
+    private List<Notification> notifications = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
