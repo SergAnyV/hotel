@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/rooms")
 @RequiredArgsConstructor
 @Tag(name = "Room Management", description = "API для управления номерами отеля")
+@Validated
 public class RoomController {
     private final RoomService roomService;
 

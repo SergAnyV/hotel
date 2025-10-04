@@ -6,7 +6,7 @@ import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.DataAlreadyExistsException;
 import com.asv.hotel.exceptions.DataNotFoundException;
 import com.asv.hotel.repositories.UserTypeRepository;
-import com.asv.hotel.services.UserTypeService;
+import com.asv.hotel.services.UserTypeInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -20,22 +20,22 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserTypeServiceImpl implements UserTypeService {
+public class UserTypeServiceImpl implements UserTypeInternalService {
 
     private final UserTypeRepository userTypeRepository;
 
     @Transactional
     public UserTypeDTO createUserType(UserTypeDTO userTypeDTO) {
         try {
-            if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole()).isPresent()) {
-                log.warn("Error: такая роль уже существует {} ", userTypeDTO.getRole());
-                throw new DataAlreadyExistsException(userTypeDTO.getRole());
+            if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName()).isPresent()) {
+                log.warn("Error: такая роль уже существует {} ", userTypeDTO.getName());
+                throw new DataAlreadyExistsException(userTypeDTO.getName());
             }
             UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
             return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ", ex);
-            throw new DataAlreadyExistsException(userTypeDTO.getRole());
+            throw new DataAlreadyExistsException(userTypeDTO.getName());
         }
     }
 
@@ -98,18 +98,18 @@ public class UserTypeServiceImpl implements UserTypeService {
 
     @Transactional
     public UserTypeDTO cahngeDataUserType(UserTypeDTO userTypeDTO) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getRole());
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName());
         if (userTypeOptional.isEmpty()) {
-            log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getRole());
+            log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getName());
             throw new DataNotFoundException("данная роль не распознана в базе");
         }
         var userType = userTypeOptional.get();
 
-        UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO,userType);
-        try{
-        userTypeRepository.save(userType);
-        }catch (DataAccessException ex){
-            log.error("Error: проблема доступа к базе ",ex);
+        UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO, userType);
+        try {
+            userTypeRepository.save(userType);
+        } catch (DataAccessException ex) {
+            log.error("Error: проблема доступа к базе ", ex);
             throw ex;
         }
 
@@ -117,10 +117,10 @@ public class UserTypeServiceImpl implements UserTypeService {
     }
 
 
-    public UserType findActiveUserTypeByType(String role){
+    public UserType findActiveUserTypeByType(String role) {
         try {
             Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()|| !userTypeOptional.get().getIsActive()) {
+            if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
                 log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
                 throw new DataNotFoundException("данная роль не распознана в базе");
             }
@@ -133,4 +133,13 @@ public class UserTypeServiceImpl implements UserTypeService {
         }
     }
 
+    @Override
+    public List<UserType> findUserTypesByJobTypeId(Long jobTypeId) {
+        try {
+            return userTypeRepository.findUserTypesByJobTypeId(jobTypeId);
+        }catch (RuntimeException ex){
+            log.warn("Error: роль не распознана среди доступных(активных) id ,указана {}", jobTypeId);
+            throw new DataNotFoundException("findUserTypesByJobTypeId");
+        }
+    }
 }

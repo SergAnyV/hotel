@@ -12,11 +12,14 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "User Management", description = "REST API для управления юзерами")
 public class UserController {
     private final UserService userService;
@@ -30,6 +33,7 @@ public class UserController {
         UserDTO newuserDTO = userService.createUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newuserDTO);
     }
+
 
     @Operation(summary = "Получить по имени и фамилии",
             description = "Возвращает юзера")
@@ -56,24 +60,28 @@ public class UserController {
         return ResponseEntity.ok(userService.findUserDTOByLastNameAndFirstName(lastName, firstName));
     }
 
+
     @Operation(summary = "Получить по номеру телефона",
             description = "Возвращает юзера")
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Номер не найден")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/by-phone")
     public ResponseEntity<UserDTO> getUserByPhoneNumber(
-            @RequestParam("phoneNumber")
+
             @NotBlank(message = "Телефон пользователя, не должен быть пустым")
             @Size(min = 3, max = 20, message = "количество символов 3-20")
             @Pattern(
-                    regexp = "^[0-9]",
+                    regexp = "^\\d+$",
                     message = "Некорректный номер. Пример: 89065554433"
             )
+            @RequestParam("phoneNumber")
             String phoneNumber) {
         return ResponseEntity.ok(userService.findUserDTOByPhoneNumber(phoneNumber));
     }
 
-    @Operation(summary = "Удалить Юзер",
+
+    @Operation(summary = "Удалите Юзер",
             description = "удаляет данные существующего Юзер по фамилии и имени ")
     @ApiResponse(responseCode = "204", description = "Юзер удален")
     @DeleteMapping("/by-name")
@@ -97,6 +105,7 @@ public class UserController {
         userService.deleteUserByLastNameAndFirstName(lastName, firstName);
         return ResponseEntity.noContent().build();
     }
+
 
     @Operation(summary = "обновить юзера ",
             description = "Возвращает обновленного юзера")

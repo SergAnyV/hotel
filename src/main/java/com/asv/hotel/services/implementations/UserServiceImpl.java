@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserInternalService {
     private final UserTypeService userTypeService;
 
 
+
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
         try {
@@ -30,10 +31,12 @@ public class UserServiceImpl implements UserInternalService {
                 log.warn("Error: такой user уже существует {} {}", userDTO.getFirstName(), userDTO.getLastName());
                 throw new DataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
             }
-            UserType userType = userTypeService.findUserTypeByType(userDTO.getRole());
+            UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
             User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
-            user.setRole(userType);
-            return UserMapper.INSTANCE.userToUserDTO(userRepository.save(user));
+            user.setType(userType);
+            return UserMapper.INSTANCE.userToUserDTO(
+                    userRepository.save(user))
+                    ;
         } catch (DataAccessException e) {
             log.error("Error: проблема с доступом к базе данных"
                     , e);
@@ -59,6 +62,17 @@ public class UserServiceImpl implements UserInternalService {
             log.warn("Error : такого юзера не существует", ex);
             throw new DataNotFoundException(" такого юзера не существует");
         }
+    }
+
+    @Override
+    public User findUserByNickName(String nickName) {
+        try {
+            return   userRepository.findUserByNickName(nickName).get();
+        }catch (Exception ex) {
+            log.warn("Error : такого юзера не существует {}",nickName, ex);
+            throw new DataNotFoundException(" такого юзера не существует");
+        }
+
     }
 
     @Transactional

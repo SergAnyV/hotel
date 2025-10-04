@@ -23,7 +23,7 @@ import java.util.Set;
 @Builder
 public class Room {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "number", nullable = false, length = 10, unique = true)
@@ -39,7 +39,7 @@ public class Room {
     @Column(nullable = false)
     private Integer capacity;
 
-    @Column(name = "price_per_night", nullable = false, precision = 7, scale = 2)
+    @Column(name = "price_per_night", nullable = false, precision = 10, scale = 2)
     private BigDecimal pricePerNight;
 
     @Column(name = "is_available", columnDefinition = "boolean default true")

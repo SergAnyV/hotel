@@ -19,7 +19,7 @@ import java.util.Set;
 @Builder
 public class ServiceHotel {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "title", nullable = false, unique = true, length = 50)
@@ -28,7 +28,7 @@ public class ServiceHotel {
     @Column(name = "description", nullable = false, unique = true, length = 250)
     private String description;
 
-    @Column(name = "price", nullable = false, precision = 5, scale = 2)
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @CreationTimestamp

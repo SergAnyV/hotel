@@ -39,8 +39,8 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        testUserTypeDTO = UserTypeDTO.builder().role("Client").description("just a client").isActive(true).build();
-        testUserTypeDTO2 = UserTypeDTO.builder().role("Admin").description("just a admin").isActive(true).build();
+        testUserTypeDTO = UserTypeDTO.builder().name("Client").description("just a client").isActive(true).build();
+        testUserTypeDTO2 = UserTypeDTO.builder().name("Admin").description("just a admin").isActive(true).build();
         testUserDTO = UserDTO.builder().role("Client").email("ghi@j.hj").firstName("Sergey")
                 .fathersName("Vladimirivich").lastName("Numm").nickName("Best").phoneNumber("86866").password("1234").build();
         testUserSimpleDTO=UserSimpleDTO.builder().firstName("Sergey").fathersName("Vladimirivich").lastName("Numm")

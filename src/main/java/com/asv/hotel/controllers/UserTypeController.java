@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/user-types")
 @RequiredArgsConstructor
 @Tag(name = "User Type Managment", description = "REST API для управления типом пользователей")
+@Validated
 public class UserTypeController {
     private final UserTypeService userTypeService;
 

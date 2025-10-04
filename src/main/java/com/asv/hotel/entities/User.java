@@ -4,7 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,9 +23,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-public class User {
+public class User implements UserDetails{
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "nick_name", unique = true, nullable = false, length = 30)
@@ -39,7 +47,7 @@ public class User {
     @Column(name = "phone", length = 30, unique = true, nullable = false)
     private String phoneNumber;
 
-    @Column(name = "password", nullable = false, length = 20)
+    @Column(name = "password", nullable = false, length = 120)
     private String password;
 
     @CreationTimestamp
@@ -53,11 +61,49 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private UserType role;
+    private UserType type;
 
     @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private Set<Booking> bookingSet = new HashSet<>();
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Report> reports = new HashSet<>();
+
+
+    // реализация методов UserDetails
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+       return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.type.getRole().name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.nickName;
+    }
+    @Override
+    public String getPassword(){
+        return this.password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+
 }

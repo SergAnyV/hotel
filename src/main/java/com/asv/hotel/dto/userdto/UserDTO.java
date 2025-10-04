@@ -3,6 +3,7 @@ package com.asv.hotel.dto.userdto;
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.entities.Report;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -70,13 +71,14 @@ public class UserDTO {
 
     @Schema(description = "Пароль  пользователя", example = "123456789")
     @NotBlank(message = "Пароль пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3,max = 120,message = "количество символов 3-120")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Schema(description = "Тип  пользователя", example = "Клиент")
     @NotBlank(message = "Тип пользователя, не должен быть пустым")
     @Size(min = 3,max = 20,message = "количество символов 3-20")
-    private String role;
+    private String type;
 
     @Schema(description = "Бронирования пользователя", accessMode = Schema.AccessMode.READ_ONLY)
     @EqualsAndHashCode.Exclude

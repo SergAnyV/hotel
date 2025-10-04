@@ -23,4 +23,6 @@ public interface UserTypeService {
 
     UserType findActiveUserTypeByType(String role);
 
+
+
 }
