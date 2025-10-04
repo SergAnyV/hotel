@@ -2,7 +2,7 @@ package com.asv.hotel.services;
 
 import com.asv.hotel.dto.usertypedto.UserTypeDTO;
 import com.asv.hotel.entities.enums.UserRole;
-import com.asv.hotel.exceptions.DataAlreadyExistsException;
+import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.implementations.UserTypeServiceImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -79,7 +79,7 @@ class UserTypeServiceImplTest {
         userTypeServiceImpl.createUserType(testUserTypeDTO);
 
         assertThatThrownBy(() -> userTypeServiceImpl.createUserType(testUserTypeDTO))
-                .isInstanceOf(DataAlreadyExistsException.class)
+                .isInstanceOf(HotelDataAlreadyExistsException.class)
                 .hasMessageContaining(testUserTypeDTO.getName());
     }
 
