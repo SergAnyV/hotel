@@ -16,6 +16,6 @@ public interface BookingService {
 
     List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber(String roomNumber);
 
-    List<RoomSimpleDTODataBase> findRoomSimpleDTOByBookingDate(LocalDate checkInDate, LocalDate checkOutDate);
+    List<RoomSimpleDTODataBase> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate);
 }
 

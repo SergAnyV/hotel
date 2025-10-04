@@ -102,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public List<RoomSimpleDTODataBase> findRoomSimpleDTOByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
+    public List<RoomSimpleDTODataBase> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
         if(!checkInDate.isBefore(checkOutDate)){
             log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
                     checkInDate, checkOutDate);
