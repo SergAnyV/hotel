@@ -5,6 +5,7 @@ import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.entities.Report;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -22,12 +23,12 @@ public class UserDTO {
 
     @Schema(description = "никнайм пользователя", example = "Goldman")
     @NotBlank(message = "никнайм пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3, max = 20, message = "количество символов 3-20")
     private String nickName;
 
     @Schema(description = "имя пользователя", example = "Николай")
     @NotBlank(message = "имя пользователя, не должен быть пустым")
-    @Size(min = 3,max = 50,message = "количество символов 3-50")
+    @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Pattern(
             regexp = "^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)*$",
             message = "Имя может содержать только русские буквы, дефисы"
@@ -36,7 +37,7 @@ public class UserDTO {
 
     @Schema(description = "Отчество пользователя", example = "Иванович")
     @NotBlank(message = "Отчество пользователя, не должен быть пустым")
-    @Size(min = 3,max = 50,message = "количество символов 3-50")
+    @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Pattern(
             regexp = "^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)*$",
             message = "Отчество может содержать только русские буквы, дефисы"
@@ -45,7 +46,7 @@ public class UserDTO {
 
     @Schema(description = "Фамилия  пользователя", example = "Бугульма")
     @NotBlank(message = "Фамилия пользователя, не должен быть пустым")
-    @Size(min = 3,max = 50,message = "количество символов 3-50")
+    @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Pattern(
             regexp = "^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)*$",
             message = "Фамилия может содержать только русские буквы, дефисы"
@@ -53,16 +54,13 @@ public class UserDTO {
     private String lastName;
 
     @Schema(description = "Маил  пользователя", example = "Bugul@Nikol.con")
-    @Size(min = 3,max = 50,message = "количество символов 3-50")
-    @Pattern(
-            regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
-            message = "Некорректный email. Пример: user@example.com"
-    )
+    @Size(min = 3, max = 50, message = "количество символов 3-50")
+    @Email(message = "Некорректный email. Пример: user@example.com")
     private String email;
 
     @Schema(description = "Телефон  пользователя", example = "89876543322")
     @NotBlank(message = "Телефон пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3, max = 20, message = "количество символов 3-20")
     @Pattern(
             regexp = "^\\d+$",
             message = "Некорректный номер. Пример: 89065554433"
@@ -71,13 +69,13 @@ public class UserDTO {
 
     @Schema(description = "Пароль  пользователя", example = "123456789")
     @NotBlank(message = "Пароль пользователя, не должен быть пустым")
-    @Size(min = 3,max = 120,message = "количество символов 3-120")
+    @Size(min = 3, max = 120, message = "количество символов 3-120")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Schema(description = "Тип  пользователя", example = "Клиент")
     @NotBlank(message = "Тип пользователя, не должен быть пустым")
-    @Size(min = 3,max = 20,message = "количество символов 3-20")
+    @Size(min = 3, max = 20, message = "количество символов 3-20")
     private String type;
 
     @Schema(description = "Бронирования пользователя", accessMode = Schema.AccessMode.READ_ONLY)

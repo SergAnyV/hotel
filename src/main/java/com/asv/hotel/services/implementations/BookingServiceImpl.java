@@ -2,9 +2,7 @@ package com.asv.hotel.services.implementations;
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
-import com.asv.hotel.dto.bookingdto.RequestByDate;
 import com.asv.hotel.dto.mapper.BookingMapper;
-import com.asv.hotel.dto.roomdto.RoomSimpleDTO;
 import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
@@ -19,11 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,8 +61,8 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatusOfBooking(BookingStatus.CONFIRMED);
 
             return BookingMapper.INSTANCE.bookingToBookingDTO(bookingRepository.save(booking));
-        } catch (RuntimeException ex) {
-            log.error("Error проблемы с сохранением бронирования");
+        } catch (DataAccessException ex) {
+            log.error("Error проблемы с созданием нового бронирования в методе createBooking", ex);
             throw ex;
         }
     }
@@ -86,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber(String roomNumber) {
+    public List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber (String roomNumber) {
         try {
             List<Booking> bookingsList = bookingRepository.findAllByRoomNumber(roomNumber);
             if (bookingsList.isEmpty()) {
