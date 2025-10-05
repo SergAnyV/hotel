@@ -76,7 +76,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         } catch (DataAccessException ex) {
             log.warn("Error: проблема с доступом к базе данных ",
                     ex);
-            throw new HotelDataAlreadyExistsException(role);
+            throw new HotelDataNotFoundException(role);
         }
     }
 

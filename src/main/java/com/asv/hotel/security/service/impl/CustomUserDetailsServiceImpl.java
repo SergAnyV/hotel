@@ -16,7 +16,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByNickName(username)
-                .orElseThrow(() -> new HotelAuthenticationException("Пользователь с ником '" + username + "' не найден"));
+                .orElseThrow(() -> new HotelAuthenticationException(String.format("Пользователь с ником '%s' не найден", username)));
         return user;
     }
 }
