@@ -39,7 +39,6 @@ public class ServiceHotel {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "bookingSet")
     @ManyToMany(mappedBy = "serviceSet", fetch = FetchType.LAZY)
     private Set<Booking> bookingSet = new HashSet<>();
 }

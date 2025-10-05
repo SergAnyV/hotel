@@ -63,11 +63,14 @@ public class User implements UserDetails{
     @JoinColumn(name = "role_id", nullable = false)
     private UserType type;
 
-    @OneToMany(mappedBy ="user",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="user",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Booking> bookingSet = new HashSet<>();
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
     private Set<Report> reports = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<NotificationHotel> notificationHotels = new HashSet<>();
 
 
     // реализация методов UserDetails

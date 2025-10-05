@@ -74,7 +74,7 @@ public class Booking {
     private Set<ServiceHotel> serviceSet;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Notification> notifications = new ArrayList<>();
+    private List<NotificationHotel> notificationHotels = new ArrayList<>();
 
     @PrePersist
     @PreUpdate
