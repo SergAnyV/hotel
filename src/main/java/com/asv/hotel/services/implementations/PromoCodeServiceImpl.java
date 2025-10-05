@@ -56,7 +56,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
         return listPromo.stream().map(promo -> {
             return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promo);
 
-        }).collect(Collectors.toList());
+       }).collect(Collectors.toList());
     }
 
 
