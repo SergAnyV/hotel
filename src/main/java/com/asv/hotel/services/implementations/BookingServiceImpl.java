@@ -2,18 +2,25 @@ package com.asv.hotel.services.implementations;
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
+import com.asv.hotel.dto.bookingdto.ResponseBookingDTO;
 import com.asv.hotel.dto.mapper.BookingMapper;
+import com.asv.hotel.dto.mapper.ServiceHoteMapper;
 import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
+import com.asv.hotel.entities.enums.UserRole;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import com.asv.hotel.repositories.BookingRepository;
+import com.asv.hotel.security.util.JWTUtils;
 import com.asv.hotel.services.*;
 import com.asv.hotel.util.BookingUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.Mapping;
+import org.mapstruct.control.MappingControl;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +45,7 @@ public class BookingServiceImpl implements BookingService {
     private final ServiceHotelInternalService serviceHotelInternalService;
     private final PromoCodeInternalService promoCodeInternalService;
     private final NotificationHotelService notificationHotelService;
+    private final JWTUtils jwtUtils;
 
     @Transactional
     public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
@@ -108,6 +116,71 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findAllFreeRoomsBetweenDates(checkInDate, checkOutDate);
     }
 
+    @Transactional
+    public ResponseBookingDTO findBesponseBookingDTOByBookingId(Long id, HttpServletRequest request) {
+        Booking booking = bookingRepository.findById(id).orElse(null);
+
+        if (booking == null) {
+            log.warn("Error: неверный номер брониования в методе findBesponseBookingDTOByBookingId id= {}", id);
+            throw new HotelDataNotFoundException("нет такого номера бронирования");
+        }
+
+        if (!isCorrectRequest(booking, request)) {
+            throw new HotelIncorrectInputData(" Неккоректный запрос для бронирвания ");
+        }
+
+        Set<ServiceHotelSimpleDTO> serviceHotelSimpleDTOS = booking.getServiceSet().stream()
+                .map(serviceHotel ->
+                        ServiceHoteMapper.INSTANCE.serviceHotelToServiceHotelSimpleDTO(serviceHotel))
+                .collect(Collectors.toSet());
+
+        return ResponseBookingDTO.builder()
+                .bookingId(booking.getId())
+                .statusOfBooking(booking.getStatusOfBooking())
+                .checkInDate(booking.getCheckInDate())
+                .checkOutDate(booking.getCheckOutDate())
+                .persons(booking.getPersons())
+                .totalPrice(booking.getTotalPrice())
+                .roomNumber(booking.getRoom().getNumber())
+                .type(booking.getRoom().getType())
+                .descriptionTypeOfRoom(booking.getRoom().getType().getDescription())
+                .firstName(booking.getUser().getFirstName())
+                .lastName(booking.getUser().getLastName())
+                .email(booking.getUser().getEmail())
+                .phoneNumber(booking.getUser().getPhoneNumber())
+                .serviceHotelSimpleDTOS(serviceHotelSimpleDTOS)
+                .build();
+    }
+
+    private boolean isCorrectRequest(Booking booking, HttpServletRequest request) {
+        String authHeader = request.getHeader(JWTUtils.AUTHORIZATION);
+
+        if (authHeader == null || !authHeader.startsWith(JWTUtils.BEARER)) {
+            return Boolean.FALSE;
+        }
+
+        String accessToken = authHeader.substring(7);
+        String nickNameFromToken = jwtUtils.extractUsername(accessToken);
+
+        if (booking.getUser().getNickName().equals(nickNameFromToken)) {
+            return Boolean.TRUE;
+        }
+
+        UserType userTypeFromTokenNickName = userInternalExtendExternalService.findUserTypeByUserNickName(nickNameFromToken);
+        if (userTypeFromTokenNickName == null) {
+            throw new HotelDataNotFoundException(String.format("неопознана роль из токена по никнейм '%s'",
+                    nickNameFromToken));
+        }
+
+        if (!(userTypeFromTokenNickName.getRole().equals(UserRole.ADMIN) ||
+                userTypeFromTokenNickName.getRole().equals(UserRole.MANAGER))) {
+            throw new HotelIncorrectInputData(String.format("Неверные права доступа для поиска не своего бронирования " +
+                    "nicknameToken '%s' bokingIdRequest '%s'", nickNameFromToken, booking));
+        }
+
+        return Boolean.TRUE;
+    }
+
 
     private Set<ServiceHotel> findAllServicesForBooking(BookingSimplDTO bookingSimplDTO) {
         Set<ServiceHotelSimpleDTO> serviceHotelDTOS = bookingSimplDTO.getServiceSet();
@@ -134,7 +207,7 @@ public class BookingServiceImpl implements BookingService {
 
     private Room findRoomForBooking(BookingSimplDTO bookingSimplDTO) {
         Room room = roomInternalService.findRoomByNumber(bookingSimplDTO.getRoomNumber());
-        if (room == null ||( Boolean.TRUE.equals(room.getIsAvailable()) && !bookingRepository.isRoomAvailableForDates(room.getId(),
+        if (room == null || (Boolean.TRUE.equals(room.getIsAvailable()) && !bookingRepository.isRoomAvailableForDates(room.getId(),
                 bookingSimplDTO.getCheckInDate(), bookingSimplDTO.getCheckOutDate()))) {
             throw new HotelDataNotFoundException("комната не свободна на данные даты или нет такой комнаты ") {
             };

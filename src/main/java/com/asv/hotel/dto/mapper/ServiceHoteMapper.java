@@ -27,6 +27,10 @@ public interface ServiceHoteMapper {
     @Mapping(target ="description" ,source = "description")
     ServiceHotelSimpleDTO serviceHotelDTOToServiceHotelSimpleDTO(ServiceHotelDTO serviceHotelDTO);
 
+    @Mapping(target ="title" ,source = "title")
+    @Mapping(target ="description" ,source = "description")
+    ServiceHotelSimpleDTO serviceHotelToServiceHotelSimpleDTO(ServiceHotel serviceHotel);
+
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target ="createdAt",ignore = true )

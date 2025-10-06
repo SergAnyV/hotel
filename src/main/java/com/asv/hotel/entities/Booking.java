@@ -20,6 +20,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NamedEntityGraph(
+        name = "Booking.withServices",
+        attributeNodes = {
+                @NamedAttributeNode("serviceSet")
+        }
+)
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

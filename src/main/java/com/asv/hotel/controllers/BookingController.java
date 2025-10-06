@@ -4,11 +4,13 @@ package com.asv.hotel.controllers;
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 
+import com.asv.hotel.dto.bookingdto.ResponseBookingDTO;
 import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
 import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.NotNull;
@@ -20,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Reader;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class BookingController {
     @ApiResponse(responseCode = "200", description = "бронирования найдены")
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
 
-    @GetMapping("/{number}")
+    @GetMapping("/room/{number}")
     public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber(
             @PathVariable
             @NotBlank(message = "номер комнаты не должен быть пустым")
@@ -83,12 +85,21 @@ public class BookingController {
                                                                                 @RequestParam
                                                                                 @Future
                                                                                 @NotNull
-                                                                                LocalDate checkOut,
-                                                                                Reader reader) {
+                                                                                LocalDate checkOut) {
         List<RoomSimpleDTODataBase> roomSimpleDTODataBaseList = bookingService.findRoomSimpleDTODataBaseByBookingDate(checkin, checkOut);
         if (roomSimpleDTODataBaseList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(roomSimpleDTODataBaseList);
+    }
+
+    @GetMapping("/bookingid/{bookingid}")
+    public  ResponseEntity<ResponseBookingDTO> gitBookingById(@PathVariable("bookingid")
+                                                               @NotNull (message = "id бронирования не может быть null")
+                                                               @Positive(message = "id бронирования должно быть положительна")
+                                                               Long id,
+                                                              HttpServletRequest request){
+        ResponseBookingDTO responseBookingDTO=bookingService.findBesponseBookingDTOByBookingId(id,request);
+        return ResponseEntity.ok(responseBookingDTO);
     }
 }

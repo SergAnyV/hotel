@@ -16,5 +16,5 @@ public interface NotificationMapper {
 
     @Mapping(target = "message",source = "message")
     @Mapping(target = "createdAt",source = "createdAt")
-    NotificationHotel notificationdtoToNotification(NotificationHotelDto notificationHotelDto);
+    NotificationHotel notificationdtoToNotification(NotificationHotelDto notificationDto);
 }
