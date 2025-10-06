@@ -45,29 +45,23 @@ public class RoomServiceImpl implements RoomInternalService {
     @Transactional(readOnly = true)
     public List<RoomDTO> findRoomsDTOByType(RoomType type) {
         return roomRepository.findRoomByTypeLikeIgnoreCase(type).stream()
-                .map(roomOptional -> {
-                    return RoomMapper.INSTANCE.roomToRoomDTO(roomOptional);
-                })
+                .map(roomOptional -> RoomMapper.INSTANCE.roomToRoomDTO(roomOptional))
                 .collect(Collectors.toList());
     }
 
 
     @Transactional
     public RoomDTO createRoom(RoomDTO roomDTO) {
-        try {
-            if (roomRepository.findRoomByNumberLikeIgnoreCase(roomDTO.getNumber()).isPresent()) {
-                log.warn("Error: такая комната уже существует {} ", roomDTO.getNumber());
-                throw new HotelDataAlreadyExistsException(roomDTO.getNumber());
-            }
-            Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
-            room.setCreatedAt(LocalDateTime.now());
-            room.setUpdatedAt(LocalDateTime.now());
-            return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(room));
-        } catch (DataAccessException e) {
-            log.warn("Error: проблема с доступом к базе данных , метода {}", new Object() {
-            }.getClass().getEnclosingMethod().getName());
+
+        if (roomRepository.findRoomByNumberLikeIgnoreCase(roomDTO.getNumber()).isPresent()) {
+            log.warn("Error: такая комната уже существует {} ", roomDTO.getNumber());
             throw new HotelDataAlreadyExistsException(roomDTO.getNumber());
         }
+        Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
+        room.setCreatedAt(LocalDateTime.now());
+        room.setUpdatedAt(LocalDateTime.now());
+        return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(room));
+
     }
 
 
@@ -80,15 +74,7 @@ public class RoomServiceImpl implements RoomInternalService {
                 });
 
         RoomMapper.INSTANCE.updateRoomFromDTO(newRoomDTO, existingRoom);
-        try {
-
-            return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(existingRoom));
-        } catch (DataAccessException ex) {
-            log.error("Error проблема с обновлением комнаты {}", existingRoom, ex);
-            throw new DataAccessException("Проблема с обновлением данных в комнате ") {
-            };
-        }
-
+        return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(existingRoom));
     }
 
 

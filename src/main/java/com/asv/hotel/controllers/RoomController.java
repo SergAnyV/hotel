@@ -45,7 +45,6 @@ public class RoomController {
             @NotBlank(message = "номер комнаты не должен быть пустым")
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
-
         RoomDTO roomDTO = roomService.findRoomDTOByNumber(number);
         return ResponseEntity.ok(roomDTO);
 
@@ -57,7 +56,7 @@ public class RoomController {
     @ApiResponse(responseCode = "201", description = "Номер создан")
     @ApiResponse(responseCode = "409", description = "Номер не создан")
     @PostMapping
-    public ResponseEntity<RoomDTO> createRoom( @RequestBody @Valid RoomDTO roomDTO) {
+    public ResponseEntity<RoomDTO> createRoom(@RequestBody @Valid RoomDTO roomDTO) {
         RoomDTO newRoomDTO = roomService.createRoom(roomDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newRoomDTO);
     }

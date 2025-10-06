@@ -66,15 +66,11 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     public List<JobTypeDTO> findJobTypesDTOByTitle(String title) {
         title = cleanString(title);
         title = StringUtil.preparedStringForPartiallyCoincidence(title);
-        try {
-            List<JobType> listJT = jobTypeRepository.findJobTypesByTitle(title);
+                 List<JobType> listJT = jobTypeRepository.findJobTypesByTitle(title);
             return listJT.stream()
                     .map(jobType -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jobType))
                     .collect(Collectors.toList());
-        } catch (DataAccessException ex) {
-            log.error("Error: проблемы с поиском  jobType по title= {}  в методе  findJobTypesDTOByTitle", title, ex);
-            throw new HotelDataNotFoundException("There is no this title= " + title);
-        }
+
     }
 
     @Transactional
@@ -82,13 +78,10 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     public List<JobType> findJobTypesByTitle(String title) {
         title = cleanString(title);
         title = StringUtil.preparedStringForPartiallyCoincidence(title);
-        try {
+
             List<JobType> listJT = jobTypeRepository.findJobTypesByTitle(title);
             return listJT;
-        } catch (DataAccessException ex) {
-            log.error("Error проблемы с поиском  jobType по title= {} в методе findJobTypesDTOByTitle", title, ex);
-            throw new HotelDataNotFoundException("There is no this title " + title);
-        }
+
     }
 
     @Transactional
@@ -96,15 +89,12 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     public List<JobTypeDTO> findActiveJobTypesDTOByTitle(String title) {
         title = cleanString(title);
         title = StringUtil.preparedStringForPartiallyCoincidence(title);
-        try {
+
             List<JobType> listJT = jobTypeRepository.findActiveJobTypesByTitle(title);
             return listJT.stream()
                     .map(jobType -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jobType))
                     .collect(Collectors.toList());
-        } catch (DataAccessException ex) {
-            log.error("Error проблемы с поиском  jobType по title= {} в методе findActiveJobTypesDTOByTitle", title, ex);
-            throw new HotelDataNotFoundException("There is no this title " + title);
-        }
+
     }
 
     @Transactional
@@ -112,13 +102,10 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     public List<JobType> findActiveJobTypesByTitle(String title) {
         title = cleanString(title);
         title = StringUtil.preparedStringForPartiallyCoincidence(title);
-        try {
+
             List<JobType> listJT = jobTypeRepository.findActiveJobTypesByTitle(title);
             return listJT;
-        } catch (DataAccessException ex) {
-            log.error("Error проблемы с поиском  jobType по title= {}", title, ex);
-            throw new HotelDataNotFoundException("There is no this title " + title);
-        }
+
     }
 
     @Transactional
@@ -127,31 +114,22 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
         isActive = cleanString(isActive);
         title = cleanString(title);
         Boolean isActiveBoolean = Boolean.valueOf(isActive);
-        try {
+
             List<JobType> listJT = jobTypeRepository.findJobTypesByTitleAndActiveStatusWithoutUserType(title, isActiveBoolean);
             return listJT.stream()
                     .map(jt -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jt))
                     .collect(Collectors.toList());
-        } catch (DataAccessException ex) {
-            log.error("Error Непредвиденные проблемы с поиском  jobType по title= {} или статусу ={} в методе " +
-                    "findJobTypesDTOByTitleAndActiveStatusWithoutUserType", title, isActive,ex);
-            throw new HotelDataNotFoundException("Incorrect title or active status" + title + " " + isActive);
-        }
+
     }
 
     @Transactional
     @Override
     public List<JobType> findJobTypesByTitleAndActiveStatusWithoutUserType(String title, String isActive) {
         Boolean isActiveBoolean = Boolean.valueOf(isActive);
-        try {
             title = cleanString(title);
             List<JobType> listJT = jobTypeRepository.findJobTypesByTitleAndActiveStatusWithoutUserType(title, isActiveBoolean);
             return listJT;
-        } catch (DataAccessException ex) {
-            log.error("Error: проблемы с поиском  jobType по title {} и статусу {} в методе " +
-                    "findJobTypesByTitleAndActiveStatusWithoutUserType", title, isActive,ex);
-            throw new HotelDataNotFoundException("Incorrect title or active status" + title + " " + isActive);
-        }
+
     }
 
     @Transactional
@@ -185,7 +163,7 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
 
             jobTypeTitle = cleanString(jobTypeTitle);
             userTypeRole = cleanString(userTypeRole);
-        try {
+
             JobType jobType = jobTypeRepository.findJobTypesByTitle(jobTypeTitle).get(0);
             Set<UserType> userTypeSet = jobType.getUserTypes();
             UserType userType = userTypeInternalService.findActiveUserTypeByType(userTypeRole);
@@ -193,10 +171,7 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
             jobType = jobTypeRepository.save(jobType);
             return jobType.getUserTypes().stream().map(ut -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(ut))
                     .collect(Collectors.toSet());
-        } catch (DataAccessException ex) {
-            log.error("Problem with adding UserType to JobType jobType is {} userType is {}", jobTypeTitle, userTypeRole,ex);
-            throw new HotelDataNotFoundException("Problem with adding UserType to JobType jobTyp");
-        }
+
 
     }
 
@@ -204,6 +179,5 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     private String cleanString(String line) {
         return line.trim().toLowerCase();
     }
-
 
 }

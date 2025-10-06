@@ -23,56 +23,35 @@ public class UserServiceImpl implements UserInternalService {
     private final UserTypeService userTypeService;
 
 
-
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
-        try {
-            if (!userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName()).isEmpty()) {
-                log.warn("Error: такой user уже существует {} {}", userDTO.getFirstName(), userDTO.getLastName());
-                throw new HotelDataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
-            }
-            UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
-            User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
-            user.setType(userType);
-            return UserMapper.INSTANCE.userToUserDTO(
-                    userRepository.save(user))
-                    ;
-        } catch (DataAccessException e) {
-            log.error("Error: проблема с доступом к базе данных"
-                    , e);
-            throw new HotelDataAlreadyExistsException(userDTO.getFirstName() + " " + userDTO.getLastName());
+
+        if (!userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName()).isEmpty()) {
+            log.warn("Error: такой user уже существует {} {}", userDTO.getFirstName(), userDTO.getLastName());
+            throw new HotelDataAlreadyExistsException(
+                    String.format("такой user уже существует '%s'  '%s'", userDTO.getFirstName(), userDTO.getLastName()));
         }
+        UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
+        User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
+        user.setType(userType);
+        return UserMapper.INSTANCE.userToUserDTO(
+                userRepository.save(user))
+                ;
     }
 
     @Transactional
     public UserDTO findUserDTOByLastNameAndFirstName(String lastName, String firstName) {
-        try {
-            return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
-        } catch (Exception ex) {
-            log.error("Error : такого юзера не существует {} {} ", lastName, firstName, ex);
-            throw new HotelDataNotFoundException(" такого юзера не существует ");
-        }
+        return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
     }
 
 
     public User findUserByLastNameAndFirstName(String lastName, String firstName) {
-        try {
-            return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
-        } catch (Exception ex) {
-            log.warn("Error : такого юзера не существует", ex);
-            throw new HotelDataNotFoundException(" такого юзера не существует");
-        }
+        return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
     }
 
     @Override
     public User findUserByNickName(String nickName) {
-        try {
-            return   userRepository.findUserByNickName(nickName).get();
-        }catch (Exception ex) {
-            log.warn("Error : такого юзера не существует {}",nickName, ex);
-            throw new HotelDataNotFoundException(" такого юзера не существует");
-        }
-
+        return userRepository.findUserByNickName(nickName).get();
     }
 
     @Transactional
@@ -85,12 +64,7 @@ public class UserServiceImpl implements UserInternalService {
 
     @Transactional
     public UserDTO findUserDTOByPhoneNumber(String phoneNumber) {
-        try {
-            return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByPhoneNumber(phoneNumber).get());
-        } catch (Exception ex) {
-            log.error("Error : такого юзера не существует", ex);
-            throw new HotelDataNotFoundException(" такого юзера не существует");
-        }
+        return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByPhoneNumber(phoneNumber).get());
     }
 
     @Transactional
@@ -98,14 +72,7 @@ public class UserServiceImpl implements UserInternalService {
         User existingUser = userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName())
                 .orElseThrow(() -> new HotelDataNotFoundException("User not found"));
         UserMapper.INSTANCE.updateUserFromDto(userDTO, existingUser, userTypeService);
-        try {
-            userRepository.save(existingUser);
-        } catch (DataAccessException ex) {
-            log.error("Error проблема с обновлением юзера {}", existingUser, ex);
-            throw new DataAccessException("Проблема с обновлением юзера ") {
-            };
-        }
-
+        userRepository.save(existingUser);
         return UserMapper.INSTANCE.userToUserDTO(existingUser);
     }
 

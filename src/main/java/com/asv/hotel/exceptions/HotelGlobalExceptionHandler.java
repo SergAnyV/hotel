@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,12 +31,7 @@ public class HotelGlobalExceptionHandler {
 
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ErrorMessage> handleDataAccessException(DataAccessException ex) {
-        log.error("Database access error: {}", ex.getMessage(), ex);
-        ErrorMessage errorMessage = new ErrorMessage(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Database error"
-        );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        return response500Error(ex, e -> "Database access error");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -77,13 +73,18 @@ public class HotelGlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorMessage> handleAllExceptions(Exception ex) {
-        log.error("Unexpected error: {}", ex.getMessage(), ex);
-        ErrorMessage errorMessage = new ErrorMessage(
+    public ResponseEntity<ErrorMessage> handleException(Exception ex) {
+        return response500Error(ex, e -> "Unexpected Internal Error ");
+    }
+
+    private ResponseEntity<ErrorMessage> response500Error(Exception ex, Function<Exception, String> function) {
+        String errorMessage = function.apply(ex);
+        log.error("{}: {}", errorMessage, ex.getMessage(), ex);
+        ErrorMessage eMessage = new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Internal server error"
+                errorMessage
         );
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(eMessage);
     }
 
 }
