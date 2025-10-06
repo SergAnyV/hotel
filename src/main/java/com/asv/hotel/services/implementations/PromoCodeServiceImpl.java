@@ -29,14 +29,8 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
             log.warn("Warning такой промокод уже существет", promoCodeDTO.getCode());
             throw new HotelDataAlreadyExistsException("данный промок уже существует" + promoCodeDTO.getCode());
         }
-        try {
-            PromoCode promoCode = PromoCodeMapper.INSTANCE.promoCodeDTOToPromoCode(promoCodeDTO);
-            return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promoCodeRepository.save(promoCode));
-        } catch (DataAccessException ex) {
-            log.error("Error проблема с сохранением промокода {}", ex);
-            throw ex;
-
-        }
+        PromoCode promoCode = PromoCodeMapper.INSTANCE.promoCodeDTOToPromoCode(promoCodeDTO);
+        return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promoCodeRepository.save(promoCode));
     }
 
     @Transactional
@@ -46,14 +40,9 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
 
     @Transactional
     public void deletePromoCodeByCode(String code) {
-        try {
-            if (promoCodeRepository.deleteByCode(code) == 0) {
-                log.warn("Warning такого промокода не  существет", code);
-                throw new HotelDataNotFoundException("данный промок не существует" + code);
-            }
-        } catch (DataAccessException ex) {
-            log.error("Error проблема судалением промокода {}", ex);
-            throw ex;
+        if (promoCodeRepository.deleteByCode(code) == 0) {
+            log.warn("Warning такого промокода не  существет", code);
+            throw new HotelDataNotFoundException("данный промок не существует" + code);
         }
     }
 

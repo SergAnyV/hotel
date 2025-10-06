@@ -5,7 +5,6 @@ import com.asv.hotel.dto.mapper.UserTypeMapper;
 import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
-import com.asv.hotel.exceptions.HotelMainException;
 import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.UserTypeInternalService;
 import lombok.RequiredArgsConstructor;
@@ -27,17 +26,12 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
 
     @Transactional
     public UserTypeDTO createUserType(UserTypeDTO userTypeDTO) {
-        try {
-            if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName()).isPresent()) {
-                log.warn("Error: такая роль уже существует {} ", userTypeDTO.getName());
-                throw new HotelDataAlreadyExistsException(userTypeDTO.getName());
-            }
-            UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
-            return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ", ex);
+        if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName()).isPresent()) {
+            log.warn("Error: такая роль уже существует {} ", userTypeDTO.getName());
             throw new HotelDataAlreadyExistsException(userTypeDTO.getName());
         }
+        UserType userType = UserTypeMapper.INSTANCE.UserTypeDTOToUserType(userTypeDTO);
+        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeRepository.save(userType));
     }
 
     @Transactional
@@ -57,45 +51,19 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
 
     @Transactional
     public void deleteAllUserTypes() {
-        try {
-            userTypeRepository.deleteAll();
-        } catch (RuntimeException ex) {
-            log.warn("Error: не удалось очистить список user_types ", ex);
-            throw new RuntimeException("не удалось очистить список user_types");
-        }
+        userTypeRepository.deleteAll();
     }
 
     @Transactional
     public UserTypeDTO findUserTypeDTOByType(String role) {
-        try {
-            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()) {
-                log.warn("Error: роль не распознана среди доступных ,указана {}", role);
-                throw new HotelDataNotFoundException("данная роль не распознана в базе");
-            }
-            return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ",
-                    ex);
-            throw new HotelDataNotFoundException(
-                    String.format("Проблемы с доступом к базе данных при сохранение роли '%s' ",role));
-        }
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
     }
 
-
+    @Transactional
     public UserType findUserTypeByType(String role) {
-        try {
-            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty()) {
-                log.warn("Error: роль не распознана среди доступных ,указана {}", role);
-                throw new HotelDataNotFoundException("данная роль не распознана в базе");
-            }
-            return userTypeOptional.get();
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ",
-                    ex);
-            throw new HotelDataAlreadyExistsException(role);
-        }
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+        return userTypeOptional.get();
     }
 
     @Transactional
@@ -103,46 +71,28 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName());
         if (userTypeOptional.isEmpty()) {
             log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getName());
-            throw new HotelDataNotFoundException("данная роль не распознана в базе");
+            throw new HotelDataNotFoundException(String.format("данная роль не распознана в базе '%s'",
+                    userTypeDTO.getName()));
         }
-        var userType = userTypeOptional.get();
-
+        UserType userType = userTypeOptional.get();
         UserTypeMapper.INSTANCE.updateuserTypeFromuserTypeDTO(userTypeDTO, userType);
-        try {
-            userTypeRepository.save(userType);
-        } catch (DataAccessException ex) {
-            log.error("Error: проблема доступа к базе ", ex);
-            throw ex;
-        }
-
+        userTypeRepository.save(userType);
         return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType);
     }
 
 
     public UserType findActiveUserTypeByType(String role) {
-        try {
-            Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-            if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
-                log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
-                throw new HotelDataNotFoundException("данная роль не распознана в базе");
-            }
-
-            return userTypeOptional.get();
-        } catch (DataAccessException ex) {
-            log.warn("Error: проблема с доступом к базе данных ",
-                    ex);
-            throw new HotelDataNotFoundException(
-                    String.format("Проблемы с доступом к базе данных при сохранение роли '%s' ",role));
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+        if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
+            log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
+            throw new HotelDataNotFoundException(String.format("данная роль не распознана в базе '%s'",
+                    role));
         }
+        return userTypeOptional.get();
     }
 
     @Override
     public List<UserType> findUserTypesByJobTypeId(Long jobTypeId) {
-        try {
-            return userTypeRepository.findUserTypesByJobTypeId(jobTypeId);
-        }catch (RuntimeException ex){
-            log.warn("Error: роль не распознана среди доступных(активных) id ,указана {}", jobTypeId);
-            throw new HotelDataNotFoundException("findUserTypesByJobTypeId");
-        }
+        return userTypeRepository.findUserTypesByJobTypeId(jobTypeId);
     }
 }
