@@ -22,10 +22,10 @@ import java.util.Set;
 @Schema(description = "Модель данных типа пользователя с описание и статусом активности в системе данного типа" +
         ", списком возможных выполняемых работ ,модель передачи данных через JSON")
 public class UserTypeDTO {
-    @Schema(description = "название должности или клиент- пользователя в системе", example = "клиент")
+    @Schema(description = "название должности или клиент- пользователя в системе", example = "Супер-Человек")
     @NotBlank(message = "название должности или клиент-пользователя в системе не должна быть пустым role")
     @Size(min = 3,max = 100,message = "количество символов 3-100")
-    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
+    @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s-]+$", message = "Роль может содержать только буквы,дефис, цифры и пробелы")
     private String name;
 
     @Schema(description = "описание название должности или клиент в системе отеле", example = "заказ номера и еды , обычные функции")
@@ -33,7 +33,7 @@ public class UserTypeDTO {
     @Size(min = 3,max = 100,message = "количество символов 3-100")
     private String description;
 
-    @Schema(description = "Роль в системе управления отелем", allowableValues = {"VISITOR","MANAGER", "ADMIN", "STAFF"})
+    @Schema(description = "Роль в системе управления отелем", allowableValues = {"CLIENT","MANAGER", "ADMIN", "STAFF"},example = "CLIENT")
     @NotNull
     private UserRole role;
 

@@ -34,4 +34,6 @@ public interface UserTypeMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateuserTypeFromuserTypeDTO(UserTypeDTO userTypeDTO, @MappingTarget UserType userType);
+
+
 }

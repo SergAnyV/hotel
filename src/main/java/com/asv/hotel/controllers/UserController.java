@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
-    @Operation(summary = "Создать новый юзера",
-            description = "создает новый юзера")
+    @Operation(summary = "Создать нового юзера",
+            description = "создает нового юзера")
     @ApiResponse(responseCode = "201", description = "юзера создан")
     @ApiResponse(responseCode = "409", description = "юзера не создан")
     @PostMapping

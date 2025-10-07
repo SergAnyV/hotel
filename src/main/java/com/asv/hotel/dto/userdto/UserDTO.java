@@ -73,7 +73,7 @@ public class UserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Schema(description = "Тип  пользователя", example = "Клиент")
+    @Schema(description = "Тип  пользователя", example = "CLIENT")
     @NotBlank(message = "Тип пользователя, не должен быть пустым")
     @Size(min = 3, max = 20, message = "количество символов 3-20")
     private String type;

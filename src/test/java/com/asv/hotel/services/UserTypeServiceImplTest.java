@@ -95,7 +95,7 @@ class UserTypeServiceImplTest {
         userTypeServiceImpl.createUserType(testUserTypeDTO);
         userTypeServiceImpl.createUserType(testUserTypeDTO2);
         userTypeServiceImpl.deleteUserTypeByType(testUserTypeDTO.getName());
-        assertThat(userTypeRepository.findUserTypeByRoleLikeIgnoreCase(testUserTypeDTO.getName())).isEmpty();
+        assertThat(userTypeRepository.findUserTypeByNameLikeIgnoreCase(testUserTypeDTO.getName())).isEmpty();
     }
 
     @Test

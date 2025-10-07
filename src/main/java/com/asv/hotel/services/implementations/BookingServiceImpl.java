@@ -36,6 +36,7 @@ public class BookingServiceImpl implements BookingService {
     private final RoomInternalService roomInternalService;
     private final ServiceHotelInternalService serviceHotelInternalService;
     private final PromoCodeInternalService promoCodeInternalService;
+    private final NotificationHotelService notificationHotelService;
 
     @Transactional
     public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
@@ -59,8 +60,9 @@ public class BookingServiceImpl implements BookingService {
         totalPrice = calculatePriceWithPromoCode(bookingSimplDTO, totalPrice);
         booking.setTotalPrice(totalPrice);
         booking.setStatusOfBooking(BookingStatus.CONFIRMED);
-
-        return BookingMapper.INSTANCE.bookingToBookingDTO(bookingRepository.save(booking));
+        Booking savedBooking=bookingRepository.save(booking);
+        notificationHotelService.createNotificationBooking("Номер забронирован",savedBooking,"Бронирование номера");
+        return BookingMapper.INSTANCE.bookingToBookingDTO(savedBooking);
     }
 
     @Transactional

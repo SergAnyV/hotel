@@ -4,8 +4,10 @@ import jakarta.mail.Authenticator;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.util.Properties;
 
@@ -18,7 +20,8 @@ public class ConfigurationApp {
                                   @Value("${mail.smtp.auth}") boolean auth,
                                   @Value("${mail.smtp.starttls.enable}") boolean starttls,
                                   @Value("${mail.username}") String username,
-                                  @Value("${mail.password}") String password){
+                                  @Value("${mail.password}") String password)
+    {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", port);
@@ -31,5 +34,14 @@ return Session.getInstance(properties, new Authenticator() {
         return new PasswordAuthentication(username, password);
     }
 });
+    }
+
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setCacheSeconds(5);
+        return messageSource;
     }
 }

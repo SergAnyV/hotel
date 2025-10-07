@@ -13,12 +13,12 @@ import java.util.Optional;
 public interface UserTypeRepository extends JpaRepository<UserType, Long> {
 
     @Query(value = "SELECT * FROM user_types WHERE name ILIKE :name", nativeQuery = true)
-    Optional<UserType> findUserTypeByRoleLikeIgnoreCase(@Param("name") String name);
+    Optional<UserType> findUserTypeByNameLikeIgnoreCase(@Param("name") String name);
 
 
     @Modifying
     @Query(value = "DELETE FROM user_types WHERE name ILIKE :name",nativeQuery = true)
-    int deleteByRole(@Param("name") String name);
+    int deleteByName(@Param("name") String name);
 
     @Modifying
     @Query(value = """
