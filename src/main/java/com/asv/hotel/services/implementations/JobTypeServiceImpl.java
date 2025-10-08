@@ -171,8 +171,6 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
             jobType = jobTypeRepository.save(jobType);
             return jobType.getUserTypes().stream().map(ut -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(ut))
                     .collect(Collectors.toSet());
-
-
     }
 
 

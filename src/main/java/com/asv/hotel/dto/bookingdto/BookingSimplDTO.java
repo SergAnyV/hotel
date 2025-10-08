@@ -17,12 +17,12 @@ import java.util.Set;
         ",модель передачи данных через JSON")
 public class BookingSimplDTO {
 
-    @Schema(description = "Дата заезда", example = "2026-01-01")
+    @Schema(description = "Дата заезда", example = "2028-01-01")
     @NotNull(message = "Дата начала проживания обязательна")
     @FutureOrPresent
     private LocalDate checkInDate;
 
-    @Schema(description = "Дата окончания действия", example = "2027-01-01")
+    @Schema(description = "Дата окончания действия", example = "2029-01-01")
     @NotNull(message = "Дата выезда обязательна")
     @Future
     private LocalDate checkOutDate;
@@ -41,7 +41,7 @@ public class BookingSimplDTO {
     @NotNull(message = "Описание не должен быть пустым")
     private UserSimpleDTO userSimpleDTO;
 
-    @Schema(description = "промокод", example = "some")
+    @Schema(description = "промокод", example = "WELCOME1000")
     private String promoCodeDTO;
 
     @Schema(description = "сервисы")

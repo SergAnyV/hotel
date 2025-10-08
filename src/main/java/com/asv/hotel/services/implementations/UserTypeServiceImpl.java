@@ -44,7 +44,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     public void deleteUserTypeByType(String name) {
         if (userTypeRepository.deleteByName(name) == 0) {
             log.warn("Error: такая роль не существует {} ", name);
-            throw new HotelDataNotFoundException(String.format(" Данной роли не существует для удаления '%s'",name));
+            throw new HotelDataNotFoundException(String.format(" Данной роли не существует для удаления '%s'", name));
         }
     }
 
@@ -56,13 +56,12 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     @Transactional
     public UserTypeDTO findUserTypeDTOByType(String name) {
         Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(name);
-        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
+        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.orElse(null));
     }
 
     @Transactional
     public UserType findUserTypeByType(String role) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(role);
-        return userTypeOptional.get();
+        return userTypeRepository.findUserTypeByNameLikeIgnoreCase(role).orElse(null);
     }
 
     @Transactional

@@ -31,27 +31,35 @@ public class UserServiceImpl implements UserInternalService {
             throw new HotelDataAlreadyExistsException(
                     String.format("такой user уже существует '%s'  '%s'", userDTO.getFirstName(), userDTO.getLastName()));
         }
+
         UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
+        if(userType==null){
+            log.warn("Error: данного типа пользователя не существует {}" , userDTO.getType());
+            throw new HotelDataNotFoundException(
+                    String.format("Такого типа юзера не существует '%s'",userDTO.getType())
+            );
+        }
+
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
         user.setType(userType);
         return UserMapper.INSTANCE.userToUserDTO(
-                userRepository.save(user))
-                ;
+                userRepository.save(user));
     }
 
     @Transactional
     public UserDTO findUserDTOByLastNameAndFirstName(String lastName, String firstName) {
-        return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByLastNameAndFirstName(lastName, firstName).get());
+        return UserMapper.INSTANCE.userToUserDTO(
+                userRepository.findUserByLastNameAndFirstName(lastName, firstName).orElse(null));
     }
 
 
     public User findUserByLastNameAndFirstName(String lastName, String firstName) {
-        return userRepository.findUserByLastNameAndFirstName(lastName, firstName).get();
+        return userRepository.findUserByLastNameAndFirstName(lastName, firstName).orElse(null);
     }
 
     @Override
     public User findUserByNickName(String nickName) {
-        return userRepository.findUserByNickName(nickName).get();
+        return userRepository.findUserByNickName(nickName).orElse(null);
     }
 
     @Transactional
@@ -64,7 +72,7 @@ public class UserServiceImpl implements UserInternalService {
 
     @Transactional
     public UserDTO findUserDTOByPhoneNumber(String phoneNumber) {
-        return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByPhoneNumber(phoneNumber).get());
+        return UserMapper.INSTANCE.userToUserDTO(userRepository.findUserByPhoneNumber(phoneNumber).orElse(null));
     }
 
     @Transactional

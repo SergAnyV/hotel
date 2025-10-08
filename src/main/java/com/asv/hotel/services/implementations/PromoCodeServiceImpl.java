@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +36,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
 
     @Transactional
     public PromoCode findActivePromoCodeByName(String code) {
-        return promoCodeRepository.findActivePromoCodeByCode(code).get();
+        return promoCodeRepository.findActivePromoCodeByCode(code).orElse(null);
     }
 
     @Transactional
@@ -51,12 +52,12 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
         List<PromoCode> listPromo = promoCodeRepository.findAll();
         if (listPromo.isEmpty()) {
             log.warn("Warning промокодов нет");
-           return Collections.emptyList();
+            return Collections.emptyList();
         }
         return listPromo.stream().map(promo -> {
             return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promo);
 
-       }).collect(Collectors.toList());
+        }).collect(Collectors.toList());
     }
 
 

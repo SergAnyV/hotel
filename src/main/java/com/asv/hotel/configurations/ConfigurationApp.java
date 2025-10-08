@@ -20,8 +20,7 @@ public class ConfigurationApp {
                                   @Value("${mail.smtp.auth}") boolean auth,
                                   @Value("${mail.smtp.starttls.enable}") boolean starttls,
                                   @Value("${mail.username}") String username,
-                                  @Value("${mail.password}") String password)
-    {
+                                  @Value("${mail.password}") String password) {
         Properties properties = new Properties();
         properties.put("mail.smtp.host", host);
         properties.put("mail.smtp.port", port);

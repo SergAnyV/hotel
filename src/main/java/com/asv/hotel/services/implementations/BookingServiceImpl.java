@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +41,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
-        PromoCode promoCode = null;
         Booking booking = BookingMapper.INSTANCE.bookingSimpleDTOToBooking(bookingSimplDTO);
         //    поиск и установление комнаты для бронирования
         Room room = findRoomForBooking(bookingSimplDTO);
@@ -48,6 +48,17 @@ public class BookingServiceImpl implements BookingService {
         //    поиск и установление юзера из базы данных для бронирования
         User user = findUserForBooking(bookingSimplDTO);
         booking.setUser(user);
+        if (user == null) {
+            log.warn("Error: не существует таких комнат {} и пользователей {} для бронирования в методе createBooking",
+                    bookingSimplDTO.getUserSimpleDTO(), bookingSimplDTO.getRoomNumber());
+            throw new HotelDataNotFoundException(
+                    String.format("There is no this user '%s' and room '%s'",
+                            bookingSimplDTO.getUserSimpleDTO(),
+                            bookingSimplDTO.getRoomNumber()));
+        }
+        //поиск и установление промокода
+        PromoCode promoCode = promoCodeInternalService.findActivePromoCodeByName(bookingSimplDTO.getPromoCodeDTO());
+        booking.setPromoCode(promoCode);
         //    поиск и установление сервисов для бронирования
         Set<ServiceHotel> serviceHotel = findAllServicesForBooking(bookingSimplDTO);
         booking.setServiceSet(serviceHotel);
@@ -60,8 +71,8 @@ public class BookingServiceImpl implements BookingService {
         totalPrice = calculatePriceWithPromoCode(bookingSimplDTO, totalPrice);
         booking.setTotalPrice(totalPrice);
         booking.setStatusOfBooking(BookingStatus.CONFIRMED);
-        Booking savedBooking=bookingRepository.save(booking);
-        notificationHotelService.createNotificationBooking("Номер забронирован",savedBooking,"Бронирование номера");
+        Booking savedBooking = bookingRepository.save(booking);
+        notificationHotelService.createNotificationBooking("Номер забронирован", savedBooking, "Бронирование номера");
         return BookingMapper.INSTANCE.bookingToBookingDTO(savedBooking);
     }
 
@@ -88,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     @Override
     public List<RoomSimpleDTODataBase> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
-        if(!checkInDate.isBefore(checkOutDate)){
+        if (!checkInDate.isBefore(checkOutDate)) {
             log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
                     checkInDate, checkOutDate);
             throw new HotelIncorrectInputData("Booking ", " Checking and Checkout dates");
@@ -101,7 +112,7 @@ public class BookingServiceImpl implements BookingService {
     private Set<ServiceHotel> findAllServicesForBooking(BookingSimplDTO bookingSimplDTO) {
         Set<ServiceHotelSimpleDTO> serviceHotelDTOS = bookingSimplDTO.getServiceSet();
         if (serviceHotelDTOS.isEmpty()) {
-            return new HashSet<>();
+            return Collections.emptySet();
         }
         return serviceHotelDTOS.stream().map(serviceHotelSimpleDTO -> {
             return serviceHotelInternalService.findServiceHotelByTitle(serviceHotelSimpleDTO.getTitle());
@@ -109,6 +120,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private BigDecimal calculateTotalPriceWithPromoCode(BigDecimal totalPrice, PromoCode promoCode) {
+        if (promoCode == null) {
+            return totalPrice;
+        }
         return switch (promoCode.getTypeOfPromoCode()) {
             case FIXED -> totalPrice.subtract(promoCode.getDiscountValue());
             case PERCENT -> totalPrice.multiply(BigDecimal.valueOf(100)
@@ -120,10 +134,9 @@ public class BookingServiceImpl implements BookingService {
 
     private Room findRoomForBooking(BookingSimplDTO bookingSimplDTO) {
         Room room = roomInternalService.findRoomByNumber(bookingSimplDTO.getRoomNumber());
-        if (room.getIsAvailable() && !bookingRepository.isRoomAvailableForDates(room.getId()
-                , bookingSimplDTO.getCheckInDate()
-                , bookingSimplDTO.getCheckOutDate())) {
-            throw new HotelDataNotFoundException("комната не свободна на данные даты или ") {
+        if (room == null ||( Boolean.TRUE.equals(room.getIsAvailable()) && !bookingRepository.isRoomAvailableForDates(room.getId(),
+                bookingSimplDTO.getCheckInDate(), bookingSimplDTO.getCheckOutDate()))) {
+            throw new HotelDataNotFoundException("комната не свободна на данные даты или нет такой комнаты ") {
             };
         }
 
@@ -138,8 +151,12 @@ public class BookingServiceImpl implements BookingService {
 
     private BigDecimal calculatePriceForServices(Set<ServiceHotel> serviceHotels, BigDecimal livingDays) {
         if (!serviceHotels.isEmpty()) {
-            return serviceHotels.stream().map(serviceHotelentity ->
-                            serviceHotelentity.getPrice().multiply(livingDays))
+            return serviceHotels.stream().map(serviceHotelentity -> {
+                        if (serviceHotelentity == null) {
+                            return BigDecimal.ZERO;
+                        }
+                        return serviceHotelentity.getPrice().multiply(livingDays);
+                    })
                     .reduce(BigDecimal.ZERO, (sum, price) -> sum.add(price));
         } else {
             return BigDecimal.ZERO;
@@ -153,15 +170,8 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private BigDecimal calculatePriceWithPromoCode(BookingSimplDTO bookingSimplDTO, BigDecimal totalPrice) {
-        try {
-            PromoCode promoCode = promoCodeInternalService.findActivePromoCodeByName(bookingSimplDTO.getPromoCodeDTO());
-            return calculateTotalPriceWithPromoCode(totalPrice, promoCode);
-
-        } catch (HotelDataNotFoundException | DataAccessException ex) {
-            log.error("Error промокод не найден {}", bookingSimplDTO.getPromoCodeDTO(), ex);
-            return totalPrice;
-        }
-
+        PromoCode promoCode = promoCodeInternalService.findActivePromoCodeByName(bookingSimplDTO.getPromoCodeDTO());
+        return calculateTotalPriceWithPromoCode(totalPrice, promoCode);
     }
 
 }

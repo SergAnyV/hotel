@@ -54,7 +54,6 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
 
     @Transactional
     public void deletServiceHotelByTtitle(String title) {
-        Optional<ServiceHotel> serviceHotelOptional = serviceHotelRepository.findByTitle(title);
         if (serviceHotelRepository.deleteByTitle(title) == 0) {
             log.error("Error данного типа сервиса не найдено {} при попытки удаления сервиса", title);
             throw new HotelDataNotFoundException("ошибка при удаление сервиса из базы");
@@ -75,11 +74,6 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
     }
 
     public ServiceHotel findServiceHotelByTitle(String title) {
-        Optional<ServiceHotel> serviceOptional =
-                serviceHotelRepository.findByTitle(title);
-        if (serviceOptional.isEmpty()) {
-            throw new HotelDataNotFoundException("не существует такого сервиса");
-        }
-        return serviceOptional.get();
+        return serviceHotelRepository.findByTitle(title).orElse(null);
     }
 }

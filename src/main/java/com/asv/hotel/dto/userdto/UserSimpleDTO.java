@@ -15,12 +15,12 @@ import lombok.Data;
 @Builder
 @Data
 public class UserSimpleDTO {
-    @Schema(description = "никнайм пользователя", example = "BigBro")
+    @Schema(description = "никнайм пользователя", example = "cleaner_maria")
     @NotBlank(message = "никнайм пользователя, не должен быть пустым")
     @Size(min = 3, max = 20, message = "количество символов 3-20")
     private String nickName;
 
-    @Schema(description = "имя пользователя", example = "Максим")
+    @Schema(description = "имя пользователя", example = "Мария")
     @NotBlank(message = "имя пользователя, не должен быть пустым")
     @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Pattern(
@@ -29,7 +29,7 @@ public class UserSimpleDTO {
     )
     private String firstName;
 
-    @Schema(description = "Отчество пользователя", example = "Николаевич")
+    @Schema(description = "Отчество пользователя", example = "Александровна")
     @NotBlank(message = "Отчество пользователя, не должен быть пустым")
     @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Pattern(
@@ -38,7 +38,7 @@ public class UserSimpleDTO {
     )
     private String fathersName;
 
-    @Schema(description = "Фамилия  пользователя", example = "Бугульма")
+    @Schema(description = "Фамилия  пользователя", example = "Смирнова")
     @NotBlank(message = "Фамилия пользователя, не должен быть пустым")
     @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Pattern(
@@ -47,12 +47,12 @@ public class UserSimpleDTO {
     )
     private String lastName;
 
-    @Schema(description = "email  пользователя", example = "Николай")
+    @Schema(description = "email  пользователя", example = "cleaner@hotel.ru")
     @Size(min = 3, max = 50, message = "количество символов 3-50")
     @Email(message = "Некорректный email. Пример: user@example.com")
     private String email;
 
-    @Schema(description = "Телефон  пользователя только в числовом формате без '+' ", example = "8686643")
+    @Schema(description = "Телефон  пользователя только в числовом формате без '+' ", example = "79164567890")
     @NotBlank(message = "Телефон пользователя, не должен быть пустым")
     @Size(min = 3, max = 20, message = "количество символов 3-20")
     @Pattern(
