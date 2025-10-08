@@ -1,6 +1,7 @@
 package com.asv.hotel.dto.userdto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -33,10 +34,7 @@ public class UserExternalDTO {
 
     @Schema(description = "Email  пользователя", example = "Николай")
     @Size(min = 3,max = 50,message = "количество символов 3-50")
-    @Pattern(
-            regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
-            message = "Некорректный email. Пример: user@example.com"
-    )
+    @Email(message = "Некорректный email. Пример: user@example.com")
     private String email;
 
     @Schema(description = "Телефон  пользователя", example = "8686643")

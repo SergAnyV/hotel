@@ -2,6 +2,7 @@ package com.asv.hotel.dto.userdto;
 
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
+import com.asv.hotel.dto.notificationdto.NotificationHotelDto;
 import com.asv.hotel.entities.Report;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -73,7 +74,7 @@ public class UserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Schema(description = "Тип  пользователя", example = "CLIENT")
+    @Schema(description = "Тип  пользователя", example = "повар")
     @NotBlank(message = "Тип пользователя, не должен быть пустым")
     @Size(min = 3, max = 20, message = "количество символов 3-20")
     private String type;
@@ -86,4 +87,9 @@ public class UserDTO {
     @Schema(description = "Отчеты пользователя", accessMode = Schema.AccessMode.READ_ONLY)
     @EqualsAndHashCode.Exclude
     private Set<Report> reports;
+
+    @Schema(description = "Сообщения пользователя", accessMode = Schema.AccessMode.READ_ONLY)
+    @EqualsAndHashCode.Exclude
+    private Set<NotificationHotelDto> notificationHotels;
+
 }

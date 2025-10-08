@@ -1,7 +1,5 @@
 package com.asv.hotel.dto.notificationdto;
 
-import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
-import com.asv.hotel.dto.userdto.UserSimpleDTO;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,7 +8,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationDto {
+public class NotificationHotelDto {
 
     private String message;
 

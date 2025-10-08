@@ -1,7 +1,7 @@
 package com.asv.hotel.services.implementations;
 
 import com.asv.hotel.dto.mapper.NotificationMapper;
-import com.asv.hotel.dto.notificationdto.NotificationDto;
+import com.asv.hotel.dto.notificationdto.NotificationHotelDto;
 import com.asv.hotel.entities.Booking;
 import com.asv.hotel.entities.NotificationHotel;
 import com.asv.hotel.repositories.NotificationRepository;
@@ -20,7 +20,7 @@ public class NotificationHotelServiceImpl implements NotificationHotelService {
 
     @Transactional
     @Override
-    public NotificationDto createNotificationBooking(String message, Booking booking, String subject) {
+    public NotificationHotelDto createNotificationBooking(String message, Booking booking, String subject) {
         NotificationHotel notificationHotel = NotificationHotel.builder()
                 .message(message)
                 .user(booking.getUser())

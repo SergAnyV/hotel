@@ -1,6 +1,6 @@
 package com.asv.hotel.dto.mapper;
 
-import com.asv.hotel.dto.notificationdto.NotificationDto;
+import com.asv.hotel.dto.notificationdto.NotificationHotelDto;
 import com.asv.hotel.entities.NotificationHotel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,9 +12,9 @@ public interface NotificationMapper {
 
     @Mapping(target = "nickName",source = "user.nickName")
     @Mapping(target = "bookingId",source = "booking.id")
-    NotificationDto notificationToNotificationDTO(NotificationHotel notificationHotel);
+    NotificationHotelDto notificationToNotificationDTO(NotificationHotel notificationHotel);
 
     @Mapping(target = "message",source = "message")
     @Mapping(target = "createdAt",source = "createdAt")
-    NotificationHotel notificationdtoToNotification(NotificationDto notificationDto);
+    NotificationHotel notificationdtoToNotification(NotificationHotelDto notificationHotelDto);
 }
