@@ -1,7 +1,7 @@
 package com.asv.hotel.security.service.impl;
 
 import com.asv.hotel.entities.User;
-import com.asv.hotel.exceptions.AuthException;
+import com.asv.hotel.exceptions.HotelAuthenticationException;
 import com.asv.hotel.security.jwt.JWTAuthentication;
 import com.asv.hotel.security.service.TokenStorageService;
 import com.asv.hotel.security.util.JWTUtils;
@@ -133,7 +133,7 @@ class AuthenticationServiceImplTest {
         when(jwtUtils.isTokenValid(TEST_REFRESH_TOKEN, null)).thenReturn(false);
 
 
-        AuthException exception = assertThrows(AuthException.class, () -> {
+        HotelAuthenticationException exception = assertThrows(HotelAuthenticationException.class, () -> {
             authenticationService.refreshAccessToken(TEST_REFRESH_TOKEN);
         });
 
@@ -153,7 +153,7 @@ class AuthenticationServiceImplTest {
         when(jwtUtils.isTokenValid(TEST_REFRESH_TOKEN, testUser)).thenReturn(false);
 
 
-        AuthException exception = assertThrows(AuthException.class, () -> {
+        HotelAuthenticationException exception = assertThrows(HotelAuthenticationException.class, () -> {
             authenticationService.refreshAccessToken(TEST_REFRESH_TOKEN);
         });
 
@@ -178,7 +178,7 @@ class AuthenticationServiceImplTest {
                 .thenThrow(new RuntimeException("User not found"));
 
 
-        AuthException exception = assertThrows(AuthException.class, () -> {
+        HotelAuthenticationException exception = assertThrows(HotelAuthenticationException.class, () -> {
             authenticationService.refreshAccessToken(TEST_REFRESH_TOKEN);
         });
 
@@ -200,7 +200,7 @@ class AuthenticationServiceImplTest {
                 .thenThrow(new RuntimeException("Unexpected error"));
 
         // Act & Assert
-        AuthException exception = assertThrows(AuthException.class, () -> {
+        HotelAuthenticationException exception = assertThrows(HotelAuthenticationException.class, () -> {
             authenticationService.refreshAccessToken(TEST_REFRESH_TOKEN);
         });
 
