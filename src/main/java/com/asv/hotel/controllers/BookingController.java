@@ -4,7 +4,7 @@ package com.asv.hotel.controllers;
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 
-import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -76,7 +76,7 @@ public class BookingController {
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
     //добавить ошибки так как все удалилось блин
     @GetMapping("/date")
-    public ResponseEntity<List<RoomSimpleDTODataBase>> getFreeRoomsBetweenDates(@RequestParam
+    public ResponseEntity<List<RoomSimpleDataBaseDTO>> getFreeRoomsBetweenDates(@RequestParam
                                                                                 @FutureOrPresent
                                                                                 @NotNull
                                                                                 LocalDate checkin,
@@ -85,10 +85,10 @@ public class BookingController {
                                                                                 @NotNull
                                                                                 LocalDate checkOut,
                                                                                 Reader reader) {
-        List<RoomSimpleDTODataBase> roomSimpleDTODataBaseList = bookingService.findRoomSimpleDTODataBaseByBookingDate(checkin, checkOut);
-        if (roomSimpleDTODataBaseList.isEmpty()) {
+        List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDTODataBaseByBookingDate(checkin, checkOut);
+        if (roomSimpleDataBaseDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(roomSimpleDTODataBaseList);
+        return ResponseEntity.ok(roomSimpleDataBaseDTOList);
     }
 }

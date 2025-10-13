@@ -3,7 +3,7 @@ package com.asv.hotel.services.implementations;
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 import com.asv.hotel.dto.mapper.BookingMapper;
-import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
@@ -14,7 +14,6 @@ import com.asv.hotel.services.*;
 import com.asv.hotel.util.BookingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -98,7 +96,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public List<RoomSimpleDTODataBase> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
+    public List<RoomSimpleDataBaseDTO> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
         if (!checkInDate.isBefore(checkOutDate)) {
             log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
                     checkInDate, checkOutDate);
