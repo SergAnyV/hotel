@@ -1,6 +1,6 @@
 package com.asv.hotel.services.implementations;
 
-import com.asv.hotel.exceptions.HotelNotififcationException;
+import com.asv.hotel.exceptions.HotelNotificationException;
 import com.asv.hotel.services.EmailService;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -8,13 +8,10 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -37,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
         mimeMessage.setText(message);
         Transport.send(mimeMessage);
         } catch (MessagingException e) {
-           throw new  HotelNotififcationException(
+           throw new HotelNotificationException(
                    String.format("Problem with sending email to: '%s' ,subject: '%s' ,message: '%s'", to, subject, message));
         }
     }

@@ -4,8 +4,7 @@ import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 import com.asv.hotel.dto.bookingdto.ResponseBookingDTO;
 import com.asv.hotel.dto.mapper.BookingMapper;
-import com.asv.hotel.dto.mapper.ServiceHoteMapper;
-import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
 import com.asv.hotel.entities.enums.BookingStatus;
@@ -29,7 +28,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -106,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public List<RoomSimpleDTODataBase> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
+    public List<RoomSimpleDataBaseDTO> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
         if (!checkInDate.isBefore(checkOutDate)) {
             log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
                     checkInDate, checkOutDate);

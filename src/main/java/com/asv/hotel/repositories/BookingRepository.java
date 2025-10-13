@@ -1,7 +1,6 @@
 package com.asv.hotel.repositories;
 
-import com.asv.hotel.dto.roomdto.RoomSimpleDTO;
-import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.entities.Booking;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +49,7 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
                 AND b.status != 'CANCELLED'
             WHERE b.id IS NULL;
             """,nativeQuery = true)
-    List <RoomSimpleDTODataBase>findAllFreeRoomsBetweenDates(@Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
+    List <RoomSimpleDataBaseDTO>findAllFreeRoomsBetweenDates(@Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
 
     @EntityGraph("Booking.withServices")
     Optional<Booking> findById(Long id);
