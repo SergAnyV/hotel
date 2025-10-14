@@ -1,6 +1,7 @@
 package com.asv.hotel.dto.bookingdto;
 
 
+import com.asv.hotel.entities.Guest;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.dto.userdto.UserSimpleDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -46,5 +48,8 @@ public class BookingSimplDTO {
 
     @Schema(description = "сервисы")
     private Set<ServiceHotelSimpleDTO> serviceSet;
+
+    @Schema(description = "список гостей проживающих в номере")
+    private List<Guest> guestList;
 
 }

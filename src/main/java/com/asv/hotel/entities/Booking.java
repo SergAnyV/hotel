@@ -82,6 +82,13 @@ public class Booking {
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationHotel> notificationHotels = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(
+            name = "booking_guests",
+            joinColumns = @JoinColumn(name = "booking_id")
+    )
+    private List<Guest> guestList;
+
     @PrePersist
     @PreUpdate
     private void preUpdate() {

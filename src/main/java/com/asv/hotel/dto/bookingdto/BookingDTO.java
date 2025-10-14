@@ -1,5 +1,6 @@
 package com.asv.hotel.dto.bookingdto;
 
+import com.asv.hotel.entities.Guest;
 import com.asv.hotel.dto.roomdto.RoomSimpleDTO;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelDTO;
 import com.asv.hotel.dto.userdto.UserSimpleDTO;
@@ -11,6 +12,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -59,4 +61,7 @@ public class BookingDTO {
 
     @Schema(description = "подключенные сервисы")
     private Set<ServiceHotelDTO> serviceHotelDTOS ;
+
+    @Schema(description = "список гостей проживающих в номере")
+    private List<Guest> guestList;
 }
