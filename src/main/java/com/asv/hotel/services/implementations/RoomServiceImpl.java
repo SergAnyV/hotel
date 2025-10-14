@@ -34,10 +34,6 @@ public class RoomServiceImpl implements RoomInternalService {
     @Transactional(readOnly = true)
     public RoomDTO findRoomDTOByNumber(String number) {
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.findRoomByNumberLikeIgnoreCase(number).orElse(null));
-//                .orElseThrow(() -> {
-//                    log.warn("Error:Не существует комнаты с номером {} ", number);
-//                    return new HotelDataNotFoundException("Не существует комнаты с номером " + number);
-//                }));
     }
 
     @Transactional(readOnly = true)
@@ -56,8 +52,6 @@ public class RoomServiceImpl implements RoomInternalService {
             throw new HotelDataAlreadyExistsException(roomDTO.getNumber());
         }
         Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
-        room.setCreatedAt(LocalDateTime.now());
-        room.setUpdatedAt(LocalDateTime.now());
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(room));
 
     }

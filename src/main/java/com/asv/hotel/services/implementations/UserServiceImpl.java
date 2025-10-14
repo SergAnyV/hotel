@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserInternalService {
         if (!userRepository.findUserByLastNameAndFirstName(userDTO.getLastName(), userDTO.getFirstName()).isEmpty()) {
             log.warn("Error: такой user уже существует {} {}", userDTO.getFirstName(), userDTO.getLastName());
             throw new HotelDataAlreadyExistsException(
-                    String.format("такой user уже существует '%s'  '%s'", userDTO.getFirstName(), userDTO.getLastName()));
+                    String.format("Такой user уже существует '%s'  '%s'", userDTO.getFirstName(), userDTO.getLastName()));
         }
 
         UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserInternalService {
     public void deleteUserByLastNameAndFirstName(String lastName, String firstName) {
         if (userRepository.deleteUserByLastNameAndFirstName(lastName, firstName) == 0) {
             log.warn("Error : такого юзера не существует для удаления");
-            throw new HotelDataNotFoundException(" такого юзера не существует");
+            throw new HotelDataNotFoundException("Такого юзера не существует");
         }
     }
 

@@ -44,7 +44,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     public void deleteUserTypeByType(String name) {
         if (userTypeRepository.deleteByName(name) == 0) {
             log.warn("Error: такая роль не существует {} ", name);
-            throw new HotelDataNotFoundException(String.format(" Данной роли не существует для удаления '%s'", name));
+            throw new HotelDataNotFoundException(String.format("Данной роли не существует для удаления '%s'", name));
         }
     }
 
@@ -69,7 +69,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(userTypeDTO.getName().trim());
         if (userTypeOptional.isEmpty()) {
             log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getName());
-            throw new HotelDataNotFoundException(String.format("данная роль не распознана в базе '%s'",
+            throw new HotelDataNotFoundException(String.format("Данная роль не распознана в базе '%s'",
                     userTypeDTO.getName()));
         }
         UserType userType = userTypeOptional.get();
@@ -83,7 +83,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
         Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(role);
         if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
             log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
-            throw new HotelDataNotFoundException(String.format("данная роль не распознана в базе '%s'",
+            throw new HotelDataNotFoundException(String.format("Данная роль не распознана в базе '%s'",
                     role));
         }
         return userTypeOptional.get();
