@@ -4,6 +4,7 @@ package com.asv.hotel.dto.bookingdto;
 import com.asv.hotel.entities.Guest;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.dto.userdto.UserSimpleDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -40,7 +41,7 @@ public class BookingSimplDTO {
     private String roomNumber;
 
     @Schema(description = "Описание того кто зачисляется")
-    @NotNull(message = "Описание не должен быть пустым")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UserSimpleDTO userSimpleDTO;
 
     @Schema(description = "промокод", example = "WELCOME1000")

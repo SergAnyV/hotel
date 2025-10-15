@@ -86,7 +86,7 @@ public class Booking {
     @CollectionTable(
             name = "booking_guests",
             joinColumns = @JoinColumn(name = "booking_id")
-    )
+            )
     private List<Guest> guestList;
 
     @PrePersist

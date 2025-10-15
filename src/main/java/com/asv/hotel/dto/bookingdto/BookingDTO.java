@@ -64,4 +64,5 @@ public class BookingDTO {
 
     @Schema(description = "список гостей проживающих в номере")
     private List<Guest> guestList;
-}
+
+   }

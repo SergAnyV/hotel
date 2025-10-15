@@ -22,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.Mapping;
 import org.mapstruct.control.MappingControl;
 import org.springframework.dao.DataAccessException;
+import org.mapstruct.control.MappingControl;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,17 +55,20 @@ public class BookingServiceImpl implements BookingService {
         //    поиск и установление комнаты для бронирования
         Room room = findRoomForBooking(bookingSimplDTO);
         booking.setRoom(room);
-        //    поиск и установление юзера из базы данных для бронирования
-        User user = findUserForBooking(bookingSimplDTO);
-        booking.setUser(user);
-        if (user == null) {
-            log.warn("Error: не существует таких комнат {} и пользователей {} для бронирования в методе createBooking",
-                    bookingSimplDTO.getUserSimpleDTO(), bookingSimplDTO.getRoomNumber());
-            throw new HotelDataNotFoundException(
-                    String.format("There is no this user '%s' and room '%s'",
-                            bookingSimplDTO.getUserSimpleDTO(),
-                            bookingSimplDTO.getRoomNumber()));
+
+        if(booking.getGuestList().size()>room.getCapacity()){
+            log.warn("Warning: количество гостей при бронирование превышает возможности номера {}",
+                    bookingSimplDTO.getRoomNumber());
+            throw new HotelIncorrectInputData(String.format("Неверное количество гостей '%s' при бронирование комнаты '%s'",
+                    booking.getGuestList().size(),
+                    bookingSimplDTO.getRoomNumber() ));
         }
+        //    поиск и установление юзера из базы данных для бронирования
+        UserDetails userDetails=(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String nickname=userDetails.getUsername();
+        User user=userInternalExtendExternalService.findUserByNickName(nickname);
+        booking.setUser(user);
+
         //поиск и установление промокода
         PromoCode promoCode = promoCodeInternalService.findActivePromoCodeByName(bookingSimplDTO.getPromoCodeDTO());
         booking.setPromoCode(promoCode);

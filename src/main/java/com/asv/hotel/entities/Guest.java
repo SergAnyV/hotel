@@ -61,6 +61,10 @@ public class Guest implements Serializable {
      * Документ удостоверяющий личность клиента
      */
     @Schema(description = "Номер документа удостоверяющего личность гостя", example = "146754672")
-    @Size(min = 3, max = 50, message = "количество символов 3-50")
+    @Size(min = 3, max = 20, message = "количество символов 3-20")
+    @Pattern(
+            regexp = "^\\d+$",
+            message = "Некорректный номер документа удостоверяющего личность. Пример: 1320456473"
+    )
     private String numberDocument;
 }
