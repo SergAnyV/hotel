@@ -1,6 +1,6 @@
 package com.asv.hotel.services.implementations;
 
-import com.asv.hotel.dto.mapper.ServiceHoteMapper;
+import com.asv.hotel.dto.mapper.ServiceHotelMapper;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelDTO;
 import com.asv.hotel.entities.ServiceHotel;
 import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
@@ -9,7 +9,6 @@ import com.asv.hotel.repositories.ServiceHotelRepository;
 import com.asv.hotel.services.ServiceHotelInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,7 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
     @Transactional
     public List<ServiceHotelDTO> findAllHotelServices() {
         return serviceHotelRepository.findAll().stream().map(service ->
-                ServiceHoteMapper.INSTANCE.serviceToServiceDTO(service)
+                ServiceHotelMapper.INSTANCE.serviceToServiceDTO(service)
         ).collect(Collectors.toList());
     }
 
@@ -38,7 +37,7 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
         if (serviceOptional.isEmpty()) {
             return null;
         }
-        return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(serviceOptional.get());
+        return ServiceHotelMapper.INSTANCE.serviceToServiceDTO(serviceOptional.get());
     }
 
     @Transactional
@@ -47,9 +46,9 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
             log.warn("War такой сервис уже существует поиск по названи=ю {}", serviceHotelDTO);
             throw new HotelDataAlreadyExistsException("такой сервис уже существует в базе");
         }
-        return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(
+        return ServiceHotelMapper.INSTANCE.serviceToServiceDTO(
                 serviceHotelRepository.save(
-                        ServiceHoteMapper.INSTANCE.serviceDTOToService(serviceHotelDTO)));
+                        ServiceHotelMapper.INSTANCE.serviceDTOToService(serviceHotelDTO)));
     }
 
     @Transactional
@@ -69,8 +68,8 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
             throw new HotelDataNotFoundException("there is no this service");
         }
         ServiceHotel serviceHotel = serviceHotelOptional.get();
-        ServiceHoteMapper.INSTANCE.updateService(serviceHotelDTO, serviceHotel);
-        return ServiceHoteMapper.INSTANCE.serviceToServiceDTO(serviceHotelRepository.save(serviceHotel));
+        ServiceHotelMapper.INSTANCE.updateService(serviceHotelDTO, serviceHotel);
+        return ServiceHotelMapper.INSTANCE.serviceToServiceDTO(serviceHotelRepository.save(serviceHotel));
     }
 
     public ServiceHotel findServiceHotelByTitle(String title) {

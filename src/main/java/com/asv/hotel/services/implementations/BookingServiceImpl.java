@@ -4,6 +4,7 @@ import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 import com.asv.hotel.dto.bookingdto.ResponseBookingDTO;
 import com.asv.hotel.dto.mapper.BookingMapper;
+import com.asv.hotel.dto.mapper.ServiceHotelMapper;
 import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.entities.*;
@@ -129,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
 
         Set<ServiceHotelSimpleDTO> serviceHotelSimpleDTOS = booking.getServiceSet().stream()
                 .map(serviceHotel ->
-                        ServiceHoteMapper.INSTANCE.serviceHotelToServiceHotelSimpleDTO(serviceHotel))
+                        ServiceHotelMapper.INSTANCE.serviceHotelToServiceHotelSimpleDTO(serviceHotel))
                 .collect(Collectors.toSet());
 
         return ResponseBookingDTO.builder()

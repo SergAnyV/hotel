@@ -5,7 +5,6 @@ import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 
 import com.asv.hotel.dto.bookingdto.ResponseBookingDTO;
-import com.asv.hotel.dto.roomdto.RoomSimpleDTODataBase;
 import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;

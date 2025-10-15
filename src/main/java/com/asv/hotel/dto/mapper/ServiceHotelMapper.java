@@ -7,8 +7,8 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface ServiceHoteMapper {
-    ServiceHoteMapper INSTANCE= Mappers.getMapper(ServiceHoteMapper.class);
+public interface ServiceHotelMapper {
+    ServiceHotelMapper INSTANCE= Mappers.getMapper(ServiceHotelMapper.class);
     @Mapping(target ="title" ,source = "title")
     @Mapping(target ="description" ,source = "description")
     @Mapping(target ="price" ,source = "price")
