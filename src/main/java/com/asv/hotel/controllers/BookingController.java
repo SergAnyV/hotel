@@ -48,7 +48,7 @@ public class BookingController {
             description = "удаляет данные существующего бронирования по id")
     @ApiResponse(responseCode = "204", description = "бронирование удалено")
     @ApiResponse(responseCode = "404", description = "бронирование не найдено")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable
             @NotNull
@@ -94,13 +94,12 @@ public class BookingController {
         return ResponseEntity.ok(roomSimpleDataBaseDTOList);
     }
 
-    @GetMapping("/bookingid/{bookingid}")
+    @GetMapping("/booking/{bookingid}")
     public  ResponseEntity<ResponseBookingDTO> gitBookingById(@PathVariable("bookingid")
                                                                @NotNull (message = "id бронирования не может быть null")
                                                                @Positive(message = "id бронирования должно быть положительна")
-                                                               Long id,
-                                                              HttpServletRequest request){
-        ResponseBookingDTO responseBookingDTO=bookingService.findBesponseBookingDTOByBookingId(id,request);
+                                                               Long id){
+        ResponseBookingDTO responseBookingDTO=bookingService.findBesponseBookingDTOByBookingId(id);
         return ResponseEntity.ok(responseBookingDTO);
     }
 }

@@ -56,17 +56,19 @@ public class BookingServiceImpl implements BookingService {
         Room room = findRoomForBooking(bookingSimplDTO);
         booking.setRoom(room);
 
-        if(booking.getGuestList().size()>room.getCapacity()){
+        if (booking.getGuestList().size() > room.getCapacity()) {
             log.warn("Warning: количество гостей при бронирование превышает возможности номера {}",
                     bookingSimplDTO.getRoomNumber());
             throw new HotelIncorrectInputData(String.format("Неверное количество гостей '%s' при бронирование комнаты '%s'",
                     booking.getGuestList().size(),
-                    bookingSimplDTO.getRoomNumber() ));
+                    bookingSimplDTO.getRoomNumber()));
         }
         //    поиск и установление юзера из базы данных для бронирования
-        UserDetails userDetails=(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String nickname=userDetails.getUsername();
-        User user=userInternalExtendExternalService.findUserByNickName(nickname);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().
+                getAuthentication().
+                getPrincipal();
+        String nickname = userDetails.getUsername();
+        User user = userInternalExtendExternalService.findUserByNickName(nickname);
         booking.setUser(user);
 
         //поиск и установление промокода
@@ -122,7 +124,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public ResponseBookingDTO findBesponseBookingDTOByBookingId(Long id, HttpServletRequest request) {
+    public ResponseBookingDTO findBesponseBookingDTOByBookingId(Long id) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserRole userRole = user.getType().getRole();
         Booking booking = bookingRepository.findById(id).orElse(null);
 
         if (booking == null) {
@@ -130,16 +135,12 @@ public class BookingServiceImpl implements BookingService {
             throw new HotelDataNotFoundException("нет такого номера бронирования");
         }
 
-        if (!isCorrectRequest(booking, request)) {
-            throw new HotelIncorrectInputData(" Неккоректный запрос для бронирвания ");
-        }
-
         Set<ServiceHotelSimpleDTO> serviceHotelSimpleDTOS = booking.getServiceSet().stream()
                 .map(serviceHotel ->
                         ServiceHotelMapper.INSTANCE.serviceHotelToServiceHotelSimpleDTO(serviceHotel))
                 .collect(Collectors.toSet());
 
-        return ResponseBookingDTO.builder()
+        ResponseBookingDTO responseBookingDTO = ResponseBookingDTO.builder()
                 .bookingId(booking.getId())
                 .statusOfBooking(booking.getStatusOfBooking())
                 .checkInDate(booking.getCheckInDate())
@@ -155,37 +156,17 @@ public class BookingServiceImpl implements BookingService {
                 .phoneNumber(booking.getUser().getPhoneNumber())
                 .serviceHotelSimpleDTOS(serviceHotelSimpleDTOS)
                 .build();
+
+        if (userRole.equals(UserRole.ADMIN) || userRole.equals(UserRole.MANAGER)) {
+            return responseBookingDTO;
+        }
+
+        if (!booking.getUser().equals(user)) {
+            throw new HotelIncorrectInputData(" Неккоректный запрос для бронирвания ");
+        }
+
+        return responseBookingDTO;
     }
-
-    private boolean isCorrectRequest(Booking booking, HttpServletRequest request) {
-        String authHeader = request.getHeader(JWTUtils.AUTHORIZATION);
-
-        if (authHeader == null || !authHeader.startsWith(JWTUtils.BEARER)) {
-            return Boolean.FALSE;
-        }
-
-        String accessToken = authHeader.substring(7);
-        String nickNameFromToken = jwtUtils.extractUsername(accessToken);
-
-        if (booking.getUser().getNickName().equals(nickNameFromToken)) {
-            return Boolean.TRUE;
-        }
-
-        UserType userTypeFromTokenNickName = userInternalExtendExternalService.findUserTypeByUserNickName(nickNameFromToken);
-        if (userTypeFromTokenNickName == null) {
-            throw new HotelDataNotFoundException(String.format("неопознана роль из токена по никнейм '%s'",
-                    nickNameFromToken));
-        }
-
-        if (!(userTypeFromTokenNickName.getRole().equals(UserRole.ADMIN) ||
-                userTypeFromTokenNickName.getRole().equals(UserRole.MANAGER))) {
-            throw new HotelIncorrectInputData(String.format("Неверные права доступа для поиска не своего бронирования " +
-                    "nicknameToken '%s' bokingIdRequest '%s'", nickNameFromToken, booking));
-        }
-
-        return Boolean.TRUE;
-    }
-
 
     private Set<ServiceHotel> findAllServicesForBooking(BookingSimplDTO bookingSimplDTO) {
         Set<ServiceHotelSimpleDTO> serviceHotelDTOS = bookingSimplDTO.getServiceSet();
