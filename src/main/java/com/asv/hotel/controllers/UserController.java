@@ -11,10 +11,13 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/users")
@@ -121,16 +124,27 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Успешный запрос")
     @ApiResponse(responseCode = "404", description = "Юзер не найден")
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyRegistration(@NotBlank
-                                                     @Size(max = 50)
-                                                     @RequestParam("token") String token) {
-        Boolean result = userService.confirmRegistrationUser(token);
-        String message;
-        if (result == Boolean.FALSE) {
-            message = "WRONG SITUATION";
-            return ResponseEntity.badRequest().body(message);
-        }
-        message = "RIGHT";
-        return ResponseEntity.ok(message);
+    public ResponseEntity<String> verifyRegistration(@RequestParam("token") String token) {
+        boolean success = userService.confirmRegistrationUser(token);
+        String message = success
+                ? "<h2>Регистрация подтверждена! Можете войти.</h2>"
+                : "<h2>Ошибка: недействительная ссылка.</h2>";
+
+        String html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Подтверждение регистрации</title>
+        </head>
+        <body>
+            %s
+        </body>
+        </html>
+        """.formatted(message);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/html;charset=UTF-8"))
+                .body(html);
     }
 }
