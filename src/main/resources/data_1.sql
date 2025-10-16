@@ -1,7 +1,7 @@
 -- Сначала очищаем таблицы с внешними ключами (дочерние)
 DELETE FROM booking_service;
 DELETE FROM report_attachments;
-DELETE FROM notifocations;
+DELETE FROM notifications;
 DELETE FROM reports;
 DELETE FROM bookings;
 DELETE FROM user_type_job_type;

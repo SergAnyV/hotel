@@ -13,11 +13,9 @@ import com.asv.hotel.repositories.JobTypeRepository;
 import com.asv.hotel.services.JobTypeInternalService;
 
 import com.asv.hotel.services.UserTypeInternalService;
-import com.asv.hotel.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +55,8 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
         } catch (DataIntegrityViolationException ex) {
             log.error("Error: не пройдена проверка на уникальность полей jobType при сохранении в методе createJobType"
                     + "jobTypeSimpleDTO ={}", jobTypeSimpleDTO, ex);
-            throw new HotelDataAlreadyExistsException(" Fileds is not unique for this jobTypeSimpleDTO=" + jobTypeSimpleDTO);
+            throw new HotelDataAlreadyExistsException(String.format(" Fileds is not unique for this jobTypeSimpleDTO= '%s' ",
+                    jobTypeSimpleDTO));
         }
     }
 
@@ -65,11 +64,11 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Override
     public List<JobTypeDTO> findJobTypesDTOByTitle(String title) {
         title = cleanString(title);
-        title = StringUtil.preparedStringForPartiallyCoincidence(title);
-                 List<JobType> listJT = jobTypeRepository.findJobTypesByTitle(title);
-            return listJT.stream()
-                    .map(jobType -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jobType))
-                    .collect(Collectors.toList());
+        List<JobType> listJT = jobTypeRepository.findJobTypesByTitleIgnoreCase(title);
+
+        return listJT.stream()
+                .map(jobType -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jobType))
+                .collect(Collectors.toList());
 
     }
 
@@ -77,10 +76,9 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Override
     public List<JobType> findJobTypesByTitle(String title) {
         title = cleanString(title);
-        title = StringUtil.preparedStringForPartiallyCoincidence(title);
 
-            List<JobType> listJT = jobTypeRepository.findJobTypesByTitle(title);
-            return listJT;
+        List<JobType> listJT = jobTypeRepository.findJobTypesByTitleIgnoreCase(title);
+        return listJT;
 
     }
 
@@ -88,12 +86,11 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Override
     public List<JobTypeDTO> findActiveJobTypesDTOByTitle(String title) {
         title = cleanString(title);
-        title = StringUtil.preparedStringForPartiallyCoincidence(title);
 
-            List<JobType> listJT = jobTypeRepository.findActiveJobTypesByTitle(title);
-            return listJT.stream()
-                    .map(jobType -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jobType))
-                    .collect(Collectors.toList());
+        List<JobType> listJT = jobTypeRepository.findActiveJobTypesByTitleIgnoreCase(title);
+        return listJT.stream()
+                .map(jobType -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jobType))
+                .collect(Collectors.toList());
 
     }
 
@@ -101,10 +98,9 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Override
     public List<JobType> findActiveJobTypesByTitle(String title) {
         title = cleanString(title);
-        title = StringUtil.preparedStringForPartiallyCoincidence(title);
 
-            List<JobType> listJT = jobTypeRepository.findActiveJobTypesByTitle(title);
-            return listJT;
+        List<JobType> listJT = jobTypeRepository.findActiveJobTypesByTitleIgnoreCase(title);
+        return listJT;
 
     }
 
@@ -115,10 +111,10 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
         title = cleanString(title);
         Boolean isActiveBoolean = Boolean.valueOf(isActive);
 
-            List<JobType> listJT = jobTypeRepository.findJobTypesByTitleAndActiveStatusWithoutUserType(title, isActiveBoolean);
-            return listJT.stream()
-                    .map(jt -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jt))
-                    .collect(Collectors.toList());
+        List<JobType> listJT = jobTypeRepository.findJobTypesByTitleAndActiveStatusWithoutUserType(title, isActiveBoolean);
+        return listJT.stream()
+                .map(jt -> JobTypeMapper.INSTANCE.jobTypeToJobTypeDTO(jt))
+                .collect(Collectors.toList());
 
     }
 
@@ -126,9 +122,9 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Override
     public List<JobType> findJobTypesByTitleAndActiveStatusWithoutUserType(String title, String isActive) {
         Boolean isActiveBoolean = Boolean.valueOf(isActive);
-            title = cleanString(title);
-            List<JobType> listJT = jobTypeRepository.findJobTypesByTitleAndActiveStatusWithoutUserType(title, isActiveBoolean);
-            return listJT;
+        title = cleanString(title);
+        List<JobType> listJT = jobTypeRepository.findJobTypesByTitleAndActiveStatusWithoutUserType(title, isActiveBoolean);
+        return listJT;
 
     }
 
@@ -144,7 +140,7 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
 
     @Transactional
     public void deleteJobTypeByTitle(String title) {
-        if (jobTypeRepository.deleteJobTypeByTitle(title) == 0) {
+        if (jobTypeRepository.deleteJobTypeByTitleIgnoreCase(title) == 0) {
             log.error("Error: не существует jobtype с title= {}  для удаления с помощью deleteJobTypeByTitle", title);
             throw new HotelDataNotFoundException("There is no JobType for delete with this title =" + title);
         }
@@ -161,18 +157,16 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     @Transactional
     public Set<UserTypeDTO> addUserTypeToJobType(String jobTypeTitle, String userTypeRole) {
 
-            jobTypeTitle = cleanString(jobTypeTitle);
-            userTypeRole = cleanString(userTypeRole);
+        jobTypeTitle = cleanString(jobTypeTitle);
+        userTypeRole = cleanString(userTypeRole);
 
-            JobType jobType = jobTypeRepository.findJobTypesByTitle(jobTypeTitle).get(0);
-            Set<UserType> userTypeSet = jobType.getUserTypes();
-            UserType userType = userTypeInternalService.findActiveUserTypeByType(userTypeRole);
-            userTypeSet.add(userType);
-            jobType = jobTypeRepository.save(jobType);
-            return jobType.getUserTypes().stream().map(ut -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(ut))
-                    .collect(Collectors.toSet());
-
-
+        JobType jobType = jobTypeRepository.findJobTypesByTitleIgnoreCase(jobTypeTitle).get(0);
+        Set<UserType> userTypeSet = jobType.getUserTypes();
+        UserType userType = userTypeInternalService.findActiveUserTypeByType(userTypeRole);
+        userTypeSet.add(userType);
+        jobType = jobTypeRepository.save(jobType);
+        return jobType.getUserTypes().stream().map(ut -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(ut))
+                .collect(Collectors.toSet());
     }
 
 

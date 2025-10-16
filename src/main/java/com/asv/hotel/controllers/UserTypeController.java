@@ -40,7 +40,7 @@ public class UserTypeController {
     public ResponseEntity<UserTypeDTO> getTypeByRole(
             @PathVariable
             @Size(min = 3, max = 100, message = "количество символов 3-100")
-            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s-]+$", message = "Роль может содержать только буквы,дефис, цифры и пробелы")
             String role) {
         UserTypeDTO userTypeDTO = userTypeService.findUserTypeDTOByType(role);
         return ResponseEntity.ok(userTypeDTO);
@@ -64,7 +64,7 @@ public class UserTypeController {
     public ResponseEntity<UserTypeDTO> deleteUserType(
             @PathVariable
             @Size(min = 3, max = 100, message = "количество символов 3-100")
-            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s]+$", message = "Роль может содержать только буквы, цифры и пробелы")
+            @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9\\s-]+$", message = "Роль может содержать только буквы,дефис, цифры и пробелы")
             String role) {
         userTypeService.deleteUserTypeByType(role);
         return ResponseEntity.noContent().build();

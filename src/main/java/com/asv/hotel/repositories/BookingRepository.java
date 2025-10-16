@@ -1,5 +1,6 @@
 package com.asv.hotel.repositories;
 
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.entities.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -35,5 +36,17 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
             ORDER BY b.check_in_date DESC
             """, nativeQuery = true)
     List<Booking> findAllByRoomNumber(@Param("roomNumber") String roomNumber);
+
+    @Query(value = """
+            SELECT r.number, r.type, r.description, r.capacity, r.price_per_night
+            FROM rooms r
+            LEFT JOIN bookings b
+                ON r.id = b.room_id
+                AND b.check_in_date < :checkOut
+                AND b.check_out_date > :checkIn
+                AND b.status != 'CANCELLED'
+            WHERE b.id IS NULL;
+            """,nativeQuery = true)
+    List <RoomSimpleDataBaseDTO>findAllFreeRoomsBetweenDates(@Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
 
 }

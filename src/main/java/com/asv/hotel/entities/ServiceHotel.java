@@ -39,10 +39,6 @@ public class ServiceHotel {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "booking_service",
-            joinColumns = @JoinColumn(name = "booking_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
+    @ManyToMany(mappedBy = "serviceSet", fetch = FetchType.LAZY)
     private Set<Booking> bookingSet = new HashSet<>();
 }

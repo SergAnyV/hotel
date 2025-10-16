@@ -33,13 +33,7 @@ public class RoomServiceImpl implements RoomInternalService {
 
     @Transactional(readOnly = true)
     public RoomDTO findRoomDTOByNumber(String number) {
-        return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.findRoomByNumberLikeIgnoreCase(number)
-                .orElseThrow(() -> {
-                    log.warn("Error:Не существует комнаты с номером {} оошибка в методе {}", number
-                            , new Object() {
-                            }.getClass().getEnclosingMethod().getName());
-                    return new HotelDataNotFoundException("Не существует комнаты с номером " + number);
-                }));
+        return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.findRoomByNumberLikeIgnoreCase(number).orElse(null));
     }
 
     @Transactional(readOnly = true)
@@ -58,8 +52,6 @@ public class RoomServiceImpl implements RoomInternalService {
             throw new HotelDataAlreadyExistsException(roomDTO.getNumber());
         }
         Room room = RoomMapper.INSTANCE.roomDTOTORomm(roomDTO);
-        room.setCreatedAt(LocalDateTime.now());
-        room.setUpdatedAt(LocalDateTime.now());
         return RoomMapper.INSTANCE.roomToRoomDTO(roomRepository.save(room));
 
     }
@@ -87,7 +79,7 @@ public class RoomServiceImpl implements RoomInternalService {
 
     @Transactional
     public Room findRoomByNumber(String number) {
-        return roomRepository.findRoomByNumberLikeIgnoreCase(number).get();
+        return roomRepository.findRoomByNumberLikeIgnoreCase(number).orElse(null);
     }
 
 

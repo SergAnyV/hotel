@@ -1,14 +1,17 @@
 package com.asv.hotel.dto.bookingdto;
 
 
+import com.asv.hotel.entities.Guest;
 import com.asv.hotel.dto.servicehoteldto.ServiceHotelSimpleDTO;
 import com.asv.hotel.dto.userdto.UserSimpleDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -17,12 +20,12 @@ import java.util.Set;
         ",модель передачи данных через JSON")
 public class BookingSimplDTO {
 
-    @Schema(description = "Дата заезда", example = "2026-01-01")
+    @Schema(description = "Дата заезда", example = "2028-01-01")
     @NotNull(message = "Дата начала проживания обязательна")
     @FutureOrPresent
     private LocalDate checkInDate;
 
-    @Schema(description = "Дата окончания действия", example = "2027-01-01")
+    @Schema(description = "Дата окончания действия", example = "2029-01-01")
     @NotNull(message = "Дата выезда обязательна")
     @Future
     private LocalDate checkOutDate;
@@ -38,13 +41,16 @@ public class BookingSimplDTO {
     private String roomNumber;
 
     @Schema(description = "Описание того кто зачисляется")
-    @NotNull(message = "Описание не должен быть пустым")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UserSimpleDTO userSimpleDTO;
 
-    @Schema(description = "промокод", example = "some")
+    @Schema(description = "промокод", example = "WELCOME1000")
     private String promoCodeDTO;
 
     @Schema(description = "сервисы")
     private Set<ServiceHotelSimpleDTO> serviceSet;
+
+    @Schema(description = "список гостей проживающих в номере")
+    private List<Guest> guestList;
 
 }

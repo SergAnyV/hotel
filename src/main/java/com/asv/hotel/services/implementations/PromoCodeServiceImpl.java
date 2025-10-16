@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +28,8 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
     public PromoCodeDTO createPromoCode(PromoCodeDTO promoCodeDTO) {
         if (promoCodeRepository.findPromoCodesByCode(promoCodeDTO.getCode()).isPresent()) {
             log.warn("Warning такой промокод уже существет", promoCodeDTO.getCode());
-            throw new HotelDataAlreadyExistsException("данный промок уже существует" + promoCodeDTO.getCode());
+            throw new HotelDataAlreadyExistsException(String.format("Данный промокод уже существует '%s'",
+                    promoCodeDTO.getCode()));
         }
         PromoCode promoCode = PromoCodeMapper.INSTANCE.promoCodeDTOToPromoCode(promoCodeDTO);
         return PromoCodeMapper.INSTANCE.promoCodeToPromoCodeDTO(promoCodeRepository.save(promoCode));
@@ -35,14 +37,14 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
 
     @Transactional
     public PromoCode findActivePromoCodeByName(String code) {
-        return promoCodeRepository.findActivePromoCodeByCode(code).get();
+        return promoCodeRepository.findActivePromoCodeByCode(code).orElse(null);
     }
 
     @Transactional
     public void deletePromoCodeByCode(String code) {
         if (promoCodeRepository.deleteByCode(code) == 0) {
-            log.warn("Warning такого промокода не  существет", code);
-            throw new HotelDataNotFoundException("данный промок не существует" + code);
+            log.warn("Warning: такого промокода не существует", code);
+            throw new HotelDataNotFoundException(String.format("Данный промокод не существует '%s'", code));
         }
     }
 
@@ -50,7 +52,7 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
     public List<PromoCodeDTO> findAllPromoCodesDTO() {
         List<PromoCode> listPromo = promoCodeRepository.findAll();
         if (listPromo.isEmpty()) {
-            log.info("промокодов нет");
+            log.warn("Warning промокодов нет");
             return Collections.emptyList();
         }
         return listPromo.stream().map(promo -> {

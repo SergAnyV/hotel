@@ -15,7 +15,7 @@ INSERT INTO report_attachments (url_file, created_at, updated_at, report_id) VAL
 
 
 -- Insert для Notification (уведомления)
-INSERT INTO notifocations (message, created_at, user_id, booking_id) VALUES
+INSERT INTO notifications (message, created_at, user_id, booking_id) VALUES
 ('Ваше бронирование подтверждено. Номер 101 с 15.06.2024 по 20.06.2024', NOW(), 1, 1),
 ('Поступил новый запрос на бронирование. Номер 201 с 01.07.2024 по 10.07.2024', NOW(), 2, 2),
 ('Ваше бронирование отменено. Номер 301 с 05.08.2024 по 15.08.2024', NOW(), 3, 3),

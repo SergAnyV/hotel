@@ -3,6 +3,8 @@ package com.asv.hotel.controllers;
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
+
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,10 +16,12 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Reader;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -64,5 +68,27 @@ public class BookingController {
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
         return ResponseEntity.ok(bookingService.findAllBookingsSimplDTOByRoomNumber(number));
+    }
+
+    @Operation(summary = "Найти свободные комнаты по датам бронирования",
+            description = "Возвращает список свободных комнат на заданные даты")
+    @ApiResponse(responseCode = "200", description = "бронирования найдены")
+    @ApiResponse(responseCode = "404", description = "бронирования не найдены")
+    //добавить ошибки так как все удалилось блин
+    @GetMapping("/date")
+    public ResponseEntity<List<RoomSimpleDataBaseDTO>> getFreeRoomsBetweenDates(@RequestParam
+                                                                                @FutureOrPresent
+                                                                                @NotNull
+                                                                                LocalDate checkin,
+                                                                                @RequestParam
+                                                                                @Future
+                                                                                @NotNull
+                                                                                LocalDate checkOut,
+                                                                                Reader reader) {
+        List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDTODataBaseByBookingDate(checkin, checkOut);
+        if (roomSimpleDataBaseDTOList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(roomSimpleDataBaseDTOList);
     }
 }

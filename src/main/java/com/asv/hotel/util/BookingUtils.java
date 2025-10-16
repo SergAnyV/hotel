@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 @Slf4j
@@ -16,6 +18,9 @@ public class BookingUtils {
         return null;
     }
     return new BigDecimal(from.until(till, ChronoUnit.DAYS));
+    }
+    public  static LocalDateTime convertDateToDateTimeNoon(LocalDate localDate){
+        return LocalDateTime.of(localDate, LocalTime.NOON);
     }
 
 

@@ -7,13 +7,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "notifocations")
+@Table(name = "notifications")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification {
+public class NotificationHotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,12 +25,11 @@ public class Notification {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
-
 }

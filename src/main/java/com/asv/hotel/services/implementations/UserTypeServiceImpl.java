@@ -9,7 +9,6 @@ import com.asv.hotel.repositories.UserTypeRepository;
 import com.asv.hotel.services.UserTypeInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
 
     @Transactional
     public UserTypeDTO createUserType(UserTypeDTO userTypeDTO) {
-        if (userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName()).isPresent()) {
+        if (userTypeRepository.findUserTypeByNameLikeIgnoreCase(userTypeDTO.getName().trim()).isPresent()) {
             log.warn("Error: такая роль уже существует {} ", userTypeDTO.getName());
             throw new HotelDataAlreadyExistsException(userTypeDTO.getName());
         }
@@ -42,10 +41,10 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     }
 
     @Transactional
-    public void deleteUserTypeByType(String role) {
-        if (userTypeRepository.deleteByRole(role) == 0) {
-            log.warn("Error: такая роль не существует {} ", role);
-            throw new HotelDataNotFoundException(role);
+    public void deleteUserTypeByType(String name) {
+        if (userTypeRepository.deleteByName(name) == 0) {
+            log.warn("Error: такая роль не существует {} ", name);
+            throw new HotelDataNotFoundException(String.format("Данной роли не существует для удаления '%s'", name));
         }
     }
 
@@ -55,23 +54,22 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
     }
 
     @Transactional
-    public UserTypeDTO findUserTypeDTOByType(String role) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.get());
+    public UserTypeDTO findUserTypeDTOByType(String name) {
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(name);
+        return UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userTypeOptional.orElse(null));
     }
 
     @Transactional
     public UserType findUserTypeByType(String role) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
-        return userTypeOptional.get();
+        return userTypeRepository.findUserTypeByNameLikeIgnoreCase(role).orElse(null);
     }
 
     @Transactional
     public UserTypeDTO cahngeDataUserType(UserTypeDTO userTypeDTO) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(userTypeDTO.getName());
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(userTypeDTO.getName().trim());
         if (userTypeOptional.isEmpty()) {
             log.warn("Error: роль не распознана среди доступных ,указана {}", userTypeDTO.getName());
-            throw new HotelDataNotFoundException(String.format("данная роль не распознана в базе '%s'",
+            throw new HotelDataNotFoundException(String.format("Данная роль не распознана в базе '%s'",
                     userTypeDTO.getName()));
         }
         UserType userType = userTypeOptional.get();
@@ -82,10 +80,10 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
 
 
     public UserType findActiveUserTypeByType(String role) {
-        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByRoleLikeIgnoreCase(role);
+        Optional<UserType> userTypeOptional = userTypeRepository.findUserTypeByNameLikeIgnoreCase(role);
         if (userTypeOptional.isEmpty() || !userTypeOptional.get().getIsActive()) {
             log.warn("Error: роль не распознана среди доступных(активных) ,указана {}", role);
-            throw new HotelDataNotFoundException(String.format("данная роль не распознана в базе '%s'",
+            throw new HotelDataNotFoundException(String.format("Данная роль не распознана в базе '%s'",
                     role));
         }
         return userTypeOptional.get();

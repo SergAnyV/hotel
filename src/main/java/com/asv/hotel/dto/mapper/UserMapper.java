@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
-@Mapper(uses = UserTypeMapper.class)
+@Mapper(uses = {UserTypeMapper.class, BookingMapper.class, NotificationMapper.class})
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 

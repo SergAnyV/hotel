@@ -1,6 +1,5 @@
 package com.asv.hotel.repositories;
 
-import com.asv.hotel.entities.Booking;
 import com.asv.hotel.entities.JobType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,10 +20,10 @@ public interface JobTypeRepository extends JpaRepository<JobType,Long> {
     Optional<JobType> findJobTypeById(@Param("id") Long id);
 
     @Query(value = "SELECT * FROM job_types WHERE title ILIKE :title" , nativeQuery = true)
-    List<JobType> findJobTypesByTitle(@Param("title") String title);
+    List<JobType> findJobTypesByTitleIgnoreCase(@Param("title") String title);
 
     @Query(value = "SELECT * FROM job_types WHERE title ILIKE :title AND is_active = true" , nativeQuery = true)
-    List<JobType> findActiveJobTypesByTitle(@Param("title") String title);
+    List<JobType> findActiveJobTypesByTitleIgnoreCase(@Param("title") String title);
 
     @Query(value = "SELECT * FROM job_types WHERE title ILIKE :title AND is_active = :isactive" , nativeQuery = true)
     List<JobType> findJobTypesByTitleAndActiveStatusWithoutUserType(@Param("title") String title,
@@ -36,7 +35,7 @@ public interface JobTypeRepository extends JpaRepository<JobType,Long> {
 
     @Modifying
     @Query(value = "DELETE FROM job_types WHERE title ILIKE :title",nativeQuery = true)
-    int deleteJobTypeByTitle(@Param("title") String title);
+    int deleteJobTypeByTitleIgnoreCase(@Param("title") String title);
 
     @Modifying
     @Query(value = "UPDATE job_types SET description = :description, is_active = :isactive WHERE title = :title",nativeQuery = true)

@@ -2,7 +2,10 @@ package com.asv.hotel.services;
 
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
+import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 
+
+import java.time.LocalDate;
 import java.util.List;
 
 public interface BookingService {
@@ -13,4 +16,6 @@ public interface BookingService {
 
     List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber(String roomNumber);
 
+    List<RoomSimpleDataBaseDTO> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate);
 }
+
