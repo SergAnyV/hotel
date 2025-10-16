@@ -10,7 +10,6 @@ import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.NotNull;
@@ -95,7 +94,7 @@ public class BookingController {
     }
 
     @GetMapping("/booking/{bookingid}")
-    public  ResponseEntity<ResponseBookingDTO> gitBookingById(@PathVariable("bookingid")
+    public  ResponseEntity<ResponseBookingDTO> getBookingById(@PathVariable("bookingid")
                                                                @NotNull (message = "id бронирования не может быть null")
                                                                @Positive(message = "id бронирования должно быть положительна")
                                                                Long id){

@@ -54,4 +54,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """, nativeQuery = true
     )
     Optional<UserType> findUserTypeByUserNickName(@Param("nickname") String nickname);
+
+    @Query(value = "SELECT * FROM users WHERE verification_token = :token", nativeQuery = true)
+    Optional<User> findUserByToken(@Param("token") String token);
 }

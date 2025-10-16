@@ -116,5 +116,21 @@ public class UserController {
         return ResponseEntity.ok(userService.changeDataUser(userDTO));
     }
 
-
+    @Operation(summary = "Подтвердить регистрацию юзера ",
+            description = "Возвращает обновленного юзера")
+    @ApiResponse(responseCode = "200", description = "Успешный запрос")
+    @ApiResponse(responseCode = "404", description = "Юзер не найден")
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyRegistration(@NotBlank
+                                                     @Size(max = 50)
+                                                     @RequestParam("token") String token) {
+        Boolean result = userService.confirmRegistrationUser(token);
+        String message;
+        if (result == Boolean.FALSE) {
+            message = "WRONG SITUATION";
+            return ResponseEntity.badRequest().body(message);
+        }
+        message = "RIGHT";
+        return ResponseEntity.ok(message);
+    }
 }
