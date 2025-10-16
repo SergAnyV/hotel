@@ -95,7 +95,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber(String roomNumber) {
+    public List<BookingSimplDTO> findAllBookingsSimpleDTOByRoomNumber(String roomNumber) {
         List<Booking> bookingsList = bookingRepository.findAllByRoomNumber(roomNumber);
         if (bookingsList.isEmpty()) {
             log.error("лист с бронированиями пуст для данной комнаты {}", roomNumber);
@@ -108,7 +108,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public List<RoomSimpleDataBaseDTO> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
+    public List<RoomSimpleDataBaseDTO> findRoomSimpleDataBaseDTOByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
         if (!checkInDate.isBefore(checkOutDate)) {
             log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
                     checkInDate, checkOutDate);
@@ -119,7 +119,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public ResponseBookingDTO findBesponseBookingDTOByBookingId(Long id) {
+    public ResponseBookingDTO findResponseBookingDTOByBookingId(Long id) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserRole userRole = user.getType().getRole();

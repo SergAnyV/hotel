@@ -106,10 +106,6 @@ public class UserServiceImpl implements UserInternalService {
         return UserMapper.INSTANCE.userToUserDTO(existingUser);
     }
 
-    private String generateRandomToken() {
-        return UUID.randomUUID().toString();
-    }
-
     @Transactional
     public Boolean confirmRegistrationUser(String token){
         User user=userRepository.findUserByToken(token).orElse(null);
@@ -119,5 +115,9 @@ public class UserServiceImpl implements UserInternalService {
         user.setVerifyStatus(VERIFICATION_STATUS_TRUE);
         userRepository.save(user);
         return VERIFICATION_STATUS_TRUE;
+    }
+
+    private String generateRandomToken() {
+        return UUID.randomUUID().toString();
     }
 }

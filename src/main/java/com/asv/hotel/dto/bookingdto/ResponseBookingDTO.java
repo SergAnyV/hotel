@@ -30,7 +30,7 @@ import java.util.Set;
  * </p>
  *
  * @see com.asv.hotel.controllers.BookingController#getBookingById
- * @see com.asv.hotel.services.implementations.BookingServiceImpl#findBesponseBookingDTOByBookingId
+ * @see com.asv.hotel.services.implementations.BookingServiceImpl#findResponseBookingDTOByBookingId
  * @see ServiceHotelSimpleDTO
  * @see BookingStatus
  * @see RoomType
