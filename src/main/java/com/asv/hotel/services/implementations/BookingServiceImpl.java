@@ -157,7 +157,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         if (!booking.getUser().equals(user)) {
-            throw new HotelIncorrectInputData(" Неккоректный запрос для бронирвания ");
+            throw new HotelIncorrectInputData(" Некорректный запрос для бронирования ");
         }
 
         return responseBookingDTO;
