@@ -2,13 +2,16 @@ package com.asv.hotel.services.implementations;
 
 import com.asv.hotel.dto.mapper.ReportAttachmentMapper;
 import com.asv.hotel.dto.reportattachmendto.ReportAttachmentDTO;
+import com.asv.hotel.dto.reportattachmendto.ReportAttachmentSimpleDTO;
 import com.asv.hotel.entities.ReportAttachment;
 import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import com.asv.hotel.exceptions.HotelReportAttachmentException;
 import com.asv.hotel.repositories.ReportAttachmentRepository;
 import com.asv.hotel.services.ReportAttachmentService;
+import jakarta.persistence.TableGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,6 +58,36 @@ public class ReportAttachmenServicetImpl implements ReportAttachmentService {
                     return f != null;
                 }).
                 collect(Collectors.toList());
+    }
+
+    @Transactional
+    @Override
+    public ByteArrayResource findByteArrayResourceByReportAttachmenID(Long id) {
+        ReportAttachment reportAttachment = reportAttachmentRepository.findById(id).orElse(null);
+        if (reportAttachment == null) {
+            return null;
+        }
+        return new ByteArrayResource(reportAttachment.getContent());
+    }
+
+    @Transactional
+    @Override
+    public byte[] findByteArrayByReportAttachmenID(Long id) {
+        ReportAttachment reportAttachment = reportAttachmentRepository.findById(id).orElse(null);
+        if (reportAttachment == null) {
+            return null;
+        }
+        return reportAttachment.getContent();
+    }
+
+    @Transactional
+    @Override
+    public ReportAttachmentSimpleDTO findReportAttachmentSimpleDTOByID(Long id) {
+        ReportAttachment reportAttachment = reportAttachmentRepository.findById(id).orElse(null);
+        if (reportAttachment == null) {
+            return null;
+        }
+        return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
     }
 
 

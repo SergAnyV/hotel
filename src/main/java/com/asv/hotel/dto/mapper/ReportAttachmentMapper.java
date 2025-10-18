@@ -1,6 +1,7 @@
 package com.asv.hotel.dto.mapper;
 
 import com.asv.hotel.dto.reportattachmendto.ReportAttachmentDTO;
+import com.asv.hotel.dto.reportattachmendto.ReportAttachmentSimpleDTO;
 import com.asv.hotel.entities.ReportAttachment;
 import com.asv.hotel.exceptions.HotelReportAttachmentException;
 import org.mapstruct.Mapper;
@@ -8,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,6 +32,11 @@ public interface ReportAttachmentMapper {
     @Mapping(target = "fileName",source = "multipartFile", qualifiedByName = "multiPartFileGetName")
     @Mapping(target = "size",source = "multipartFile", qualifiedByName = "multiPartFileGetSize")
     ReportAttachment multipartFileToReportAttachmentWithoutType(MultipartFile multipartFile);
+
+    @Mapping(target = "fileName", source = "fileName")
+    @Mapping(target = "contentType", source = "contentType")
+    @Mapping(target = "byteArrayResource",source = "content",qualifiedByName = "byteArrayToByteArrayResource")
+    ReportAttachmentSimpleDTO reportAttachmentToReportAttachmentSimpleDTO(ReportAttachment reportAttachment);
 
 
     @Named("multiPartFileToByteArray")
@@ -55,6 +62,11 @@ public interface ReportAttachmentMapper {
     @Named("multiPartFileGetSize")
     default Long multiPartFileGetSize(MultipartFile multipartFile) {
         return multipartFile.getSize();
+    }
+
+    @Named("byteArrayToByteArrayResource")
+    default ByteArrayResource byteArrayToByteArrayResource(byte[] bytes){
+        return new ByteArrayResource(bytes);
     }
 
 }
