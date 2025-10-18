@@ -26,8 +26,12 @@ public class ReportAttachmentController {
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<List<ReportAttachmentDTO>> createAttachmentBatch(@RequestParam("multipartFileList") List<MultipartFile> multipartFileList) {
+    public ResponseEntity<List<ReportAttachmentDTO>> createAttachmentBatch(
+            @RequestParam("multipartFileList") List<MultipartFile> multipartFileList) {
         List<ReportAttachmentDTO> reportAttachmentDTOList = reportAttachmentService.createReportAttachmentBatch(multipartFileList);
+        if(reportAttachmentDTOList.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(reportAttachmentDTOList);
     }
 }
