@@ -1,6 +1,7 @@
 package com.asv.hotel.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,19 +22,25 @@ public class ReportAttachment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "url_file", nullable = false, unique = true, length = 100)
-    private String url;
+    @Column(name = "file_name",nullable = false,length = 30)
+    private String fileName;
+
+    @Column(name = "content_type",nullable = false,length = 30)
+    private String contentType;
+
+    @Column(name = "size",nullable = false,length = 20)
+    private Long size;
+
+    @Lob
+    @Column(name = "content",nullable = false)
+    private byte[] content;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedDate;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id", nullable = false)
+    @JoinColumn(name = "report_id", nullable = true)
     private Report report;
 
 }
