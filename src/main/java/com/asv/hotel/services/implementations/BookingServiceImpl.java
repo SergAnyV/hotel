@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
-    private final UserInternalService userInternalExtendExternalService;
+    private final UserInternalService userService;
     private final RoomInternalService roomInternalService;
     private final ServiceHotelInternalService serviceHotelInternalService;
     private final PromoCodeInternalService promoCodeInternalService;
@@ -63,7 +63,7 @@ public class BookingServiceImpl implements BookingService {
                 getAuthentication().
                 getPrincipal();
         String nickname = userDetails.getUsername();
-        User user = userInternalExtendExternalService.findUserByNickName(nickname);
+        User user = userService.findUserByNickName(nickname);
         booking.setUser(user);
 
         //поиск и установление промокода
@@ -198,7 +198,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private User findUserForBooking(BookingSimplDTO bookingSimplDTO) {
-        User user = userInternalExtendExternalService.findUserByLastNameAndFirstName(
+        User user = userService.findUserByLastNameAndFirstName(
                 bookingSimplDTO.getUserSimpleDTO().getLastName(), bookingSimplDTO.getUserSimpleDTO().getFirstName());
         return user;
     }

@@ -40,7 +40,7 @@ public class ReportAttachment {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "report_id", nullable = true)
+    @JoinColumn(name = "report_id", nullable = false)
     private Report report;
 
 }

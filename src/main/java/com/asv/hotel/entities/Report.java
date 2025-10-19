@@ -53,8 +53,9 @@ public class Report {
     @JoinColumn(name = "staff_id", nullable = false)
     private User staff;
 
-    @OneToMany(mappedBy = "report", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<ReportAttachment> reportAttachmentSet;
+    @OneToMany(mappedBy = "report", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<ReportAttachment> reportAttachmentSet=new HashSet<>();
 
 
     @PrePersist
@@ -66,6 +67,11 @@ public class Report {
         if (reportStatus != null) {
             this.descriptionStatus = reportStatus.getDescription();
         }
+    }
+
+    public void addAttachment(ReportAttachment attachment){
+        attachment.setReport(this);
+        this.reportAttachmentSet.add(attachment);
     }
 
 }

@@ -84,8 +84,7 @@ public class BookingController {
                                                                                 @RequestParam
                                                                                 @Future
                                                                                 @NotNull
-                                                                                LocalDate checkOut,
-                                                                                Reader reader) {
+                                                                                LocalDate checkOut) {
         List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDataBaseDTOByBookingDate(checkin, checkOut);
         if (roomSimpleDataBaseDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -56,7 +56,7 @@ public class Room {
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Booking> bookings = new HashSet<>();
 
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<Report> reports = new HashSet<>();
 
     @PrePersist
