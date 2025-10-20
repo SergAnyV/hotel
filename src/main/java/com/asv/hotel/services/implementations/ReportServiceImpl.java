@@ -17,8 +17,6 @@ import com.asv.hotel.services.RoomInternalService;
 import com.asv.hotel.services.UserInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,34 +73,44 @@ public class ReportServiceImpl implements ReportService {
 
     @Transactional
     @Override
-    public void addReportAttachmentToReport(Long reportId, List<MultipartFile> multipartFileList){
-     Report report=reportRepository.findReportById(reportId).orElse(null);
+    public void addReportAttachmentToReport(Long reportId, List<MultipartFile> multipartFileList) {
+        Report report = reportRepository.findReportById(reportId).orElse(null);
 
-     if (report==null){
-         log.warn("Warning: Нет отчета с таким id {}",reportId);
-         throw new HotelDataNotFoundException(String.format("Нет отчета с таким id %d",reportId));
-     }
+        if (report == null) {
+            log.warn("Warning: Нет отчета с таким id {}", reportId);
+            throw new HotelDataNotFoundException(String.format("Нет отчета с таким id %d", reportId));
+        }
 
-     if (isCollectionNullOrEmpty(multipartFileList)){
-         log.warn("Warning: нет приложенных файлов для сохранения количество");
-         throw new HotelIncorrectInputData("Отсутствуют файлы для сохранения в отчет");
-     }
+        if (isCollectionNullOrEmpty(multipartFileList)) {
+            log.warn("Warning: нет приложенных файлов для сохранения количество");
+            throw new HotelIncorrectInputData("Отсутствуют файлы для сохранения в отчет");
+        }
 
-     Set<ReportAttachment> reportAttachmentSet=multipartFileList.stream().
-             map(mpf->reportAAttachmentService.generateReportAttachmentFromMultipartFile(mpf)).
-             filter(reportAttachment -> reportAttachment!=null).collect(Collectors.toSet());
-     if (isCollectionNullOrEmpty(reportAttachmentSet)){
-         log.warn("Warning: в приложенных файлах нет нужных для сохранения форматов");
-         throw new HotelIncorrectInputData("В приложенных файлах нет нужных для сохранения форматов");
-     }
-     for (ReportAttachment reportAttachment:reportAttachmentSet){
-         report.addAttachment(reportAttachment);
-     }
-     reportRepository.save(report);
+        Set<ReportAttachment> reportAttachmentSet = multipartFileList.stream().
+                map(mpf -> reportAAttachmentService.generateReportAttachmentFromMultipartFile(mpf)).
+                filter(reportAttachment -> reportAttachment != null).collect(Collectors.toSet());
+        if (isCollectionNullOrEmpty(reportAttachmentSet)) {
+            log.warn("Warning: в приложенных файлах нет нужных для сохранения форматов");
+            throw new HotelIncorrectInputData("В приложенных файлах нет нужных для сохранения форматов");
+        }
+        for (ReportAttachment reportAttachment : reportAttachmentSet) {
+            report.addAttachment(reportAttachment);
+        }
+        reportRepository.save(report);
+    }
+
+    @Transactional
+    @Override
+    public void deleteAttachmentFromReport(Long reportId, Long reportAttachmentId) {
+        int result = reportRepository.deleteReportAttachmentFromReportByID(reportId,reportAttachmentId);
+        if (result==0){
+            log.warn("Warning: для отчета id {} не существует пиложения с id {}",reportId,reportAttachmentId);
+            throw new HotelIncorrectInputData(String.format("для отчета id %d не существует пиложения с id %d",reportId,reportAttachmentId));
+        }
     }
 
 
-    private boolean isCollectionNullOrEmpty(Collection<?> collection){
+    private boolean isCollectionNullOrEmpty(Collection<?> collection) {
         return collection == null || collection.isEmpty();
     }
 

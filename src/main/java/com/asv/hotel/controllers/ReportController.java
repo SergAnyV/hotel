@@ -5,7 +5,9 @@ import com.asv.hotel.entities.enums.ReportType;
 import com.asv.hotel.services.ReportService;
 import com.asv.hotel.services.implementations.ReportServiceImpl;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,13 +36,30 @@ public class ReportController {
     }
 
     @PostMapping("/{reportId}/attachments")
-    public ResponseEntity<?> addReportAttachmentToTheReportByRID(@PathVariable("reportId")
-                                                                 @NotNull
-                                                                 Long reportId,
-                                                                 @RequestParam(value = "multipartFileList", required = false)
-                                                                 @NotNull
-                                                                 List<MultipartFile> multipartFileList) {
+    public ResponseEntity<Void> addReportAttachmentToTheReportByRID(@PathVariable("reportId")
+                                                                    @NotNull
+                                                                    @NumberFormat
+                                                                    @Positive
+                                                                    Long reportId,
+                                                                    @RequestParam(value = "multipartFileList", required = false)
+                                                                    @NotNull
+                                                                    List<MultipartFile> multipartFileList) {
         reportService.addReportAttachmentToReport(reportId, multipartFileList);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{reportId}/{reportAttachmentId}")
+    public ResponseEntity<Void> deleteAttachFromReportById(@PathVariable("reportId")
+                                                           @NotNull
+                                                           @NumberFormat
+                                                           @Positive
+                                                           Long reportId,
+                                                           @PathVariable("reportAttachmentId")
+                                                           @NotNull
+                                                           @NumberFormat
+                                                           @Positive
+                                                           Long reportAttachmentId) {
+        reportService.deleteAttachmentFromReport(reportId, reportAttachmentId);
+        return ResponseEntity.noContent().build();
     }
 }

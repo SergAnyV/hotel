@@ -11,4 +11,5 @@ public interface ReportService {
     ReportDTO createReport(ReportType reportType, String roomNumber, List<MultipartFile> multipartFileList);
 
     void addReportAttachmentToReport(Long reportId, List<MultipartFile> multipartFileList);
+    void deleteAttachmentFromReport(Long reportId,Long reportAttachmentId);
 }
