@@ -44,9 +44,9 @@ public class ReportServiceImpl {
             return null;
         }
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.findUserByNickName(userDetails.getUsername());
-//        User user = userService.findUserByNickName("admin_ivan");
+//        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        User user = userService.findUserByNickName(userDetails.getUsername());
+        User user = userService.findUserByNickName("admin_ivan");
         if (user == null) {
             return null;
         }

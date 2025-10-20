@@ -25,4 +25,7 @@ public interface ReportAttachmentRepository extends JpaRepository<ReportAttachme
     @Modifying
     @Query(value = "DELETE * FROM report_attachments WHERE id=:id",nativeQuery = true)
     int deleteReportAttachmentById(@Param("id") Long id);
+
+    @Query(value = "SELECT * FROM report_attachments WHERE report_id =:report_id",nativeQuery = true)
+    List<ReportAttachment> findReportAttachmentForZipListByReportId(@Param("report_id")Long reportId);
 }

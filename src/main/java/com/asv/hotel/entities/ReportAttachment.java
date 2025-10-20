@@ -31,7 +31,6 @@ public class ReportAttachment {
     @Column(name = "size",nullable = false,length = 20)
     private Long size;
 
-    @Lob
     @Column(name = "content",nullable = false)
     private byte[] content;
 

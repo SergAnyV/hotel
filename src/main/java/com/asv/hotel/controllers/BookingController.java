@@ -61,7 +61,6 @@ public class BookingController {
             description = "Возвращает данные бронирования по номеру комнаты")
     @ApiResponse(responseCode = "200", description = "бронирования найдены")
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
-
     @GetMapping("/room/{number}")
     public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber(
             @PathVariable

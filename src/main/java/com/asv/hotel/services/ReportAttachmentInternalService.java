@@ -13,4 +13,6 @@ public interface ReportAttachmentInternalService extends ReportAttachmentService
     ReportAttachment generateReportAttachmentFromMultipartFile(MultipartFile multipartFile);
 
     Set<ReportAttachment> generateReportAttachmentSetFromMultipartFileList(List<MultipartFile> multipartFileList);
+
+    List<ReportAttachment> findReportAttachmentForZipByReportID(Long id);
 }

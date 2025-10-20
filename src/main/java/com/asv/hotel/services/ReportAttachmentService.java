@@ -1,23 +1,16 @@
 package com.asv.hotel.services;
 
-import com.asv.hotel.dto.reportattachmendto.ReportAttachmentDTO;
 import com.asv.hotel.dto.reportattachmendto.ReportAttachmentSimpleDTO;
-import com.asv.hotel.entities.ReportAttachment;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.util.List;
+import java.security.Principal;
 
 public interface ReportAttachmentService {
 
-//    ReportAttachmentDTO createReportAttachment(MultipartFile multipartFile);
-//
-//
-//    List<ReportAttachmentDTO> createReportAttachmentBatchReturnReportAttachmentDTO(List<MultipartFile> multipartFileList);
-
-
     ReportAttachmentSimpleDTO findReportAttachmentSimpleDTOByID(Long id);
 
+    void deleteReportAttachmentById(Long id);
 
-
+    StreamingResponseBody findStreamingResponseBodyAttacmnetsByReportID(Long id);
 
 }
