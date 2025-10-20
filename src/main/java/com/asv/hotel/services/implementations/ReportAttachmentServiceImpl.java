@@ -46,13 +46,12 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
             return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
         }
 
-        User userOwner=getUserOwnerFromReportAttachment(reportAttachment);
-        if(userRequester.getNickName().equals(userOwner.getNickName())){
+        User userOwner = getUserOwnerFromReportAttachment(reportAttachment);
+        if (userRequester.getNickName().equals(userOwner.getNickName())) {
             return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
         }
 
-        throw new HotelReportAttachmentException(String.format("Некорректный запрос по роли и владельце приложенного " +
-                "файла, запросил %s владелец %s",userRequester.getNickName(),userOwner.getNickName()));
+        return null;
     }
 
 
@@ -100,12 +99,21 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
 
     @Transactional
     public StreamingResponseBody findStreamingResponseBodyAttacmnetsByReportID(Long id) {
-       StreamingResponseBody streamingResponseBody=getStreamingResponseBodyByReportID(id);
-        User userRequester = getUserFromSecurityContext();
-        if (isUserRoleAdminOrManager(userRequester)) {
-            return streamingResponseBody;
-        }
 
+        List<ReportAttachment> reportAttachmentList = reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
+        if (reportAttachmentList == null || reportAttachmentList.isEmpty()) {
+            return null;
+        }
+//        StreamingResponseBody streamingResponseBody = getStreamingResponseBodyByReportID(reportAttachmentList);
+//        User userRequester = getUserFromSecurityContext();
+//        if (isUserRoleAdminOrManager(userRequester)) {
+//            return getStreamingResponseBodyByReportID(reportAttachmentList);
+//        }
+//        User userOwner=getUserOwnerFromReportAttachment(reportAttachmentList.get(0));
+//        if (userOwner.getNickName().equals(userRequester.getNickName())){
+            return getStreamingResponseBodyByReportID(reportAttachmentList);
+//        }
+//        return null;
     }
 
     private String findFileTypePhoto(MultipartFile multipartFile) {
@@ -135,26 +143,18 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    private boolean isUserRoleAdminOrManager(User userRequester){
-        return userRequester.getType().getRole().equals(UserRole.ADMIN)||
+    private boolean isUserRoleAdminOrManager(User userRequester) {
+        return userRequester.getType().getRole().equals(UserRole.ADMIN) ||
                 userRequester.getType().getRole().equals(UserRole.MANAGER);
     }
-    private User getUserOwnerFromReportAttachment(ReportAttachment reportAttachment){
+
+    private User getUserOwnerFromReportAttachment(ReportAttachment reportAttachment) {
         return reportAttachment.getReport().getStaff();
     }
 
-    private StreamingResponseBody getStreamingResponseBodyByReportID(Long id){
+    private StreamingResponseBody getStreamingResponseBodyByReportID(List<ReportAttachment> reportAttachmentForZipDTOList) {
         return outputStream -> {
             try (ZipOutputStream zipOut = new ZipOutputStream(outputStream)) {
-
-                List<ReportAttachment> reportAttachmentForZipDTOList =
-                        reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
-
-                if (reportAttachmentForZipDTOList == null || reportAttachmentForZipDTOList.isEmpty()) {
-                    new ZipOutputStream(outputStream).close();
-                    return;
-                }
-
                 for (ReportAttachment reportAttachmentForZipDTO : reportAttachmentForZipDTOList) {
                     ZipEntry entry = new ZipEntry(
                             String.format("%s %s", reportAttachmentForZipDTO.getFileName(), reportAttachmentForZipDTO.getCreatedAt()));

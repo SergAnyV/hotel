@@ -1,6 +1,7 @@
 package com.asv.hotel.controllers;
 
 import com.asv.hotel.dto.reportattachmendto.ReportAttachmentSimpleDTO;
+import com.asv.hotel.exceptions.HotelReportAttachmentException;
 import com.asv.hotel.services.ReportAttachmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,17 +27,18 @@ public class ReportAttachmentController {
 
     @Operation(summary = "Найти вложение его id",
             description = "Возвращает содержимое вложения (изображение )в виде бинарных данных. " +
-            "Тип содержимого определяется MIME-типом файла. " +
-            "Поддерживается отображение в браузере (inline) для изображений.")
+                    "Тип содержимого определяется MIME-типом файла. " +
+                    "Поддерживается отображение в браузере (inline) для изображений.")
     @ApiResponse(responseCode = "200", description = "Вложение успешно найдено и возвращено")
     @ApiResponse(responseCode = "404", description = "вложение не найдены")
     @GetMapping("/id/{id}")
     public ResponseEntity<Resource> getContentByAttachmentID(@PathVariable(value = "id")
-                                                                 @NotNull
-                                                                 Long id) {
+                                                             @NotNull
+                                                             Long id) {
         ReportAttachmentSimpleDTO resource = reportAttachmentService.findReportAttachmentSimpleDTOByID(id);
         if (resource == null) {
-            return ResponseEntity.badRequest().build();
+            throw new HotelReportAttachmentException("Некорректный запрос по роли и владельце приложенного " +
+                    "файла, запросил владелец ");
         }
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(resource.getContentType()))
@@ -47,9 +49,12 @@ public class ReportAttachmentController {
 
     @GetMapping(value = "/{reportId}/attachments/zip-stream", produces = "application/zip")
     public ResponseEntity<StreamingResponseBody> downloadAttachmentsAsZip(@PathVariable(value = "reportId")
-                                                                              @NotNull
-                                                                              Long reportId){
-        StreamingResponseBody stream=reportAttachmentService.findStreamingResponseBodyAttacmnetsByReportID(reportId);
+                                                                          @NotNull
+                                                                          Long reportId) {
+        StreamingResponseBody stream = reportAttachmentService.findStreamingResponseBodyAttacmnetsByReportID(reportId);
+        if (stream == null) {
+            throw new HotelReportAttachmentException("Некорректный запрос при выгрузки архива");
+        }
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"report_" + reportId + "_attachments.zip\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -64,13 +69,11 @@ public class ReportAttachmentController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteReportAttachment(@PathVariable(value = "id")
-                                                           @NotNull
-                                                           Long id){
+                                                       @NotNull
+                                                       Long id) {
         reportAttachmentService.deleteReportAttachmentById(id);
         return ResponseEntity.noContent().build();
     }
-
-
 
 
 }
