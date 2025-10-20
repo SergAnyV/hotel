@@ -30,7 +30,6 @@ public class ReportAttachmentController {
             "Поддерживается отображение в браузере (inline) для изображений.")
     @ApiResponse(responseCode = "200", description = "Вложение успешно найдено и возвращено")
     @ApiResponse(responseCode = "404", description = "вложение не найдены")
-    @PreAuthorize("hasRole('ROLE_CLIENT')")
     @GetMapping("/id/{id}")
     public ResponseEntity<Resource> getContentByAttachmentID(@PathVariable(value = "id")
                                                                  @NotNull
