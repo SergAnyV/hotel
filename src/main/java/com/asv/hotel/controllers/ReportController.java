@@ -3,16 +3,18 @@ package com.asv.hotel.controllers;
 import com.asv.hotel.dto.reportdto.ReportDTO;
 import com.asv.hotel.entities.enums.ReportType;
 import com.asv.hotel.services.ReportService;
-import com.asv.hotel.services.implementations.ReportServiceImpl;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.ldap.embedded.EmbeddedLdapProperties;
+import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -59,6 +61,7 @@ public class ReportController {
                                                            @NumberFormat
                                                            @Positive
                                                            Long reportAttachmentId) {
+
         reportService.deleteAttachmentFromReport(reportId, reportAttachmentId);
         return ResponseEntity.noContent().build();
     }

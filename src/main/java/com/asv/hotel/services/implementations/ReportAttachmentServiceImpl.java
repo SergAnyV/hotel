@@ -4,6 +4,7 @@ import com.asv.hotel.dto.mapper.ReportAttachmentMapper;
 import com.asv.hotel.dto.reportattachmendto.ReportAttachmentSimpleDTO;
 import com.asv.hotel.entities.ReportAttachment;
 import com.asv.hotel.entities.User;
+import com.asv.hotel.entities.enums.UserRole;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import com.asv.hotel.exceptions.HotelReportAttachmentException;
@@ -11,13 +12,15 @@ import com.asv.hotel.repositories.ReportAttachmentRepository;
 import com.asv.hotel.services.ReportAttachmentInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.IOException;
-import java.security.Principal;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,22 +36,32 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
     @Transactional
     @Override
     public ReportAttachmentSimpleDTO findReportAttachmentSimpleDTOByID(Long id) {
-
-
         ReportAttachment reportAttachment = reportAttachmentRepository.findById(id).orElse(null);
         if (reportAttachment == null) {
             return null;
         }
 
-        return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
+        User userRequester = getUserFromSecurityContext();
+        if (isUserRoleAdminOrManager(userRequester)) {
+            return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
+        }
+
+        User userOwner=getUserOwnerFromReportAttachment(reportAttachment);
+        if(userRequester.getNickName().equals(userOwner.getNickName())){
+            return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
+        }
+
+        throw new HotelReportAttachmentException(String.format("Некорректный запрос по роли и владельце приложенного " +
+                "файла, запросил %s владелец %s",userRequester.getNickName(),userOwner.getNickName()));
     }
+
 
     @Transactional
     @Override
     public void deleteReportAttachmentById(Long id) {
         int result = reportAttachmentRepository.deleteReportAttachmentById(id);
         if (result == 0) {
-            log.warn("Warning: не файла для удаления с данным id {}", id);
+            log.warn("Warning: нет файла для удаления с данным id {}", id);
             throw new HotelDataNotFoundException(String.format("Не существует файла для удаления с данным id = %s", id));
         }
     }
@@ -84,29 +97,15 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
     public List<ReportAttachment> findReportAttachmentForZipByReportID(Long id) {
         return reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
     }
-@Transactional
+
+    @Transactional
     public StreamingResponseBody findStreamingResponseBodyAttacmnetsByReportID(Long id) {
-        return outputStream -> {
-            try (ZipOutputStream zipOut = new ZipOutputStream(outputStream)) {
+       StreamingResponseBody streamingResponseBody=getStreamingResponseBodyByReportID(id);
+        User userRequester = getUserFromSecurityContext();
+        if (isUserRoleAdminOrManager(userRequester)) {
+            return streamingResponseBody;
+        }
 
-                List<ReportAttachment> reportAttachmentForZipDTOList =
-                        reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
-
-                if(reportAttachmentForZipDTOList==null||reportAttachmentForZipDTOList.isEmpty()){
-                    new ZipOutputStream(outputStream).close();
-                    return;
-                }
-
-                for (ReportAttachment reportAttachmentForZipDTO:reportAttachmentForZipDTOList){
-                    ZipEntry entry =new ZipEntry(
-                            String.format("%s %s",reportAttachmentForZipDTO.getFileName(),reportAttachmentForZipDTO.getCreatedAt()));
-                    zipOut.putNextEntry(entry);
-                    zipOut.write(reportAttachmentForZipDTO.getContent());
-                    zipOut.closeEntry();
-                }
-            }
-
-        };
     }
 
     private String findFileTypePhoto(MultipartFile multipartFile) {
@@ -130,6 +129,42 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         }
 
         throw new HotelIncorrectInputData("Неверный тип данных для фото");
+    }
+
+    private User getUserFromSecurityContext() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    private boolean isUserRoleAdminOrManager(User userRequester){
+        return userRequester.getType().getRole().equals(UserRole.ADMIN)||
+                userRequester.getType().getRole().equals(UserRole.MANAGER);
+    }
+    private User getUserOwnerFromReportAttachment(ReportAttachment reportAttachment){
+        return reportAttachment.getReport().getStaff();
+    }
+
+    private StreamingResponseBody getStreamingResponseBodyByReportID(Long id){
+        return outputStream -> {
+            try (ZipOutputStream zipOut = new ZipOutputStream(outputStream)) {
+
+                List<ReportAttachment> reportAttachmentForZipDTOList =
+                        reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
+
+                if (reportAttachmentForZipDTOList == null || reportAttachmentForZipDTOList.isEmpty()) {
+                    new ZipOutputStream(outputStream).close();
+                    return;
+                }
+
+                for (ReportAttachment reportAttachmentForZipDTO : reportAttachmentForZipDTOList) {
+                    ZipEntry entry = new ZipEntry(
+                            String.format("%s %s", reportAttachmentForZipDTO.getFileName(), reportAttachmentForZipDTO.getCreatedAt()));
+                    zipOut.putNextEntry(entry);
+                    zipOut.write(reportAttachmentForZipDTO.getContent());
+                    zipOut.closeEntry();
+                }
+            }
+
+        };
     }
 }
 

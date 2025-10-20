@@ -61,6 +61,7 @@ public class ReportAttachmentController {
             description = "удаляет данные существующего вложения по id")
     @ApiResponse(responseCode = "204", description = "Вложения удалено")
     @ApiResponse(responseCode = "404", description = "Вложения не найдено")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteReportAttachment(@PathVariable(value = "id")
                                                            @NotNull
