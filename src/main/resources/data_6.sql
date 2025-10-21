@@ -1,17 +1,16 @@
 
 
--- Insert для ReportAttachment (вложения отчетов)
---INSERT INTO report_attachments (url_file, created_at, updated_at, report_id) VALUES
---('/reports/2024/06/15/report_1_photo1.jpg', NOW(), NOW(), 1),
---('/reports/2024/06/15/report_1_photo2.jpg', NOW(), NOW(), 1),
---('/reports/2024/07/01/report_2_video.mp4', NOW(), NOW(), 2),
---('/reports/2024/08/05/report_3_document.pdf', NOW(), NOW(), 3),
---('/reports/2024/09/10/report_4_scan.png', NOW(), NOW(), 4),
---('/reports/2024/10/20/report_5_audio.mp3', NOW(), NOW(), 5),
---('/reports/2024/11/01/report_6_image.jpg', NOW(), NOW(), 6),
---('/reports/2024/12/01/report_7_diagram.png', NOW(), NOW(), 7),
---('/reports/2025/01/10/report_8_log.txt', NOW(), NOW(), 8),
---('/reports/2025/02/14/report_9_video.mp4', NOW(), NOW(), 9);
+INSERT INTO report_attachments (file_name, content_type, size, content, created_at, report_id) VALUES
+('defect_101.jpg',        'image/jpeg', 245678, '\x89504E470D0A1A0A'::bytea, NOW(), 1),
+('before_cleaning.jpg',   'image/jpeg', 312456, '\x89504E470D0A1A0A'::bytea, NOW(), 1),
+('repair_done_201.png',   'image/png',  456789, '\x89504E470D0A1A0A'::bytea, NOW(), 2),
+('rejected_issue_301.jpg','image/jpeg', 198765, '\x89504E470D0A1A0A'::bytea, NOW(), 3),
+('fixed_pipe_401.png',    'image/png',  567890, '\x89504E470D0A1A0A'::bytea, NOW(), 4),
+('approved_work_102.jpg', 'image/jpeg', 220000, '\x89504E470D0A1A0A'::bytea, NOW(), 5),
+('issue_202.jpg',         'image/jpeg', 280000, '\x89504E470D0A1A0A'::bytea, NOW(), 6),
+('work_confirmed_302.png','image/png',  500000, '\x89504E470D0A1A0A'::bytea, NOW(), 7),
+('cancelled_402.jpg',     'image/jpeg', 175000, '\x89504E470D0A1A0A'::bytea, NOW(), 8),
+('final_fix_103.png',     'image/png',  420000, '\x89504E470D0A1A0A'::bytea, NOW(), 9);
 
 
 -- Insert для Notification (уведомления)
