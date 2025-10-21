@@ -12,27 +12,45 @@ import com.asv.hotel.repositories.ReportAttachmentRepository;
 import com.asv.hotel.services.ReportAttachmentInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Основная реализация сервиса для управления вложениями отчётов.
+ * <p>
+ * Обеспечивает:
+ * <ul>
+ *   <li>Безопасный доступ к данным с учётом ролей пользователя (ADMIN, MANAGER, STAFF)</li>
+ *   <li>Валидацию и преобразование загружаемых файлов (только JPEG/PNG)</li>
+ *   <li>Формирование ZIP-архивов из вложений отчёта</li>
+ *   <li>Корректную работу с бинарными данными и метаданными файлов</li>
+ * </ul>
+ * <p>
+ * Все операции с доступом используют {@link SecurityContextHolder} для получения
+ * информации о текущем пользователе. Методы, возвращающие данные, гарантируют,
+ * что пользователь имеет право на их получение.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class ReportAttachmentServiceImpl implements ReportAttachmentInternalService {
     private final ReportAttachmentRepository reportAttachmentRepository;
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Проверяет права доступа перед возвратом содержимого файла.
+     */
     @Transactional
     @Override
     public ReportAttachmentSimpleDTO findReportAttachmentSimpleDTOByID(Long id) {
@@ -54,7 +72,11 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         return null;
     }
 
-
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Удаляет вложение из базы данных. Операция защищена на уровне контроллера аннотацией {@code @PreAuthorize}.
+     */
     @Transactional
     @Override
     public void deleteReportAttachmentById(Long id) {
@@ -65,12 +87,21 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         }
     }
 
-
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Простой запрос к репозиторию без дополнительной логики.
+     */
     @Override
     public List<ReportAttachment> findReportAttachmentByReportID(Long id) {
         return reportAttachmentRepository.findReportAttachmentByReportID(id);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Поддерживает только JPEG и PNG. Определяет тип по "магическим байтам".
+     */
     @Override
     public ReportAttachment generateReportAttachmentFromMultipartFile(MultipartFile multipartFile) {
         String fileType = null;
@@ -84,6 +115,11 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         return reportAttachment;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Использует стрим для фильтрации и преобразования.
+     */
     @Override
     public Set<ReportAttachment> generateReportAttachmentSetFromMultipartFileList(List<MultipartFile> multipartFileList) {
         return multipartFileList.stream().map(multipartFile ->
@@ -92,32 +128,40 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
                 collect(Collectors.toSet());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Использует JPQL-запрос с JOIN FETCH для предварительной загрузки связанных сущностей.
+     */
     @Override
     public List<ReportAttachment> findReportAttachmentForZipByReportID(Long id) {
         return reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Формирует ZIP-архив в памяти с использованием {@link ByteArrayOutputStream} и {@link ZipOutputStream}.
+     * В случае ошибки возвращает пустой массив, чтобы избежать исключений на уровне контроллера.
+     */
     @Transactional
-    public StreamingResponseBody findStreamingResponseBodyAttacmnetsByReportID(Long id) {
+    public byte[] findByteArrayAttachmentsLikeZipByReportID(Long id) {
 
         List<ReportAttachment> reportAttachmentList = reportAttachmentRepository.findReportAttachmentForZipListByReportId(id);
-        if (reportAttachmentList == null || reportAttachmentList.isEmpty()) {
-            return null;
-        }
-//        StreamingResponseBody streamingResponseBody = getStreamingResponseBodyByReportID(reportAttachmentList);
-//        User userRequester = getUserFromSecurityContext();
-//        if (isUserRoleAdminOrManager(userRequester)) {
-//            return getStreamingResponseBodyByReportID(reportAttachmentList);
-//        }
-//        User userOwner=getUserOwnerFromReportAttachment(reportAttachmentList.get(0));
-//        if (userOwner.getNickName().equals(userRequester.getNickName())){
+
+        User userRequester = getUserFromSecurityContext();
+        if (isUserRoleAdminOrManager(userRequester)) {
             return getStreamingResponseBodyByReportID(reportAttachmentList);
-//        }
-//        return null;
+        }
+        User userOwner = getUserOwnerFromReportAttachment(reportAttachmentList.get(0));
+        if (userOwner.getNickName().equals(userRequester.getNickName())) {
+            return getStreamingResponseBodyByReportID(reportAttachmentList);
+        }
+        return new byte[0];
     }
 
     private String findFileTypePhoto(MultipartFile multipartFile) {
-        byte[] data = null;
+        byte[] data;
         try {
             data = multipartFile.getBytes();
         } catch (IOException e) {
@@ -152,19 +196,26 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         return reportAttachment.getReport().getStaff();
     }
 
-    private StreamingResponseBody getStreamingResponseBodyByReportID(List<ReportAttachment> reportAttachmentForZipDTOList) {
-        return outputStream -> {
-            try (ZipOutputStream zipOut = new ZipOutputStream(outputStream)) {
-                for (ReportAttachment reportAttachmentForZipDTO : reportAttachmentForZipDTOList) {
-                    ZipEntry entry = new ZipEntry(
-                            String.format("%s %s", reportAttachmentForZipDTO.getFileName(), reportAttachmentForZipDTO.getCreatedAt()));
-                    zipOut.putNextEntry(entry);
-                    zipOut.write(reportAttachmentForZipDTO.getContent());
-                    zipOut.closeEntry();
-                }
-            }
+    private byte[] getStreamingResponseBodyByReportID(List<ReportAttachment> reportAttachmentForZipDTOList) {
 
-        };
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
+            for (ReportAttachment reportAttachmentForZipDTO : reportAttachmentForZipDTOList) {
+                ZipEntry entry = new ZipEntry(
+                        String.format("%s %s", reportAttachmentForZipDTO.getFileName(), reportAttachmentForZipDTO.getCreatedAt()));
+                zipOut.putNextEntry(entry);
+                zipOut.write(reportAttachmentForZipDTO.getContent());
+                zipOut.closeEntry();
+
+            }
+            return byteArrayOutputStream.toByteArray();
+
+        } catch (IOException e) {
+            log.warn("Некорректное формирования zip method getStreamingResponseBodyByReportID");
+            return new byte[0];
+        }
+
+
     }
 }
 
