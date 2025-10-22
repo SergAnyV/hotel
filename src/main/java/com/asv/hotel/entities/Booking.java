@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -89,6 +90,9 @@ public class Booking {
             joinColumns = @JoinColumn(name = "booking_id")
             )
     private List<Guest> guestList;
+
+    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+    private Set<Message> messages = new HashSet<>();
 
     @PrePersist
     @PreUpdate
