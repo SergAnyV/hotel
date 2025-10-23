@@ -4,11 +4,13 @@ package com.asv.hotel.controllers;
 import com.asv.hotel.dto.bookingdto.BookingDTO;
 import com.asv.hotel.dto.bookingdto.BookingSimplDTO;
 
+import com.asv.hotel.dto.bookingdto.ResponseBookingDTO;
 import com.asv.hotel.dto.roomdto.RoomSimpleDataBaseDTO;
 import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.NotNull;
@@ -46,7 +48,7 @@ public class BookingController {
             description = "удаляет данные существующего бронирования по id")
     @ApiResponse(responseCode = "204", description = "бронирование удалено")
     @ApiResponse(responseCode = "404", description = "бронирование не найдено")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable
             @NotNull
@@ -61,7 +63,7 @@ public class BookingController {
     @ApiResponse(responseCode = "200", description = "бронирования найдены")
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
 
-    @GetMapping("/{number}")
+    @GetMapping("/room/{number}")
     public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber(
             @PathVariable
             @NotBlank(message = "номер комнаты не должен быть пустым")
@@ -90,5 +92,14 @@ public class BookingController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(roomSimpleDataBaseDTOList);
+    }
+
+    @GetMapping("/booking/{bookingid}")
+    public  ResponseEntity<ResponseBookingDTO> gitBookingById(@PathVariable("bookingid")
+                                                               @NotNull (message = "id бронирования не может быть null")
+                                                               @Positive(message = "id бронирования должно быть положительна")
+                                                               Long id){
+        ResponseBookingDTO responseBookingDTO=bookingService.findBesponseBookingDTOByBookingId(id);
+        return ResponseEntity.ok(responseBookingDTO);
     }
 }

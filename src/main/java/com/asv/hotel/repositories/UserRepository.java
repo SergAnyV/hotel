@@ -1,6 +1,7 @@
 package com.asv.hotel.repositories;
 
 import com.asv.hotel.entities.User;
+import com.asv.hotel.entities.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -46,4 +47,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "SELECT * FROM users WHERE nick_name = :nickName", nativeQuery = true)
     Optional<User> findUserByNickName(@Param("nickName") String nickName);
 
+    @Query(value = """
+            SELECT * FROM user_types 
+            WHERE id= ( SELECT role_id FROM users 
+                        WHERE nick_name =:nickname )
+            """, nativeQuery = true
+    )
+    Optional<UserType> findUserTypeByUserNickName(@Param("nickname") String nickname);
 }

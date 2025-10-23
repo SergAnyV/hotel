@@ -53,8 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/db/**").permitAll()
                         .requestMatchers("/user-types/**","/api/users/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
-//                        .requestMatchers("/bookings/**").authenticated()
-                        .requestMatchers("/bookings/**").permitAll()
+                        .requestMatchers("/bookings/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session

@@ -23,6 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 public class User implements UserDetails{
 
     @Id
@@ -61,15 +62,23 @@ public class User implements UserDetails{
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private UserType type;
 
     @OneToMany(mappedBy ="user",fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Booking> bookingSet = new HashSet<>();
 
     @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Report> reports = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<NotificationHotel> notificationHotels = new HashSet<>();
 
 
@@ -108,6 +117,5 @@ public class User implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
-
 
 }

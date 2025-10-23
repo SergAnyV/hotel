@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserInternalService {
                 userRepository.findUserByLastNameAndFirstName(lastName, firstName).orElse(null));
     }
 
-
+    @Override
     public User findUserByLastNameAndFirstName(String lastName, String firstName) {
         return userRepository.findUserByLastNameAndFirstName(lastName, firstName).orElse(null);
     }
@@ -60,6 +60,11 @@ public class UserServiceImpl implements UserInternalService {
     @Override
     public User findUserByNickName(String nickName) {
         return userRepository.findUserByNickName(nickName).orElse(null);
+    }
+
+    @Override
+    public UserType findUserTypeByUserNickName(String nickName){
+        return userRepository.findUserTypeByUserNickName(nickName).orElse(null);
     }
 
     @Transactional
