@@ -2,6 +2,7 @@ package com.asv.hotel.repositories;
 
 import com.asv.hotel.entities.User;
 import com.asv.hotel.entities.UserType;
+import com.asv.hotel.entities.enums.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -57,4 +59,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM users WHERE verification_token = :token", nativeQuery = true)
     Optional<User> findUserByToken(@Param("token") String token);
+
+
+    @Query("SELECT u FROM User u WHERE u.type.role IN :roles")
+    Optional<User> findFirstByTypeRoleIn(@Param("roles") List<UserRole> roles);
 }

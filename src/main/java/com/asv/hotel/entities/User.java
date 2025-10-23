@@ -91,13 +91,7 @@ public class User implements UserDetails{
     @ToString.Exclude
     private Boolean verifyStatus;
 
-    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
-    private Set<Message> sentMessages = new HashSet<>();
-
-    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
-    private Set<Message> receivedMessages = new HashSet<>();
-
-    // реализация методов UserDetails
+     // реализация методов UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.type.getRole().name()));

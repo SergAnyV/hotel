@@ -91,9 +91,6 @@ public class Booking {
             )
     private List<Guest> guestList;
 
-    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
-    private Set<Message> messages = new HashSet<>();
-
     @PrePersist
     @PreUpdate
     private void preUpdate() {

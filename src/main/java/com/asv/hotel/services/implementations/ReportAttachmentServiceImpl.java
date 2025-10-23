@@ -192,6 +192,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
                 userRequester.getType().getRole().equals(UserRole.MANAGER);
     }
 
+
     private User getUserOwnerFromReportAttachment(ReportAttachment reportAttachment) {
         return reportAttachment.getReport().getStaff();
     }
