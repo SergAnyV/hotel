@@ -13,7 +13,6 @@ import com.asv.hotel.entities.enums.UserRole;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import com.asv.hotel.repositories.BookingRepository;
-import com.asv.hotel.security.util.JWTUtils;
 import com.asv.hotel.services.*;
 import com.asv.hotel.util.BookingUtils;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,6 @@ public class BookingServiceImpl implements BookingService {
     private final ServiceHotelInternalService serviceHotelInternalService;
     private final PromoCodeInternalService promoCodeInternalService;
     private final NotificationHotelService notificationHotelService;
-    private final JWTUtils jwtUtils;
 
     @Transactional
     public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
