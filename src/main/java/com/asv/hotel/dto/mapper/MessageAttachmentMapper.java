@@ -2,7 +2,7 @@ package com.asv.hotel.dto.mapper;
 
 import com.asv.hotel.dto.messageattachmentdto.MessageAttachmentDTO;
 import com.asv.hotel.entities.MessageAttachment;
-import com.asv.hotel.exceptions.HotelReportAttachmentException;
+import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -28,6 +28,7 @@ public interface MessageAttachmentMapper {
     @Mapping(target = "content",source = "multipartFile", qualifiedByName = "multiPartFileToByteArray")
     @Mapping(target = "fileName",source = "multipartFile", qualifiedByName = "multiPartFileGetName")
     @Mapping(target = "size",source = "multipartFile", qualifiedByName = "multiPartFileGetSize")
+    @Mapping(target = "contentType", ignore = true)
     MessageAttachment multipartFileToMessageAttachmentWithoutType(MultipartFile multipartFile);
 
 
@@ -36,7 +37,7 @@ public interface MessageAttachmentMapper {
         try {
             return multipartFile.getBytes();
         } catch (IOException e) {
-            throw new HotelReportAttachmentException(String.format("Неверное преобразование из MultipartFile в byte[] '%s' ",
+            throw new HotelIncorrectInputData(String.format("Неверное преобразование из MultipartFile в byte[] '%s' ",
                     e));
         }
     }
@@ -48,7 +49,7 @@ public interface MessageAttachmentMapper {
 
     @Named("multiPartFileGetName")
     default String multiPartFileGetName(MultipartFile multipartFile) {
-        return multipartFile.getName();
+        return multipartFile.getOriginalFilename();
     }
 
     @Named("multiPartFileGetSize")

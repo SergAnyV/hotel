@@ -30,7 +30,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true,
+        prePostEnabled = true )
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -56,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/bookings/**").authenticated()
                         .requestMatchers("/reports/**").authenticated()
                         .requestMatchers("/attachments/**").authenticated()
+                        .requestMatchers("/ws-messenger/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session

@@ -12,8 +12,8 @@ public interface MessageAttachmentRepository extends JpaRepository<MessageAttach
     @Query(value = "SELECT * FROM message_attachments WHERE chat_id=:chatId", nativeQuery = true)
     List<MessageAttachment> findMessageAttachmentsByChat(@Param("chatId") Long chatId);
 
-    @Query(value = "DELETE FROM message_attachments WHERE chat_id=:chatId", nativeQuery = true)
-    int deleteAllAttachmentsForChat(@Param("chatId") Long chatId);
+    @Query(value = "DELETE FROM message_attachments WHERE id=:id", nativeQuery = true)
+    int deleteAttachmentForById(@Param("chatId") Long id);
 
     @Query(value = "SELECT * FROM message_attachments WHERE id=:id", nativeQuery = true)
     Optional<MessageAttachment> findMessageAttachmentsById(@Param("id") Long id);

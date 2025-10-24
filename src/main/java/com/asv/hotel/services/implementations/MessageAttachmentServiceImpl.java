@@ -1,6 +1,7 @@
 package com.asv.hotel.services.implementations;
 
 import com.asv.hotel.dto.mapper.MessageAttachmentMapper;
+import com.asv.hotel.dto.messageattachmentdto.MessageAttachmentDTO;
 import com.asv.hotel.entities.MessageAttachment;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.entities.enums.UserRole;
@@ -13,11 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -29,21 +32,36 @@ import java.util.zip.ZipOutputStream;
 public class MessageAttachmentServiceImpl implements MessageAttachmentService {
     private final MessageAttachmentRepository messageAttachmentRepository;
 
-
+    @Transactional
     @Override
-    public void deleteAllMessageAttachmentByChatId(Long chatId) {
-        int result = messageAttachmentRepository.deleteAllAttachmentsForChat(chatId);
+    public void deleteMessageAttachmentByIdReturnVoid(Long id) {
+        int result = messageAttachmentRepository.deleteAttachmentForById(id);
         if (result == 0) {
-            throw new HotelDataNotFoundException(String.format("Нет вложений в чате с id %d", chatId));
+            throw new HotelDataNotFoundException(String.format("Нет вложения в с id %d", id));
         }
     }
 
+    @Transactional
+    public MessageAttachmentDTO createMessageAttachmentReturnDTO(MultipartFile multipartFile) {
+        MessageAttachment messageAttachment = generateMessageAttachmentFromMultipartFile(multipartFile);
+        MessageAttachment messageAttachmentSaved = messageAttachmentRepository.save(messageAttachment);
+        return MessageAttachmentMapper.INSTANCE.messageAttachmentToMessageAttachmentDTO(messageAttachmentSaved);
+    }
+
+    @Transactional
+    public Set<MessageAttachmentDTO> createMessageAttachmentsFromListMultipartFileReturnListDTO(List<MultipartFile> multipartFileList) {
+        Set<MessageAttachment> messageAttachmentSet = generateMessageAttachmentSetFromMultipartFileList(multipartFileList);
+        return messageAttachmentSet.stream().map(messageAttachment ->
+                        MessageAttachmentMapper.INSTANCE.messageAttachmentToMessageAttachmentDTO(messageAttachment)).
+                filter(Objects::nonNull).
+                collect(Collectors.toSet());
+    }
 
 
     public Set<MessageAttachment> generateMessageAttachmentSetFromMultipartFileList(List<MultipartFile> multipartFileList) {
         return multipartFileList.stream().map(multipartFile ->
                         generateMessageAttachmentFromMultipartFile(multipartFile)).
-                filter(messageAttachment -> messageAttachment != null).
+                filter(Objects::nonNull).
                 collect(Collectors.toSet());
     }
 
@@ -121,7 +139,7 @@ public class MessageAttachmentServiceImpl implements MessageAttachmentService {
     }
 
     private User getUserSenderFromMessageAttachment(MessageAttachment messageAttachment) {
-        return messageAttachment.getSender();
+        return messageAttachment.getMessage().getSender();
     }
 
     private byte[] getByteAtrrayFromListMessageAttachment(List<MessageAttachment> messageAttachmentList) {
