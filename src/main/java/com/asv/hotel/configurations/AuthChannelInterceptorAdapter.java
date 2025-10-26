@@ -1,6 +1,5 @@
 package com.asv.hotel.configurations;
 
-import com.asv.hotel.entities.Booking;
 import com.asv.hotel.entities.User;
 import com.asv.hotel.exceptions.HotelAuthenticationException;
 import com.asv.hotel.exceptions.HotelIncorrectInputData;
@@ -158,6 +157,7 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
         log.info("Пользователь {} имеет права на отправку сообщений", auth.getName());
     }
 
+
     private boolean hasAccessToBooking(UsernamePasswordAuthenticationToken auth, Long bookingId) {
         String nickName = auth.getName();
         User bookingOwnerUser = bookingService.findUserOwnerOfBookingByIdOrNull(bookingId);
@@ -172,8 +172,8 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 
     private boolean isUserAllowedToChat(UsernamePasswordAuthenticationToken auth) {
         User user = userInternalService.findUserByNickName(auth.getName());
-        user.getVerifyStatus();
-        if (user.getVerifyStatus()) {
+
+        if (Boolean.TRUE.equals(user.getVerifyStatus())) {
             return Boolean.TRUE;
         }
 
