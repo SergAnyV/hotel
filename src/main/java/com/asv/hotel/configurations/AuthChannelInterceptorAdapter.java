@@ -1,6 +1,12 @@
 package com.asv.hotel.configurations;
 
+import com.asv.hotel.entities.Booking;
+import com.asv.hotel.entities.User;
+import com.asv.hotel.exceptions.HotelAuthenticationException;
+import com.asv.hotel.exceptions.HotelIncorrectInputData;
 import com.asv.hotel.security.util.JWTUtils;
+import com.asv.hotel.services.BookingService;
+import com.asv.hotel.services.UserInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -22,6 +28,8 @@ import org.springframework.util.StringUtils;
 public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
     private final UserDetailsService userDetailsService;
     private final JWTUtils jwtUtils;
+    private final UserInternalService userInternalService;
+    private final BookingService bookingService;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -35,33 +43,31 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
         StompCommand command = accessor.getCommand();
 
         if (StompCommand.CONNECT.equals(command)) {
-            log.info("Попытка подключения к WebSocket");
             handleConnect(accessor);
         } else if (StompCommand.SUBSCRIBE.equals(command)) {
-               String destination = accessor.getDestination();
-            log.info("Попытка подписки на: {}", destination);
+            String destination = accessor.getDestination();
             handleSubscribe(accessor, destination);
         } else if (StompCommand.SEND.equals(command)) {
             String destination = accessor.getDestination();
-            log.info("Отправка сообщения в: {}", destination);
             handleSend(accessor, destination);
         }
 
         return message;
     }
+
     private void handleConnect(StompHeaderAccessor accessor) {
         String token = getTokenFromHeader(accessor);
 
         if (!StringUtils.hasText(token)) {
             log.warn(" WebSocket подключение без токена");
-            throw new RuntimeException("Требуется аутентификация");
+            throw new HotelAuthenticationException("Требуется аутентификация");
         }
 
         String username = jwtUtils.extractUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        if (!jwtUtils.isTokenValid(token,userDetails)) {
+        if (!jwtUtils.isTokenValid(token, userDetails)) {
             log.warn("Невалидный JWT токен при подключении к WebSocket");
-            throw new RuntimeException("Невалидный токен аутентификации");
+            throw new HotelAuthenticationException("Невалидный токен аутентификации");
         }
 
         UsernamePasswordAuthenticationToken authentication =
@@ -81,138 +87,107 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
 
     private void handleSubscribe(StompHeaderAccessor accessor, String destination) {
         if (destination == null) return;
-
-
         if (destination.startsWith("/topic/booking/")) {
-            // 🏨 ЧАТ БРОНИРОВАНИЯ - проверяем доступ
             checkBookingAccess(accessor, destination);
         } else if (destination.startsWith("/user/queue/")) {
-            // 👤 ПЕРСОНАЛЬНЫЕ КАНАЛЫ - проверяем что пользователь подписывается на свои
             checkUserAccess(accessor, destination);
         }
-        // Можно добавить проверки для других типов каналов
     }
 
-    /**
-     * 📤 ПРОВЕРКА ПРАВ ПРИ ОТПРАВКЕ СООБЩЕНИЙ
-     */
+
     private void handleSend(StompHeaderAccessor accessor, String destination) {
         if (destination == null) return;
 
-        // 💬 ПРОВЕРЯЕМ ЧАТ СООБЩЕНИЯ
         if (destination.startsWith("/app/chat.")) {
             checkChatPermissions(accessor);
         }
     }
 
-    /**
-     * 🏨 ПРОВЕРКА ДОСТУПА К ЧАТУ БРОНИРОВАНИЯ
-     */
+
     private void checkBookingAccess(StompHeaderAccessor accessor, String destination) {
         try {
-            // 🔢 ИЗВЛЕКАЕМ ID БРОНИРОВАНИЯ ИЗ ПУТИ: "/topic/booking/123"
             String[] pathParts = destination.split("/");
-            Long bookingId = Long.parseLong(pathParts[3]); // 4-я часть пути
+            Long bookingId = Long.parseLong(pathParts[3]);
 
-            // 👤 ПОЛУЧАЕМ ДАННЫЕ АУТЕНТИФИЦИРОВАННОГО ПОЛЬЗОВАТЕЛЯ
             UsernamePasswordAuthenticationToken auth =
                     (UsernamePasswordAuthenticationToken) accessor.getUser();
 
             if (auth == null) {
-                throw new RuntimeException("Пользователь не аутентифицирован");
+                throw new HotelAuthenticationException("Пользователь не аутентифицирован");
             }
 
-            // 🔍 ПРОВЕРЯЕМ ЕСТЬ ЛИ ДОСТУП К БРОНИРОВАНИЮ
             if (!hasAccessToBooking(auth, bookingId)) {
-                throw new RuntimeException("Нет доступа к чату бронирования: " + bookingId);
+                throw new HotelAuthenticationException("Нет доступа к чату бронирования: " + bookingId);
             }
 
-            log.info("✅ Разрешена подписка на бронирование {} для {}", bookingId, auth.getName());
+            log.info("Разрешена подписка на бронирование {} для {}", bookingId, auth.getName());
 
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Неверный ID бронирования: " + destination);
+            throw new HotelIncorrectInputData("Неверный ID бронирования: " + destination);
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new RuntimeException("Неверный формат destination: " + destination);
+            throw new HotelIncorrectInputData("Неверный формат destination: " + destination);
         }
     }
 
-    /**
-     * 👤 ПРОВЕРКА ДОСТУПА К ПЕРСОНАЛЬНЫМ КАНАЛАМ
-     */
+
     private void checkUserAccess(StompHeaderAccessor accessor, String destination) {
         UsernamePasswordAuthenticationToken auth =
                 (UsernamePasswordAuthenticationToken) accessor.getUser();
 
         if (auth == null) {
-            throw new RuntimeException("Пользователь не аутентифицирован");
+            throw new HotelAuthenticationException("Пользователь не аутентифицирован");
         }
 
-        // ✅ Spring автоматически проверяет что пользователь подписывается на свои каналы
-        log.info("✅ Разрешена подписка на персональные каналы для: {}", auth.getName());
+        log.info("Разрешена подписка на персональные каналы для: {}", auth.getName());
     }
 
-    /**
-     * 💬 ПРОВЕРКА ПРАВ НА ОТПРАВКУ СООБЩЕНИЙ
-     */
+
     private void checkChatPermissions(StompHeaderAccessor accessor) {
         UsernamePasswordAuthenticationToken auth =
                 (UsernamePasswordAuthenticationToken) accessor.getUser();
 
         if (auth == null) {
-            throw new RuntimeException("Пользователь не аутентифицирован для отправки сообщений");
+            throw new HotelAuthenticationException("Пользователь не аутентифицирован для отправки сообщений");
         }
 
-        // 🔍 ПРОВЕРЯЕМ МОЖЕТ ЛИ ПОЛЬЗОВАТЕЛЬ ОТПРАВЛЯТЬ СООБЩЕНИЯ
+
         if (!isUserAllowedToChat(auth)) {
-            throw new RuntimeException("Пользователь не имеет прав на отправку сообщений");
+            throw new HotelAuthenticationException("Пользователь не имеет прав на отправку сообщений");
         }
 
-        log.info("✅ Пользователь {} имеет права на отправку сообщений", auth.getName());
+        log.info("Пользователь {} имеет права на отправку сообщений", auth.getName());
     }
 
-    /**
-     * 🎯 ПРОВЕРКА ДОСТУПА К КОНКРЕТНОМУ БРОНИРОВАНИЮ
-     */
     private boolean hasAccessToBooking(UsernamePasswordAuthenticationToken auth, Long bookingId) {
-        // 💡 В РЕАЛЬНОМ ПРИЛОЖЕНИИ ЗДЕСЬ ДОЛЖНА БЫТЬ ЛОГИКА:
-        // 1. Найти пользователя в базе по auth.getName()
-        // 2. Найти бронирование по bookingId
-        // 3. Проверить:
-        //    - Пользователь владелец бронирования?
-        //    - Пользователь персонал отеля?
-        //    - Пользователь менеджер?
+        String nickName = auth.getName();
+        User bookingOwnerUser = bookingService.findUserOwnerOfBookingByIdOrNull(bookingId);
+        if (bookingOwnerUser.getNickName().equals(nickName)) {
+            return Boolean.TRUE;
+        }
+        log.info("Проверка доступа пользователя {} к бронированию {}", auth.getName(), bookingId);
+        return Boolean.FALSE;
 
-        log.info("🔍 Проверка доступа пользователя {} к бронированию {}", auth.getName(), bookingId);
-
-        // 🎯 ВРЕМЕННАЯ ЗАГЛУШКА - всегда разрешаем
-        // В реальном приложении заменить на вызов сервиса проверки прав
-        return true;
     }
 
-    /**
-     * ✅ ПРОВЕРКА МОЖЕТ ЛИ ПОЛЬЗОВАТЕЛЬ ОТПРАВЛЯТЬ СООБЩЕНИЯ
-     */
+
     private boolean isUserAllowedToChat(UsernamePasswordAuthenticationToken auth) {
-        // 💡 В РЕАЛЬНОМ ПРИЛОЖЕНИИ ПРОВЕРЯТЬ:
-        // - Аккаунт подтвержден?
-        // - Пользователь не заблокирован?
-        // - Имеет нужную роль?
-
-        return true; // Временная заглушка
-    }
-
-    /**
-     * 🔑 ИЗВЛЕЧЕНИЕ JWT ТОКЕНА ИЗ ЗАГОЛОВКОВ
-     */
-    private String getTokenFromHeader(StompHeaderAccessor accessor) {
-        // 📨 ИЩЕМ ЗАГОЛОВОК Authorization
-        String authHeader = accessor.getFirstNativeHeader("Authorization");
-
-        // ✂️ ИЗВЛЕКАЕМ ТОКЕН ИЗ "Bearer ваш_токен"
-        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7); // Убираем "Bearer "
+        User user = userInternalService.findUserByNickName(auth.getName());
+        user.getVerifyStatus();
+        if (user.getVerifyStatus()) {
+            return Boolean.TRUE;
         }
 
-        return null; // Токен не найден
+        return Boolean.FALSE;
+    }
+
+
+    private String getTokenFromHeader(StompHeaderAccessor accessor) {
+        String authHeader = accessor.getFirstNativeHeader(JWTUtils.AUTHORIZATION);
+
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith(JWTUtils.BEARER)) {
+            return authHeader.substring(7);
+        }
+
+        return null;
     }
 }

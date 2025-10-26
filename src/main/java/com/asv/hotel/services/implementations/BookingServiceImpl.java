@@ -117,6 +117,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
+    @Override
+    public Booking findBookingByIdOrNull(Long bookingId) {
+        return bookingRepository.findById(bookingId).orElse(null);
+
+    }
+
+    @Transactional
+    @Override
+    public User findUserOwnerOfBookingByIdOrNull(Long bookingId) {
+        Booking booking=findBookingByIdOrNull(bookingId);
+        if(booking==null){
+            return null;
+        }
+        return booking.getUser();
+    }
+
+    @Transactional
     public ResponseBookingDTO findResponseBookingDTOByBookingId(Long id) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
