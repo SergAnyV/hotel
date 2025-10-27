@@ -16,13 +16,8 @@ import com.asv.hotel.repositories.BookingRepository;
 import com.asv.hotel.security.util.JWTUtils;
 import com.asv.hotel.services.*;
 import com.asv.hotel.util.BookingUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.Mapping;
-import org.mapstruct.control.MappingControl;
-import org.springframework.dao.DataAccessException;
-import org.mapstruct.control.MappingControl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -100,7 +95,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public List<BookingSimplDTO> findAllBookingsSimplDTOByRoomNumber(String roomNumber) {
+    public List<BookingSimplDTO> findAllBookingsSimpleDTOByRoomNumber(String roomNumber) {
         List<Booking> bookingsList = bookingRepository.findAllByRoomNumber(roomNumber);
         if (bookingsList.isEmpty()) {
             log.error("лист с бронированиями пуст для данной комнаты {}", roomNumber);
@@ -113,7 +108,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public List<RoomSimpleDataBaseDTO> findRoomSimpleDTODataBaseByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
+    public List<RoomSimpleDataBaseDTO> findRoomSimpleDataBaseDTOByBookingDate(LocalDate checkInDate, LocalDate checkOutDate) {
         if (!checkInDate.isBefore(checkOutDate)) {
             log.error("Error:некорректные данные для поиска бронирования по датам заселение {} выселение {}",
                     checkInDate, checkOutDate);
@@ -124,14 +119,24 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Transactional
-    public ResponseBookingDTO findBesponseBookingDTOByBookingId(Long id) {
+    public ResponseBookingDTO findResponseBookingDTOByBookingId(Long id) {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserRole userRole = user.getType().getRole();
-        Booking booking = bookingRepository.findById(id).orElse(null);
+        Booking booking = null;
+        if (userRole.equals(UserRole.ADMIN) || userRole.equals(UserRole.MANAGER)) {
+            booking = bookingRepository.findById(id).orElse(null);
+            return getResponseBookingDTO(booking,id);
+        } else {
+            booking = bookingRepository.findBookingByIDAndUser_NickName(user.getNickName(),id).orElse(null);
+            return getResponseBookingDTO(booking,id);
+        }
 
+    }
+
+    private ResponseBookingDTO getResponseBookingDTO(Booking booking,Long id) {
         if (booking == null) {
-            log.warn("Error: неверный номер брониования в методе findBesponseBookingDTOByBookingId id= {}", id);
+            log.warn("Error: неверный номер брониования в методе findBesponseBookingDTOByBookingId id= {}",id);
             throw new HotelDataNotFoundException("нет такого номера бронирования");
         }
 
@@ -140,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
                         ServiceHotelMapper.INSTANCE.serviceHotelToServiceHotelSimpleDTO(serviceHotel))
                 .collect(Collectors.toSet());
 
-        ResponseBookingDTO responseBookingDTO = ResponseBookingDTO.builder()
+        return ResponseBookingDTO.builder()
                 .bookingId(booking.getId())
                 .statusOfBooking(booking.getStatusOfBooking())
                 .checkInDate(booking.getCheckInDate())
@@ -156,16 +161,6 @@ public class BookingServiceImpl implements BookingService {
                 .phoneNumber(booking.getUser().getPhoneNumber())
                 .serviceHotelSimpleDTOS(serviceHotelSimpleDTOS)
                 .build();
-
-        if (userRole.equals(UserRole.ADMIN) || userRole.equals(UserRole.MANAGER)) {
-            return responseBookingDTO;
-        }
-
-        if (!booking.getUser().equals(user)) {
-            throw new HotelIncorrectInputData(" Неккоректный запрос для бронирвания ");
-        }
-
-        return responseBookingDTO;
     }
 
     private Set<ServiceHotel> findAllServicesForBooking(BookingSimplDTO bookingSimplDTO) {

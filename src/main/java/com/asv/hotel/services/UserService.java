@@ -14,5 +14,6 @@ public interface UserService {
 
     UserDTO changeDataUser(UserDTO userDTO);
 
+    Boolean confirmRegistrationUser(String token);
 
 }

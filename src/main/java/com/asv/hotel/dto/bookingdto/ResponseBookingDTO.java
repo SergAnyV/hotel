@@ -7,7 +7,6 @@ import com.asv.hotel.entities.enums.RoomType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,8 +29,8 @@ import java.util.Set;
  * бронирование, либо администратору/менеджеру (согласно логике).
  * </p>
  *
- * @see com.asv.hotel.controllers.BookingController#gitBookingById
- * @see com.asv.hotel.services.implementations.BookingServiceImpl#findBesponseBookingDTOByBookingId
+ * @see com.asv.hotel.controllers.BookingController#getBookingById
+ * @see com.asv.hotel.services.implementations.BookingServiceImpl#findResponseBookingDTOByBookingId
  * @see ServiceHotelSimpleDTO
  * @see BookingStatus
  * @see RoomType

@@ -30,6 +30,6 @@ public class NotificationHotel {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id", nullable = false)
+    @JoinColumn(name = "booking_id", nullable = true)
     private Booking booking;
 }

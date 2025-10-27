@@ -7,13 +7,16 @@ import com.asv.hotel.entities.UserType;
 import com.asv.hotel.exceptions.HotelDataAlreadyExistsException;
 import com.asv.hotel.exceptions.HotelDataNotFoundException;
 import com.asv.hotel.repositories.UserRepository;
+import com.asv.hotel.services.EmailService;
+import com.asv.hotel.services.NotificationHotelService;
 import com.asv.hotel.services.UserInternalService;
 import com.asv.hotel.services.UserTypeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserInternalService {
     private final UserRepository userRepository;
     private final UserTypeService userTypeService;
-
+    private final EmailService emailService;
+    private final NotificationHotelService notificationHotelService;
+    private static Boolean VERIFICATION_STATUS_FALSE = Boolean.FALSE;
+    private static Boolean VERIFICATION_STATUS_TRUE = Boolean.TRUE;
+    private static String REGISTRATION_SUBJECT = "Registration mail";
+    private static String URL_REGISTRATION_USER="http://localhost:8080/api/users/verify?token=";
 
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
@@ -33,17 +41,26 @@ public class UserServiceImpl implements UserInternalService {
         }
 
         UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
-        if(userType==null){
-            log.warn("Error: данного типа пользователя не существует {}" , userDTO.getType());
+        if (userType == null) {
+            log.warn("Error: данного типа пользователя не существует {}", userDTO.getType());
             throw new HotelDataNotFoundException(
-                    String.format("Такого типа юзера не существует '%s'",userDTO.getType())
+                    String.format("Такого типа юзера не существует '%s'", userDTO.getType())
             );
         }
 
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
         user.setType(userType);
-        return UserMapper.INSTANCE.userToUserDTO(
-                userRepository.save(user));
+        user.setVerifyStatus(VERIFICATION_STATUS_FALSE);
+
+        String token= generateRandomToken();
+        user.setVerificationToken(token);
+
+        User savedUser = userRepository.save(user);
+
+        notificationHotelService.createNotificationNewUserVerifying(URL_REGISTRATION_USER.concat(token),
+                user, REGISTRATION_SUBJECT);
+
+        return UserMapper.INSTANCE.userToUserDTO(savedUser);
     }
 
     @Transactional
@@ -63,7 +80,7 @@ public class UserServiceImpl implements UserInternalService {
     }
 
     @Override
-    public UserType findUserTypeByUserNickName(String nickName){
+    public UserType findUserTypeByUserNickName(String nickName) {
         return userRepository.findUserTypeByUserNickName(nickName).orElse(null);
     }
 
@@ -89,4 +106,18 @@ public class UserServiceImpl implements UserInternalService {
         return UserMapper.INSTANCE.userToUserDTO(existingUser);
     }
 
+    @Transactional
+    public Boolean confirmRegistrationUser(String token){
+        User user=userRepository.findUserByToken(token).orElse(null);
+        if(user==null){
+            return VERIFICATION_STATUS_FALSE;
+        }
+        user.setVerifyStatus(VERIFICATION_STATUS_TRUE);
+        userRepository.save(user);
+        return VERIFICATION_STATUS_TRUE;
+    }
+
+    private String generateRandomToken() {
+        return UUID.randomUUID().toString();
+    }
 }

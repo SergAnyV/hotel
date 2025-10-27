@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookingRepository extends JpaRepository<Booking,Long> {
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
 
     @Query(value = "SELECT CASE WHEN COUNT(b.id) = 0 THEN true ELSE false END " +
@@ -27,7 +27,7 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
             @Param("checkOutDate") LocalDate checkOutDate);
 
     @Modifying
-    @Query(value = "DELETE FROM bookings b WHERE b.id = :id",nativeQuery = true)
+    @Query(value = "DELETE FROM bookings b WHERE b.id = :id", nativeQuery = true)
     int deleteBookingById(@Param("id") Long id);
 
     @Query(value = """
@@ -48,9 +48,19 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
                 AND b.check_out_date > :checkIn
                 AND b.status != 'CANCELLED'
             WHERE b.id IS NULL;
-            """,nativeQuery = true)
-    List <RoomSimpleDataBaseDTO>findAllFreeRoomsBetweenDates(@Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
+            """, nativeQuery = true)
+    List<RoomSimpleDataBaseDTO> findAllFreeRoomsBetweenDates(@Param("checkIn") LocalDate checkIn, @Param("checkOut") LocalDate checkOut);
 
     @EntityGraph("Booking.withServices")
     Optional<Booking> findById(Long id);
+
+    @Query(value = """
+            SELECT b.* 
+            FROM bookings b
+            LEFT JOIN users u
+            ON b.user_id=u.id
+            WHERE b.id=:bookingId 
+            AND u.nick_name=:nickName
+            """, nativeQuery = true)
+    Optional<Booking> findBookingByIDAndUser_NickName(@Param("nickName") String nickName,@Param("bookingId") Long bookingId);
 }

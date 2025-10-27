@@ -10,7 +10,6 @@ import com.asv.hotel.services.BookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.NotNull;
@@ -69,7 +68,7 @@ public class BookingController {
             @NotBlank(message = "номер комнаты не должен быть пустым")
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
-        return ResponseEntity.ok(bookingService.findAllBookingsSimplDTOByRoomNumber(number));
+        return ResponseEntity.ok(bookingService.findAllBookingsSimpleDTOByRoomNumber(number));
     }
 
     @Operation(summary = "Найти свободные комнаты по датам бронирования",
@@ -87,7 +86,7 @@ public class BookingController {
                                                                                 @NotNull
                                                                                 LocalDate checkOut,
                                                                                 Reader reader) {
-        List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDTODataBaseByBookingDate(checkin, checkOut);
+        List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDataBaseDTOByBookingDate(checkin, checkOut);
         if (roomSimpleDataBaseDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -95,11 +94,11 @@ public class BookingController {
     }
 
     @GetMapping("/booking/{bookingid}")
-    public  ResponseEntity<ResponseBookingDTO> gitBookingById(@PathVariable("bookingid")
+    public  ResponseEntity<ResponseBookingDTO> getBookingById(@PathVariable("bookingid")
                                                                @NotNull (message = "id бронирования не может быть null")
                                                                @Positive(message = "id бронирования должно быть положительна")
                                                                Long id){
-        ResponseBookingDTO responseBookingDTO=bookingService.findBesponseBookingDTOByBookingId(id);
+        ResponseBookingDTO responseBookingDTO=bookingService.findResponseBookingDTOByBookingId(id);
         return ResponseEntity.ok(responseBookingDTO);
     }
 }

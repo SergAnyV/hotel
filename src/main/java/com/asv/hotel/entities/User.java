@@ -81,6 +81,15 @@ public class User implements UserDetails{
     @ToString.Exclude
     private Set<NotificationHotel> notificationHotels = new HashSet<>();
 
+    @Column(name = "verification_token",nullable = false,unique = true,length = 50)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private String verificationToken;
+
+    @Column(name = "verify_status",nullable = false)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private Boolean verifyStatus;
 
     // реализация методов UserDetails
     @Override
