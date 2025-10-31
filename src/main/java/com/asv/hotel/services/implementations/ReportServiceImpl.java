@@ -87,7 +87,7 @@ public class ReportServiceImpl implements ReportService {
         Room room = roomService.findRoomByNumber(roomNumber.trim());
 
         if (room == null) {
-            return null;
+            throw new HotelDataNotFoundException(String.format("данный номер комнаты не существует %s",roomNumber));
         }
 
         User user = getUserFromSecurityContext();

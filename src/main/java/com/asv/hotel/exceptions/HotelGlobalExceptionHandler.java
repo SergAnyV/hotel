@@ -130,7 +130,7 @@ public class HotelGlobalExceptionHandler {
 
         ErrorMessage error = new ErrorMessage(
                 HttpStatus.BAD_REQUEST,
-                "Validation error: " + errorMessage
+                "Validation error: "
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

@@ -56,7 +56,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
     public ReportAttachmentSimpleDTO findReportAttachmentSimpleDTOByID(Long id) {
         ReportAttachment reportAttachment = reportAttachmentRepository.findById(id).orElse(null);
         if (reportAttachment == null) {
-            return null;
+            throw new HotelDataNotFoundException("Приложения с таким id не существует");
         }
 
         User userRequester = getUserFromSecurityContext();
@@ -69,7 +69,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
             return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
         }
 
-        return null;
+        throw new HotelReportAttachmentException("Данного вложения для отчетов не существует или у вас нет прав на этот отчет");
     }
 
     /**
@@ -108,6 +108,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
         try {
             fileType = findFileTypePhoto(multipartFile);
         } catch (HotelReportAttachmentException | HotelIncorrectInputData e) {
+            log.error("Некорректный тип файла для отчета ошибка {}", e.getErrorMessage());
             return null;
         }
         ReportAttachment reportAttachment = ReportAttachmentMapper.INSTANCE.multipartFileToReportAttachmentWithoutType(multipartFile);
@@ -211,7 +212,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
             return byteArrayOutputStream.toByteArray();
 
         } catch (IOException e) {
-            log.warn("Некорректное формирования zip method getStreamingResponseBodyByReportID");
+            log.error("Некорректное формирования zip method getStreamingResponseBodyByReportID");
             return new byte[0];
         }
 
