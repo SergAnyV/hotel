@@ -85,11 +85,9 @@ public class ReportController {
     @ApiResponse(responseCode = "400", description = "Некорректные данные: несуществующая комната или нарушение валидации")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ReportDTO> createReport(
-            @Valid @ModelAttribute CreateReportForm reportForm,
-            @Schema(description = "приложенные файлы для отчета, только форматы jpeg,png,jpg, не обязательно для заполнения")
-            @RequestParam(value = "multipartFileList", required = false)
-            List<MultipartFile> multipartFileList) {
-        ReportDTO reportDTO = reportService.createReport(reportForm.getReportType(), reportForm.getRoomNumber(), multipartFileList);
+            @Valid @ModelAttribute CreateReportForm reportForm
+    ) {
+        ReportDTO reportDTO = reportService.createReport(reportForm.getReportType(), reportForm.getRoomNumber(), reportForm.getMultipartFileList());
 
         return ResponseEntity.ok(reportDTO);
     }

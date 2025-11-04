@@ -6,6 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 /**
  * Модель данных запроса для создания отчета.
  * <p>
@@ -22,7 +26,7 @@ public class CreateReportForm {
      * Обязательное поле. Допустимые значения: {@code "ISSUE"}, {@code "WORK"}.
      */
     @Schema(description = "Тип отчета (отчет о работе или сообщение  о проблеме)", allowableValues = {"ISSUE", "WORK"})
-//    @NotNull
+    @NotNull
     private ReportType reportType;
 
     /**
@@ -31,7 +35,10 @@ public class CreateReportForm {
      * Обязательное поле. Максимальная длина — 10 символов.
      */
     @Schema(description = "номер комнаты", example = "101")
-//    @NotNull
-//    @Size(max = 10)
+    @NotNull
+    @Size(max = 10)
     private String roomNumber;
+
+    @Schema(description = "приложенные файлы для отчета, только форматы jpeg,png,jpg, не обязательно для заполнения")
+    List<MultipartFile> multipartFileList;
 }
