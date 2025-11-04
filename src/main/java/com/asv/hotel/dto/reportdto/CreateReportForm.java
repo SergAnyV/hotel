@@ -22,7 +22,7 @@ public class CreateReportForm {
      * Обязательное поле. Допустимые значения: {@code "ISSUE"}, {@code "WORK"}.
      */
     @Schema(description = "Тип отчета (отчет о работе или сообщение  о проблеме)", allowableValues = {"ISSUE", "WORK"})
-    @NotNull
+//    @NotNull
     private ReportType reportType;
 
     /**
@@ -31,7 +31,7 @@ public class CreateReportForm {
      * Обязательное поле. Максимальная длина — 10 символов.
      */
     @Schema(description = "номер комнаты", example = "101")
-    @NotNull
-    @Size(max = 10)
+//    @NotNull
+//    @Size(max = 10)
     private String roomNumber;
 }

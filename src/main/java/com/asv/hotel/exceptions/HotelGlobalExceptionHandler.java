@@ -1,6 +1,7 @@
 package com.asv.hotel.exceptions;
 
 import com.asv.hotel.dto.ErrorMessage;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 /**
  * Глобальный обработчик исключений для всего веб-приложения системы управления отелем.
  * <p>
@@ -117,17 +119,12 @@ public class HotelGlobalExceptionHandler {
      * @param ex исключение валидации
      * @return ответ с HTTP-статусом 400 и деталями ошибок
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorMessage> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(fieldError ->
-                        fieldError.getDefaultMessage())
-                .collect(Collectors.joining(", "));
-
-        log.warn("Validation failed: {}", errorMessage);
-
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class,
+            ConstraintViolationException.class
+    })
+    public ResponseEntity<ErrorMessage> handleValidationExceptions(Exception ex) {
+        log.warn("Validation failed: ");
         ErrorMessage error = new ErrorMessage(
                 HttpStatus.BAD_REQUEST,
                 "Validation error: "

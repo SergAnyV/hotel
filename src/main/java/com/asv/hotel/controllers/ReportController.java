@@ -5,7 +5,10 @@ import com.asv.hotel.dto.reportdto.ReportDTO;
 import com.asv.hotel.entities.enums.ReportType;
 import com.asv.hotel.services.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -18,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
+
 /**
  * Контроллер для управления отчётами через REST API.
  * <p>
@@ -52,6 +57,7 @@ import java.util.List;
 @RequestMapping("/reports")
 public class ReportController {
     private final ReportService reportService;
+
     /**
      * Создаёт новый отчёт указанного типа для заданной комнаты.
      * <p>
@@ -62,11 +68,10 @@ public class ReportController {
      * <p>
      * Файлы не обязательны — отчёт может быть создан без вложений.
      *
-     * @param reportForm форма отчёта (обязательный параметр формы), включает в себя тип отчета (enum) и номер комнаты
+     * @param reportForm        форма отчёта (обязательный параметр формы), включает в себя тип отчета (enum) и номер комнаты
      * @param multipartFileList список файлов для прикрепления (необязательный параметр)
      * @return {@link ResponseEntity} с DTO созданного отчёта ({@code 200 OK}) или {@code 400 Bad Request},
-     *         если комната не найдена
-     *
+     * если комната не найдена
      * @see ReportService#createReport(ReportType, String, List)
      */
     @Operation(
@@ -88,6 +93,7 @@ public class ReportController {
 
         return ResponseEntity.ok(reportDTO);
     }
+
     /**
      * Добавляет одно или несколько вложений к существующему отчёту.
      * <p>
@@ -105,8 +111,7 @@ public class ReportController {
      * @param multipartFileList непустой список файлов для прикрепления (обязательный параметр формы)
      * @return {@link ResponseEntity} с кодом {@code 204 No Content} при успехе
      * @throws com.asv.hotel.exceptions.HotelDataNotFoundException если отчёт не найден
-     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData   если файлы отсутствуют или недопустимы
-     *
+     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData    если файлы отсутствуют или недопустимы
      * @see ReportService#addReportAttachmentToReport(Long, List)
      */
     @Operation(
@@ -118,18 +123,18 @@ public class ReportController {
     @ApiResponse(responseCode = "204", description = "Вложения успешно добавлены")
     @ApiResponse(responseCode = "400", description = "Отсутствуют файлы или они имеют недопустимый формат")
     @ApiResponse(responseCode = "404", description = "Отчёт с указанным ID не найден")
-    @PostMapping("/{reportId}/attachments")
+    @PostMapping(path = "/{reportId}/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> addReportAttachmentToTheReportByRID(@PathVariable("reportId")
                                                                     @NotNull
                                                                     @NumberFormat
                                                                     @Positive
                                                                     Long reportId,
                                                                     @RequestParam(value = "multipartFileList", required = false)
-                                                                    @NotNull
                                                                     List<MultipartFile> multipartFileList) {
         reportService.addReportAttachmentToReport(reportId, multipartFileList);
         return ResponseEntity.noContent().build();
     }
+
     /**
      * Удаляет конкретное вложение из отчёта по идентификаторам отчёта и вложения.
      * <p>
@@ -145,7 +150,6 @@ public class ReportController {
      * @param reportAttachmentId идентификатор удаляемого вложения (в пути URL)
      * @return {@link ResponseEntity} с кодом {@code 204 No Content} при успешном удалении
      * @throws com.asv.hotel.exceptions.HotelDataNotFoundException если отчёт/вложение не найдены или нет прав
-     *
      * @see ReportService#deleteAttachmentFromReport(Long, Long)
      */
     @Operation(

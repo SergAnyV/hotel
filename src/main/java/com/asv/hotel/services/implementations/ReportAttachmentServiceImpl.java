@@ -12,6 +12,7 @@ import com.asv.hotel.repositories.ReportAttachmentRepository;
 import com.asv.hotel.services.ReportAttachmentInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,6 +104,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
      * Поддерживает только JPEG и PNG. Определяет тип по "магическим байтам".
      */
     @Override
+    @Nullable
     public ReportAttachment generateReportAttachmentFromMultipartFile(MultipartFile multipartFile) {
         String fileType = null;
         try {
