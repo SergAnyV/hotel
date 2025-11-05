@@ -147,7 +147,8 @@ public class ReportServiceImpl implements ReportService {
 
         Set<ReportAttachment> reportAttachmentSet = multipartFileList.stream().
                 map(mpf -> reportAAttachmentService.generateReportAttachmentFromMultipartFile(mpf)).
-                filter(reportAttachment -> reportAttachment != null).collect(Collectors.toSet());
+                filter(reportAttachment -> reportAttachment != null)
+                .collect(Collectors.toSet());
         if (isCollectionNullOrEmpty(reportAttachmentSet)) {
             log.warn("Warning: в приложенных файлах нет нужных для сохранения форматов");
             throw new HotelIncorrectInputData("В приложенных файлах нет нужных для сохранения форматов");
