@@ -15,6 +15,6 @@ public interface ServiceHotelRepository extends JpaRepository<ServiceHotel,Long>
     Optional<ServiceHotel>findByTitle(@Param("title") String title);
 
     @Modifying
-    @Query(value = "DELETE * FROM services WHERE title = :title",nativeQuery = true)
+    @Query(value = "DELETE FROM services WHERE title = :title",nativeQuery = true)
     int deleteByTitle(@Param("title") String title);
 }

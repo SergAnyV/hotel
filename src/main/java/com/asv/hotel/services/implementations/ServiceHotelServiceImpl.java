@@ -59,7 +59,7 @@ public class ServiceHotelServiceImpl implements ServiceHotelInternalService {
         }
     }
 
-
+    // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
     @Transactional
     public ServiceHotelDTO changeDataServiceHotel(ServiceHotelDTO serviceHotelDTO) {
         Optional<ServiceHotel> serviceHotelOptional = serviceHotelRepository.findByTitle(serviceHotelDTO.getTitle());

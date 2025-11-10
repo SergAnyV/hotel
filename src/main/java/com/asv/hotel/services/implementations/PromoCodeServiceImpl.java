@@ -61,5 +61,5 @@ public class PromoCodeServiceImpl implements PromoCodeInternalService {
         }).collect(Collectors.toList());
     }
 
-
+    // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
 }

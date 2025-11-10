@@ -215,7 +215,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
             return new byte[0];
         }
 
-
+        // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
     }
 }
 
