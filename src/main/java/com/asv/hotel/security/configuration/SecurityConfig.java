@@ -36,7 +36,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,CustomUserDetailsServiceImpl userDetailsService) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomUserDetailsServiceImpl userDetailsService) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
@@ -51,9 +51,11 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/db/**").permitAll()
-                        .requestMatchers("/user-types/**","/api/users/**").permitAll()
+                        .requestMatchers("/user-types/**", "/api/users/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .requestMatchers("/bookings/**").authenticated()
+                        .requestMatchers("/reports/**").authenticated()
+                        .requestMatchers("/attachments/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
@@ -61,6 +63,7 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider(userDetailsService))
                 .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

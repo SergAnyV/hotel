@@ -71,12 +71,12 @@ public class User implements UserDetails{
     @ToString.Exclude
     private Set<Booking> bookingSet = new HashSet<>();
 
-    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true)
+    @OneToMany(mappedBy = "staff", fetch = FetchType.LAZY,orphanRemoval = true,cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<Report> reports = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private Set<NotificationHotel> notificationHotels = new HashSet<>();

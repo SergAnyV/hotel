@@ -11,7 +11,7 @@ public enum ReportStatus {
     REJECTED("отклонен"),
     FIXED("исправлен"),
     CANCELLED("отменен"),
-    ISSUE("выпущен");
+    ISSUED("выпущен");
 
     private final String description;
 }

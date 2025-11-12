@@ -61,7 +61,6 @@ public class BookingController {
             description = "Возвращает данные бронирования по номеру комнаты")
     @ApiResponse(responseCode = "200", description = "бронирования найдены")
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
-
     @GetMapping("/room/{number}")
     public ResponseEntity<List<BookingSimplDTO>> getAllBookingsByRoomNumber(
             @PathVariable
@@ -84,8 +83,7 @@ public class BookingController {
                                                                                 @RequestParam
                                                                                 @Future
                                                                                 @NotNull
-                                                                                LocalDate checkOut,
-                                                                                Reader reader) {
+                                                                                LocalDate checkOut) {
         List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDataBaseDTOByBookingDate(checkin, checkOut);
         if (roomSimpleDataBaseDTOList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

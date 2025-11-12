@@ -58,17 +58,17 @@ INSERT INTO booking_guests (booking_id, name, surname, age, number_document) VAL
 (10, 'Артём', 'Дмитриев', 13, '1029384756');
 
 -- Insert для Report (отчеты)
-INSERT INTO reports (status, created_at, updated_at, room_id, staff_id) VALUES
-('SUBMITTED', NOW(), NOW(), 1, 4),
-('APPROVED', NOW(), NOW(), 2, 4),
-('REJECTED', NOW(), NOW(), 3, 4),
-('FIXED', NOW(), NOW(), 4, 4),
-('ISSUE', NOW(), NOW(), 5, 4),
-('SUBMITTED', NOW(), NOW(), 6, 9),
-('APPROVED', NOW(), NOW(), 7, 9),
-('REJECTED', NOW(), NOW(), 8, 9),
-('FIXED', NOW(), NOW(), 9, 9),
-('ISSUE', NOW(), NOW(), 10, 9);
+--INSERT INTO reports (status, created_at, updated_at, room_id, staff_id) VALUES
+--('SUBMITTED', NOW(), NOW(), 1, 4),
+--('APPROVED', NOW(), NOW(), 2, 4),
+--('REJECTED', NOW(), NOW(), 3, 4),
+--('FIXED', NOW(), NOW(), 4, 4),
+--('ISSUE', NOW(), NOW(), 5, 4),
+--('SUBMITTED', NOW(), NOW(), 6, 9),
+--('APPROVED', NOW(), NOW(), 7, 9),
+--('REJECTED', NOW(), NOW(), 8, 9),
+--('FIXED', NOW(), NOW(), 9, 9),
+--('ISSUE', NOW(), NOW(), 10, 9);
 
 
 
