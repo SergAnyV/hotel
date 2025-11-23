@@ -25,7 +25,7 @@ public class SignInRequest {
     @Size(min = 3, max = 30, message = "Никнейм должен содержать от 3 до 30 символов")
     @Schema(
             description = "Уникальный никнейм пользователя",
-            example = "Goldman",
+            example = "cleaner_maria",
             minLength = 3,
             maxLength = 30
     )
@@ -38,6 +38,7 @@ public class SignInRequest {
     @Size( max = 120, message = "Пароль должен содержать до 120 символов")
     @Schema(
             description = "Пароль пользователя",
+            example = "password",
             maxLength = 20
     )
     private String password;
