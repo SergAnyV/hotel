@@ -81,6 +81,6 @@ public class RoomServiceImpl implements RoomInternalService {
     public Room findRoomByNumber(String number) {
         return roomRepository.findRoomByNumberLikeIgnoreCase(number).orElse(null);
     }
-
+    // TODO : переделать для админа и менеджера для изменений комнат см. репорт сервисы
 
 }

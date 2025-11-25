@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.StandardCharsets;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "User Management", description = "REST API для управления юзерами")

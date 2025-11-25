@@ -173,5 +173,5 @@ public class JobTypeServiceImpl implements JobTypeInternalService {
     private String cleanString(String line) {
         return line.trim().toLowerCase();
     }
-
+    // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
 }

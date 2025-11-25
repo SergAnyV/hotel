@@ -12,7 +12,6 @@ import com.asv.hotel.repositories.ReportAttachmentRepository;
 import com.asv.hotel.services.ReportAttachmentInternalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +56,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
     public ReportAttachmentSimpleDTO findReportAttachmentSimpleDTOByID(Long id) {
         ReportAttachment reportAttachment = reportAttachmentRepository.findById(id).orElse(null);
         if (reportAttachment == null) {
-            throw new HotelDataNotFoundException("Приложения с таким id не существует");
+            return null;
         }
 
         User userRequester = getUserFromSecurityContext();
@@ -70,7 +69,7 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
             return ReportAttachmentMapper.INSTANCE.reportAttachmentToReportAttachmentSimpleDTO(reportAttachment);
         }
 
-        throw new HotelReportAttachmentException("Данного вложения для отчетов не существует или у вас нет прав на этот отчет");
+        return null;
     }
 
     /**
@@ -104,13 +103,11 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
      * Поддерживает только JPEG и PNG. Определяет тип по "магическим байтам".
      */
     @Override
-    @Nullable
     public ReportAttachment generateReportAttachmentFromMultipartFile(MultipartFile multipartFile) {
         String fileType = null;
         try {
             fileType = findFileTypePhoto(multipartFile);
         } catch (HotelReportAttachmentException | HotelIncorrectInputData e) {
-            log.error("Некорректный тип файла для отчета ошибка {}", e.getErrorMessage());
             return null;
         }
         ReportAttachment reportAttachment = ReportAttachmentMapper.INSTANCE.multipartFileToReportAttachmentWithoutType(multipartFile);
@@ -214,11 +211,11 @@ public class ReportAttachmentServiceImpl implements ReportAttachmentInternalServ
             return byteArrayOutputStream.toByteArray();
 
         } catch (IOException e) {
-            log.error("Некорректное формирования zip method getStreamingResponseBodyByReportID");
+            log.warn("Некорректное формирования zip method getStreamingResponseBodyByReportID");
             return new byte[0];
         }
 
-
+        // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
     }
 }
 

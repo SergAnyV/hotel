@@ -74,7 +74,7 @@ public class BookingController {
             description = "Возвращает список свободных комнат на заданные даты")
     @ApiResponse(responseCode = "200", description = "бронирования найдены")
     @ApiResponse(responseCode = "404", description = "бронирования не найдены")
-    //добавить ошибки так как все удалилось блин
+    // TODO : добавить ошибки
     @GetMapping("/date")
     public ResponseEntity<List<RoomSimpleDataBaseDTO>> getFreeRoomsBetweenDates(@RequestParam
                                                                                 @FutureOrPresent

@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserInternalService {
     public UserType findUserTypeByUserNickName(String nickName) {
         return userRepository.findUserTypeByUserNickName(nickName).orElse(null);
     }
-
+    // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
     @Transactional
     public void deleteUserByLastNameAndFirstName(String lastName, String firstName) {
         if (userRepository.deleteUserByLastNameAndFirstName(lastName, firstName) == 0) {

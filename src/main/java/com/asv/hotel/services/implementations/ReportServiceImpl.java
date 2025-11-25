@@ -56,7 +56,6 @@ public class ReportServiceImpl implements ReportService {
     private final ReportAttachmentInternalService reportAAttachmentService;
     private final RoomInternalService roomService;
     private final UserInternalService userService;
-
     /**
      * Создаёт новый отчёт указанного типа для заданной комнаты.
      * <p>
@@ -76,7 +75,7 @@ public class ReportServiceImpl implements ReportService {
      * @param roomNumber        номер комнаты (будет обрезан от пробелов)
      * @param multipartFileList список загружаемых файлов (может быть {@code null} или пустым)
      * @return {@link com.asv.hotel.dto.reportdto.ReportDTO} созданного отчёта или {@code null},
-     * если комната с указанным номером не существует
+     *         если комната с указанным номером не существует
      * @throws RuntimeException при ошибках сохранения или обработки файлов (пробрасываются из зависимых сервисов)
      */
     @Transactional
@@ -88,7 +87,7 @@ public class ReportServiceImpl implements ReportService {
         Room room = roomService.findRoomByNumber(roomNumber.trim());
 
         if (room == null) {
-            throw new HotelDataNotFoundException(String.format("данный номер комнаты не существует %s", roomNumber));
+            return null;
         }
 
         User user = getUserFromSecurityContext();
@@ -110,7 +109,6 @@ public class ReportServiceImpl implements ReportService {
 
         return ReportMapper.INSTANCE.reportToReportDTO(report);
     }
-
     /**
      * Добавляет одно или несколько вложений к существующему отчёту.
      * <p>
@@ -129,43 +127,18 @@ public class ReportServiceImpl implements ReportService {
      * @param reportId          идентификатор существующего отчёта
      * @param multipartFileList непустой список файлов для прикрепления
      * @throws com.asv.hotel.exceptions.HotelDataNotFoundException если отчёт не найден
-     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData    если файлы отсутствуют,
+     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData   если файлы отсутствуют,
      *                                                             пусты или не содержат допустимых форматов
      */
     @Transactional
     @Override
     public void addReportAttachmentToReport(Long reportId, List<MultipartFile> multipartFileList) {
-        Optional<Report> optionalReport = reportRepository.findReportById(reportId);
-        Report report = optionalReport.orElse(null);
+        Report report = reportRepository.findReportById(reportId).orElse(null);
 
         if (report == null) {
             log.warn("Warning: Нет отчета с таким id {}", reportId);
             throw new HotelDataNotFoundException(String.format("Нет отчета с таким id %d", reportId));
         }
-
-        User userRequester = getUserFromSecurityContext();
-
-        if (isUserRoleAdminOrManager(userRequester)) {
-            performAddingReportAttachmentToReport(multipartFileList, report);
-            return;
-        }
-        User userOwner = getUserOwnerFromReport(optionalReport);
-
-        if (userRequester.getNickName().equals(userOwner.getNickName())) {
-            performAddingReportAttachmentToReport(multipartFileList, report);
-            return;
-        }
-
-        log.warn("не совпадение ролей  или владельцев запрашиваемых ресурсов method addReportAttachmentToReport " +
-                        "requester nick={} , role={} , owner nick={} , role={}",
-                userRequester.getNickName(),
-                userRequester.getType().getRole(),
-                userOwner.getNickName(),
-                userOwner.getType().getRole());
-        throw new HotelDataNotFoundException("не совпадение ролей  или владельцев запрашиваемых ресурсов");
-    }
-
-    private void performAddingReportAttachmentToReport(List<MultipartFile> multipartFileList, Report report) {
 
         if (isCollectionNullOrEmpty(multipartFileList)) {
             log.warn("Warning: нет приложенных файлов для сохранения количество");
@@ -174,8 +147,8 @@ public class ReportServiceImpl implements ReportService {
 
         Set<ReportAttachment> reportAttachmentSet = multipartFileList.stream().
                 map(mpf -> reportAAttachmentService.generateReportAttachmentFromMultipartFile(mpf)).
-                filter(reportAttachment -> reportAttachment != null).collect(Collectors.toSet());
-
+                filter(reportAttachment -> reportAttachment != null)
+                .collect(Collectors.toSet());
         if (isCollectionNullOrEmpty(reportAttachmentSet)) {
             log.warn("Warning: в приложенных файлах нет нужных для сохранения форматов");
             throw new HotelIncorrectInputData("В приложенных файлах нет нужных для сохранения форматов");
@@ -185,7 +158,6 @@ public class ReportServiceImpl implements ReportService {
         }
         reportRepository.save(report);
     }
-
     /**
      * Удаляет конкретное вложение из отчёта по идентификаторам.
      * <p>
@@ -204,7 +176,7 @@ public class ReportServiceImpl implements ReportService {
      * @param reportAttachmentId идентификатор удаляемого вложения
      * @throws com.asv.hotel.exceptions.HotelDataNotFoundException если отчёт не существует
      *                                                             или у пользователя нет прав на удаление
-     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData    если вложение с таким ID не найдено
+     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData   если вложение с таким ID не найдено
      *                                                             или не принадлежит указанному отчёту
      */
     @Transactional
@@ -222,7 +194,7 @@ public class ReportServiceImpl implements ReportService {
             return;
         }
         log.warn("не совпадение ролей  или владельцев запрашиваемых ресурсов " +
-                        "requester nick={} , role={} , owner nick={} , role={}",
+                "requester nick={} , role={} , owner nick={} , role={}",
                 userRequester.getNickName(),
                 userRequester.getType().getRole(),
                 userOwner.getNickName(),
