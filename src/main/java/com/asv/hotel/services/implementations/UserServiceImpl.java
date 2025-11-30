@@ -26,10 +26,11 @@ public class UserServiceImpl implements UserInternalService {
     private final UserTypeService userTypeService;
     private final EmailService emailService;
     private final NotificationHotelService notificationHotelService;
-    private static Boolean VERIFICATION_STATUS_FALSE = Boolean.FALSE;
-    private static Boolean VERIFICATION_STATUS_TRUE = Boolean.TRUE;
-    private static String REGISTRATION_SUBJECT = "Registration mail";
-    private static String URL_REGISTRATION_USER="http://localhost:8080/api/users/verify?token=";
+    private static final Boolean VERIFICATION_STATUS_FALSE = Boolean.FALSE;
+    private static final Boolean VERIFICATION_STATUS_TRUE = Boolean.TRUE;
+    private static final String REGISTRATION_SUBJECT = "Registration mail";
+    private static final String URL_REGISTRATION_USER="http://localhost:8080/api/users/verify?token=";
+    private static final String CLIENT="клиент";
 
     @Transactional
     public UserDTO createUser(UserDTO userDTO) {
@@ -42,10 +43,7 @@ public class UserServiceImpl implements UserInternalService {
 
         UserType userType = userTypeService.findUserTypeByType(userDTO.getType());
         if (userType == null) {
-            log.warn("Error: данного типа пользователя не существует {}", userDTO.getType());
-            throw new HotelDataNotFoundException(
-                    String.format("Такого типа юзера не существует '%s'", userDTO.getType())
-            );
+            userType = userTypeService.findUserTypeByType(CLIENT);
         }
 
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);

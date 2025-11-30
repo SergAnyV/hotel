@@ -125,7 +125,6 @@ public class UserDTO {
      * Длина — от 3 до 20 символов.
      */
     @Schema(description = "Тип  пользователя", example = "повар")
-    @NotBlank(message = "Тип пользователя, не должен быть пустым")
     @Size(min = 3, max = 20, message = "количество символов 3-20")
     private String type;
     /**
