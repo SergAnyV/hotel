@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -50,12 +51,11 @@ public class SecurityConfig {
                                 "/configuration/security"
                         ).permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/db/**").permitAll()
-                        .requestMatchers("/user-types/**", "/api/users/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/bookings/**").authenticated()
+                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/services","/services/{title}").permitAll()
+                        .requestMatchers("/bookings/**").permitAll()
                         .requestMatchers("/reports/**").authenticated()
-                        .requestMatchers("/attachments/**").authenticated()
+                        .requestMatchers("/promo-codes/**", "/user-types/**","/services/**").hasRole("MANAGER")
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
@@ -63,7 +63,7 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider(userDetailsService))
                 .addFilterAfter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+// TODO : закончить настройку конфига полностью
         return http.build();
     }
 

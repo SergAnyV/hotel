@@ -1,16 +1,10 @@
 package com.asv.hotel.controllers;
 
-import com.asv.hotel.dto.reportdto.CreateReportForm;
 import com.asv.hotel.dto.reportdto.ReportDTO;
 import com.asv.hotel.entities.enums.ReportType;
 import com.asv.hotel.services.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -18,12 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
-
 /**
  * Контроллер для управления отчётами через REST API.
  * <p>
@@ -51,13 +42,11 @@ import java.util.List;
  *
  * @see ReportService — сервисный слой, реализующий бизнес-логику и проверку прав доступа
  */
-@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/reports")
 public class ReportController {
     private final ReportService reportService;
-
     /**
      * Создаёт новый отчёт указанного типа для заданной комнаты.
      * <p>
@@ -68,10 +57,12 @@ public class ReportController {
      * <p>
      * Файлы не обязательны — отчёт может быть создан без вложений.
      *
-     * @param reportForm        форма отчёта (обязательный параметр формы), включает в себя тип отчета (enum) и номер комнаты
+     * @param reportType        тип отчёта (обязательный параметр формы)
+     * @param roomNumber        номер комнаты (макс. 10 символов, обязательный)
      * @param multipartFileList список файлов для прикрепления (необязательный параметр)
      * @return {@link ResponseEntity} с DTO созданного отчёта ({@code 200 OK}) или {@code 400 Bad Request},
-     * если комната не найдена
+     *         если комната не найдена
+     *
      * @see ReportService#createReport(ReportType, String, List)
      */
     @Operation(
@@ -85,13 +76,21 @@ public class ReportController {
     @ApiResponse(responseCode = "400", description = "Некорректные данные: несуществующая комната или нарушение валидации")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ReportDTO> createReport(
-            @Valid @ModelAttribute CreateReportForm reportForm
-    ) {
-        ReportDTO reportDTO = reportService.createReport(reportForm.getReportType(), reportForm.getRoomNumber(), reportForm.getMultipartFileList());
-
+            @RequestParam("reportType")
+            @NotNull
+            ReportType reportType,
+            @RequestParam("roomNumber")
+            @NotNull
+            @Size(max = 10)
+            String roomNumber,
+            @RequestParam(value = "multipartFileList", required = false)
+            List<MultipartFile> multipartFileList) {
+        ReportDTO reportDTO = reportService.createReport(reportType, roomNumber, multipartFileList);
+        if (reportDTO == null) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(reportDTO);
     }
-
     /**
      * Добавляет одно или несколько вложений к существующему отчёту.
      * <p>
@@ -109,7 +108,8 @@ public class ReportController {
      * @param multipartFileList непустой список файлов для прикрепления (обязательный параметр формы)
      * @return {@link ResponseEntity} с кодом {@code 204 No Content} при успехе
      * @throws com.asv.hotel.exceptions.HotelDataNotFoundException если отчёт не найден
-     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData    если файлы отсутствуют или недопустимы
+     * @throws com.asv.hotel.exceptions.HotelIncorrectInputData   если файлы отсутствуют или недопустимы
+     *
      * @see ReportService#addReportAttachmentToReport(Long, List)
      */
     @Operation(
@@ -121,18 +121,18 @@ public class ReportController {
     @ApiResponse(responseCode = "204", description = "Вложения успешно добавлены")
     @ApiResponse(responseCode = "400", description = "Отсутствуют файлы или они имеют недопустимый формат")
     @ApiResponse(responseCode = "404", description = "Отчёт с указанным ID не найден")
-    @PostMapping(path = "/{reportId}/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/{reportId}/attachments")
     public ResponseEntity<Void> addReportAttachmentToTheReportByRID(@PathVariable("reportId")
                                                                     @NotNull
                                                                     @NumberFormat
                                                                     @Positive
                                                                     Long reportId,
                                                                     @RequestParam(value = "multipartFileList", required = false)
+                                                                    @NotNull
                                                                     List<MultipartFile> multipartFileList) {
         reportService.addReportAttachmentToReport(reportId, multipartFileList);
         return ResponseEntity.noContent().build();
     }
-
     /**
      * Удаляет конкретное вложение из отчёта по идентификаторам отчёта и вложения.
      * <p>
@@ -148,6 +148,7 @@ public class ReportController {
      * @param reportAttachmentId идентификатор удаляемого вложения (в пути URL)
      * @return {@link ResponseEntity} с кодом {@code 204 No Content} при успешном удалении
      * @throws com.asv.hotel.exceptions.HotelDataNotFoundException если отчёт/вложение не найдены или нет прав
+     *
      * @see ReportService#deleteAttachmentFromReport(Long, Long)
      */
     @Operation(

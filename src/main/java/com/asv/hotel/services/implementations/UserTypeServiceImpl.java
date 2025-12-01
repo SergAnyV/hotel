@@ -39,7 +39,7 @@ public class UserTypeServiceImpl implements UserTypeInternalService {
                 .map(userType -> UserTypeMapper.INSTANCE.userTypeToUserTypeDTO(userType))
                 .collect(Collectors.toList());
     }
-
+    // TODO : переделать для админа и менеджера для изменений см. репорт сервисы
     @Transactional
     public void deleteUserTypeByType(String name) {
         if (userTypeRepository.deleteByName(name) == 0) {
