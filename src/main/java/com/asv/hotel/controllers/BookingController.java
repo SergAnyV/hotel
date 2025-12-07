@@ -86,7 +86,7 @@ public class BookingController {
                                                                                 LocalDate checkOut) {
         List<RoomSimpleDataBaseDTO> roomSimpleDataBaseDTOList = bookingService.findRoomSimpleDataBaseDTOByBookingDate(checkin, checkOut);
         if (roomSimpleDataBaseDTOList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(roomSimpleDataBaseDTOList);
     }

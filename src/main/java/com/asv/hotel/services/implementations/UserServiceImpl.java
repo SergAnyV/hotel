@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserInternalService {
     private static final Boolean VERIFICATION_STATUS_FALSE = Boolean.FALSE;
     private static final Boolean VERIFICATION_STATUS_TRUE = Boolean.TRUE;
     private static final String REGISTRATION_SUBJECT = "Registration mail";
-    private static final String URL_REGISTRATION_USER="http://localhost:8080/api/users/verify?token=";
+    private static final String URL_REGISTRATION_USER="http://localhost:8083/users/verify?token=";
     private static final String CLIENT="клиент";
 
     @Transactional
