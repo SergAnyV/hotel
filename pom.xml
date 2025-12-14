@@ -54,6 +54,7 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -176,7 +177,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-indexer</artifactId>
             <version>6.2.12</version>
-            <scope>optional</scope>
+            <scope>true</scope>
         </dependency>
     </dependencies>
 
