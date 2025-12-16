@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
     private final ServiceHotelInternalService serviceHotelInternalService;
     private final PromoCodeInternalService promoCodeInternalService;
     private final NotificationHotelService notificationHotelService;
-    private final JWTUtils jwtUtils;
+
 
     @Transactional
     public BookingDTO createBooking(BookingSimplDTO bookingSimplDTO) {
@@ -88,9 +88,21 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     public void deleteBookingById(Long id) {
-        if (bookingRepository.deleteBookingById(id) == 0) {
-            log.error("Error данной брони не существует для удаления {}", id);
-            throw new HotelDataNotFoundException("данной брони не существует для удаления");
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserRole userRole = user.getType().getRole();
+        Booking booking = null;
+        if (userRole.equals(UserRole.ADMIN) || userRole.equals(UserRole.MANAGER)) {
+            booking = bookingRepository.findById(id).orElseThrow(() -> new HotelDataNotFoundException(
+                    String.format("Бронирование с номером %d для удаления не найдено", id)));
+            booking.getServiceSet().clear();
+            booking.getGuestList().clear();
+            bookingRepository.delete(booking);
+        } else {
+            booking = bookingRepository.findBookingByIDAndUser_NickName(user.getNickName(), id).orElseThrow(() -> new HotelDataNotFoundException(
+                    String.format("Бронирование с номером %d для удаления не найдено", id)));
+            booking.getServiceSet().clear();
+            booking.getGuestList().clear();
+            bookingRepository.delete(booking);
         }
     }
 
@@ -126,17 +138,17 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = null;
         if (userRole.equals(UserRole.ADMIN) || userRole.equals(UserRole.MANAGER)) {
             booking = bookingRepository.findById(id).orElse(null);
-            return getResponseBookingDTO(booking,id);
+            return getResponseBookingDTO(booking, id);
         } else {
-            booking = bookingRepository.findBookingByIDAndUser_NickName(user.getNickName(),id).orElse(null);
-            return getResponseBookingDTO(booking,id);
+            booking = bookingRepository.findBookingByIDAndUser_NickName(user.getNickName(), id).orElse(null);
+            return getResponseBookingDTO(booking, id);
         }
 
     }
 
-    private ResponseBookingDTO getResponseBookingDTO(Booking booking,Long id) {
+    private ResponseBookingDTO getResponseBookingDTO(Booking booking, Long id) {
         if (booking == null) {
-            log.warn("Error: неверный номер брониования в методе findBesponseBookingDTOByBookingId id= {}",id);
+            log.warn("Error: неверный номер брониования в методе findBesponseBookingDTOByBookingId id= {}", id);
             throw new HotelDataNotFoundException("нет такого номера бронирования");
         }
 
