@@ -160,6 +160,7 @@ public class BookingServiceImpl implements BookingService {
                 .email(booking.getUser().getEmail())
                 .phoneNumber(booking.getUser().getPhoneNumber())
                 .serviceHotelSimpleDTOS(serviceHotelSimpleDTOS)
+                .guestList(booking.getGuestList())
                 .build();
     }
 

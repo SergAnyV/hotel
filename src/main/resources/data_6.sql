@@ -1,17 +1,16 @@
 
-
 -- Insert для ReportAttachment (вложения отчетов)
---INSERT INTO report_attachments (url_file, created_at, updated_at, report_id) VALUES
---('/reports/2024/06/15/report_1_photo1.jpg', NOW(), NOW(), 1),
---('/reports/2024/06/15/report_1_photo2.jpg', NOW(), NOW(), 1),
---('/reports/2024/07/01/report_2_video.mp4', NOW(), NOW(), 2),
---('/reports/2024/08/05/report_3_document.pdf', NOW(), NOW(), 3),
---('/reports/2024/09/10/report_4_scan.png', NOW(), NOW(), 4),
---('/reports/2024/10/20/report_5_audio.mp3', NOW(), NOW(), 5),
---('/reports/2024/11/01/report_6_image.jpg', NOW(), NOW(), 6),
---('/reports/2024/12/01/report_7_diagram.png', NOW(), NOW(), 7),
---('/reports/2025/01/10/report_8_log.txt', NOW(), NOW(), 8),
---('/reports/2025/02/14/report_9_video.mp4', NOW(), NOW(), 9);
+INSERT INTO report_attachments (file_name, content_type, size, content, created_at, report_id) VALUES
+('report_1_photo1.jpg', 'image/jpeg', 1024, E'\\x', NOW(), 1),
+('report_1_photo2.jpg', 'image/jpeg', 2048, E'\\x', NOW(), 1),
+('report_2_video.mp4', 'video/mp4', 5120, E'\\x', NOW(), 2),
+('report_3_document.pdf', 'application/pdf', 3072, E'\\x', NOW(), 3),
+('report_4_scan.png', 'image/png', 4096, E'\\x', NOW(), 4),
+('report_5_audio.mp3', 'audio/mpeg', 2560, E'\\x', NOW(), 5),
+('report_6_image.jpg', 'image/jpeg', 1536, E'\\x', NOW(), 6),
+('report_7_diagram.png', 'image/png', 10240, E'\\x', NOW(), 7),
+('report_8_log.txt', 'text/plain', 512, E'\\x', NOW(), 8),
+('report_9_video.mp4', 'video/mp4', 7168, E'\\x', NOW(), 9);
 
 
 -- Insert для Notification (уведомления)

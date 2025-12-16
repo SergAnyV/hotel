@@ -82,7 +82,7 @@ public class Booking {
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NotificationHotel> notificationHotels = new ArrayList<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "booking_guests",
             joinColumns = @JoinColumn(name = "booking_id")
