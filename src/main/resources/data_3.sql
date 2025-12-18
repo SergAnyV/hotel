@@ -1,11 +1,11 @@
 
 -- Insert для User (пользователи)
 INSERT INTO users (nick_name, first_name, fathers_name, last_name, email, phone, password, created_at, updated_at, role_id, verification_token, verify_status) VALUES
-('admin_ivan', 'Иван', 'Петрович', 'Сидоров', 'admin@hotel.ru', '79161234567', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 1,
+('admin_ivan', 'Иван', 'Петрович', 'Сидоров', 'anivlg@ydex.ru', '79161234567', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 1,
  'f47ac10b-58cc-4372-a567-0e02b2c3d479', true),
-('manager_olga', 'Ольга', 'Сергеевна', 'Иванова', 'manager@hotel.ru', '79162345678', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 2,
+('manager_olga', 'Ольга', 'Сергеевна', 'Иванова', 'managerOOOOOOO@hoOOOOOtel.ru', '79162345678', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 2,
  '6ba7b810-9dad-11d1-80b4-00c04fd430c8', true),
-('cook_andrey', 'Андрей', 'Михайлович', 'Петров', 'cook@hotel.ru', '79163456789', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 3,
+('cook_andrey', 'Андрей', 'Михайлович', 'Петров', 'cookOOOOOOO@hoOOOOOOtel.ru', '79163456789', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 3,
  '7c9e6679-7425-40de-944b-e07fc1f90ae7', true),
 ('cleaner_maria', 'Мария', 'Александровна', 'Смирнова', 'tihonicovsergej@gmail.com', '79164567890', '$2a$10$GjGv9uyQejDku0lPUkTLB.xti8VPuYMWwdx.vmY0mNXvd7TRLmyCi', NOW(), NOW(), 4,
  'a1b2c3d4-e5f6-7890-1234-567890abcdef', true),

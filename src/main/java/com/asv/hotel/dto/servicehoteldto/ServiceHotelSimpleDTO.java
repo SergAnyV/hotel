@@ -33,7 +33,7 @@ public class ServiceHotelSimpleDTO {
      */
     @Schema(description = "Название сервиса", example = "Уборка")
     @NotBlank(message = "Название сервиса не должно быть пустым")
-    @Size(min = 3, max = 20, message = "количество символов 3-20 для названия сервиса")
+    @Size(min = 2, max = 20, message = "количество символов 3-20 для названия сервиса")
     private String title;
 
     /**

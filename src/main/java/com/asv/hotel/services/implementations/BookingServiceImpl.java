@@ -178,7 +178,7 @@ public class BookingServiceImpl implements BookingService {
 
     private Set<ServiceHotel> findAllServicesForBooking(BookingSimplDTO bookingSimplDTO) {
         Set<ServiceHotelSimpleDTO> serviceHotelDTOS = bookingSimplDTO.getServiceSet();
-        if (serviceHotelDTOS.isEmpty()) {
+        if (serviceHotelDTOS==null||serviceHotelDTOS.isEmpty()) {
             return Collections.emptySet();
         }
         return serviceHotelDTOS.stream().map(serviceHotelSimpleDTO -> {
