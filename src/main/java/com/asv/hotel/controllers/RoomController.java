@@ -38,7 +38,7 @@ public class RoomController {
     @Operation(summary = "Найти номер по номеру",
             description = "Возвращает данные номера по номеру комнаты")
     @ApiResponse(responseCode = "200", description = "Номер найден")
-    @ApiResponse(responseCode = "404", description = "Номер не найден")
+    @ApiResponse(responseCode = "400", description = "Неверный запрос")
     @GetMapping("/{number}")
     public ResponseEntity<RoomDTO> getRoomByNumber(
             @PathVariable
@@ -46,6 +46,9 @@ public class RoomController {
             @Pattern(regexp = "^[а-яА-ЯёЁa-zA-Z0-9]+$", message = "Комната может содержать только буквы, цифры ")
             String number) {
         RoomDTO roomDTO = roomService.findRoomDTOByNumber(number);
+        if (roomDTO==null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return ResponseEntity.ok(roomDTO);
 
     }
